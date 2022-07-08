@@ -1,0 +1,2519 @@
+From 773f33f6320e6e77356aad702709e31bb52fe948 Mon Sep 17 00:00:00 2001
+From: chengweipeng <chengweipeng@allwinnertech.com>
+Date: Tue, 15 Jun 2021 15:25:00 +0800
+Subject: [PATCH] update roscpp to melodic
+
+Signed-off-by: chengweipeng <chengweipeng@allwinnertech.com>
+---
+ clients/roscpp/CHANGELOG.rst                  | 124 +++++++++-
+ clients/roscpp/CMakeLists.txt                 |  16 +-
+ clients/roscpp/include/ros/callback_queue.h   |  18 +-
+ clients/roscpp/include/ros/forwards.h         |   6 +
+ clients/roscpp/include/ros/init.h             |   5 +
+ .../include/ros/internal/condition_variable.h | 228 ++++++++++++++++++
+ clients/roscpp/include/ros/names.h            |   4 +-
+ clients/roscpp/include/ros/node_handle.h      |   2 +-
+ clients/roscpp/include/ros/param.h            |  11 +
+ clients/roscpp/include/ros/publisher.h        |  27 ++-
+ clients/roscpp/include/ros/roscpp.dox         |   2 +-
+ clients/roscpp/include/ros/rosout_appender.h  |   5 +-
+ clients/roscpp/include/ros/service.h          |   1 +
+ clients/roscpp/include/ros/service_client.h   |   1 +
+ clients/roscpp/include/ros/service_server.h   |   1 +
+ .../roscpp/include/ros/service_server_link.h  |   3 +-
+ clients/roscpp/include/ros/spinner.h          |   2 +-
+ clients/roscpp/include/ros/statistics.h       |   8 +-
+ clients/roscpp/include/ros/steady_timer.h     |   4 +
+ clients/roscpp/include/ros/subscriber.h       |   1 +
+ clients/roscpp/include/ros/timer.h            |   5 +-
+ clients/roscpp/include/ros/timer_manager.h    |  62 +++--
+ .../roscpp/include/ros/transport/transport.h  |   3 +-
+ clients/roscpp/include/ros/wall_timer.h       |   3 +
+ clients/roscpp/include/ros/xmlrpc_manager.h   |   6 +-
+ clients/roscpp/package.xml                    |   9 +-
+ clients/roscpp/src/libros/callback_queue.cpp  | 116 +++++----
+ clients/roscpp/src/libros/connection.cpp      |   2 +-
+ clients/roscpp/src/libros/file_log.cpp        |  10 +-
+ clients/roscpp/src/libros/init.cpp            |  42 +++-
+ .../src/libros/internal_timer_manager.cpp     |  13 -
+ clients/roscpp/src/libros/master.cpp          |  18 +-
+ clients/roscpp/src/libros/names.cpp           |   2 +-
+ clients/roscpp/src/libros/network.cpp         |   1 +
+ clients/roscpp/src/libros/node_handle.cpp     |   4 +
+ clients/roscpp/src/libros/param.cpp           |  38 ++-
+ clients/roscpp/src/libros/poll_set.cpp        |   5 +-
+ clients/roscpp/src/libros/publication.cpp     |   4 +
+ clients/roscpp/src/libros/rosout_appender.cpp |  16 +-
+ clients/roscpp/src/libros/service.cpp         |  11 +-
+ clients/roscpp/src/libros/service_manager.cpp |   8 +-
+ .../roscpp/src/libros/service_publication.cpp |   2 +-
+ .../roscpp/src/libros/service_server_link.cpp |   1 +
+ clients/roscpp/src/libros/spinner.cpp         |  42 +---
+ clients/roscpp/src/libros/statistics.cpp      |  13 +-
+ clients/roscpp/src/libros/steady_timer.cpp    |  86 +------
+ clients/roscpp/src/libros/subscription.cpp    |  15 +-
+ .../roscpp/src/libros/subscription_queue.cpp  |   7 +-
+ clients/roscpp/src/libros/this_node.cpp       |  20 +-
+ clients/roscpp/src/libros/timer.cpp           |   5 +
+ clients/roscpp/src/libros/topic_manager.cpp   |   7 +-
+ .../roscpp/src/libros/transport/transport.cpp |   8 +-
+ .../src/libros/transport/transport_tcp.cpp    |  26 +-
+ .../src/libros/transport/transport_udp.cpp    |  13 +-
+ .../src/libros/transport_publisher_link.cpp   |  11 +-
+ .../src/libros/transport_subscriber_link.cpp  |   2 +-
+ clients/roscpp/src/libros/wall_timer.cpp      |   5 +
+ clients/roscpp/src/libros/xmlrpc_manager.cpp  |   3 +
+ 58 files changed, 754 insertions(+), 359 deletions(-)
+ create mode 100644 clients/roscpp/include/ros/internal/condition_variable.h
+
+diff --git a/clients/roscpp/CHANGELOG.rst b/clients/roscpp/CHANGELOG.rst
+index c164c83..c6b927f 100644
+--- a/clients/roscpp/CHANGELOG.rst
++++ b/clients/roscpp/CHANGELOG.rst
+@@ -2,48 +2,146 @@
+ Changelog for package roscpp
+ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 
+-1.12.14 (2018-08-23)
++1.14.11 (2021-04-26)
+ --------------------
++* Fix for deadlock issue 1980 (`#2121 <https://github.com/ros/ros_comm/issues/2121>`_)
++* Fix getNumPublishers() to only count fully connected (`#2107 <https://github.com/ros/ros_comm/issues/2107>`_)
++* Replace message assertion with logging in order to have release modes to fail in compilation when msg type mismatches occur (`#2096 <https://github.com/ros/ros_comm/issues/2096>`_)
++* Contributors: C. Andy Martin, Ivor Wanders, Tahsincan Köse
++
++1.14.10 (2020-10-16)
++--------------------
++* Set call_finished\_ with true for each call inside callFinished (`#2074 <https://github.com/ros/ros_comm/issues/2074>`_)
++* Update maintainers (`#2075 <https://github.com/ros/ros_comm/issues/2075>`_)
++* Cached parameter should be unsubscribed (`#2068 <https://github.com/ros/ros_comm/issues/2068>`_)
++* Fix spelling (`#2066 <https://github.com/ros/ros_comm/issues/2066>`_)
++* Fix Lost Wake Bug in ROSOutAppender (`#2033 <https://github.com/ros/ros_comm/issues/2033>`_)
++* Contributors: Adel Fakih, Chen Lihui, Jacob Perron, Shane Loretz, tomoya
++
++1.14.9 (2020-08-20)
++-------------------
++* use fully qualified ceil() in condition_variable.h (`#2025 <https://github.com/ros/ros_comm/issues/2025>`_)
++
++1.14.8 (2020-08-12)
++-------------------
++* remove 'using namespace' from condition_variable.h (`#2020 <https://github.com/ros/ros_comm/issues/2020>`_)
++* support boost 1.66 (`#2016 <https://github.com/ros/ros_comm/issues/2016>`_)
++
++1.14.7 (2020-07-31)
++-------------------
++* fix subscription busy wait melodic (`#1684 <https://github.com/ros/ros_comm/issues/1684>`_, `#2014 <https://github.com/ros/ros_comm/issues/2014>`_)
++* use an internal implementation of boost::condition_variable with monotonic clock (`#1932 <https://github.com/ros/ros_comm/issues/1932>`_)
++
++1.14.6 (2020-05-29)
++-------------------
++* fix a bug that using a destroyed connection object (`#1950 <https://github.com/ros/ros_comm/issues/1950>`_)
++* remove extra n in ROS_DEBUG (`#1925 <https://github.com/ros/ros_comm/issues/1925>`_)
++
++1.14.5 (2020-03-19)
++-------------------
++
++1.14.4 (2020-02-20)
++-------------------
++* add default ROS_MASTER_URI (`#1666 <https://github.com/ros/ros_comm/issues/1666>`_)
++* add default assignment operator for various classes (`#1888 <https://github.com/ros/ros_comm/issues/1888>`_)
++* bump CMake minimum version to avoid CMP0048 warning (`#1869 <https://github.com/ros/ros_comm/issues/1869>`_)
++* do not display error message if poll yields EINTR (`#1868 <https://github.com/ros/ros_comm/issues/1868>`_)
++* [windows] portable duration cast (`#1882 <https://github.com/ros/ros_comm/issues/1882>`_)
++* drop custom implementation of boost::condition_variable to fix busy-wait spinning (`#1878 <https://github.com/ros/ros_comm/issues/1878>`_)
++* disable rosout via ROSCPP_NO_ROSOUT environment variable (`#1858 <https://github.com/ros/ros_comm/issues/1858>`_)
++* [windows] conditionally guard sys/socket.h (`#1876 <https://github.com/ros/ros_comm/issues/1876>`_)
++* explicit include of socket.h to support FreeBSD (`#1864 <https://github.com/ros/ros_comm/issues/1864>`_)
++* remove DEBUG statements from getImpl (`#1823 <https://github.com/ros/ros_comm/issues/1823>`_)
++* use c++11 std::snprintf (`#1820 <https://github.com/ros/ros_comm/issues/1820>`_)
++* TransportTCP: Allow socket() to return 0 (`#1707 <https://github.com/ros/ros_comm/issues/1707>`_)
++* fix dynamic windowing for Topic Statistics (`#1695 <https://github.com/ros/ros_comm/issues/1695>`_)
++* service_publication: removed int-bool-comparison (`#1710 <https://github.com/ros/ros_comm/issues/1710>`_)
++* add Timer::isValid() const (`#1779 <https://github.com/ros/ros_comm/issues/1779>`_)
++* add possibility to pass rospy.Duration as timeout to wait_for_service and wait_for_message (`#1703 <https://github.com/ros/ros_comm/issues/1703>`_)
++* fix segfault in TransportPublisherLink (`#1714 <https://github.com/ros/ros_comm/issues/1714>`_)
++* TransportTCP: enable poll event POLLRDHUP to detect dead connections properly (`#1704 <https://github.com/ros/ros_comm/issues/1704>`_)
++* transportUDP: zero-initialize sockaddr_in object (`#1740 <https://github.com/ros/ros_comm/issues/1740>`_)
++* unregisterService returns result of execute("unregisterService") (`#1751 <https://github.com/ros/ros_comm/issues/1751>`_)
++* use safe string check (`#1771 <https://github.com/ros/ros_comm/issues/1771>`_)
++* fix memory leak of global variable (`#1503 <https://github.com/ros/ros_comm/issues/1503>`_)
++* fix exception boost::lock_error during shutdown (`#1656 <https://github.com/ros/ros_comm/issues/1656>`_)
++* avoid deadlock in TopicManager (`#1645 <https://github.com/ros/ros_comm/issues/1645>`_)
++* use WallTime/WallDuration for waiting for service (`#1638 <https://github.com/ros/ros_comm/issues/1638>`_)
++* add missing include path (for bazel workspaces) (`#1636 <https://github.com/ros/ros_comm/issues/1636>`_)
++* fix bug in statistics decision making if one should publish (`#1625 <https://github.com/ros/ros_comm/issues/1625>`_)
++* add hasStarted() const to WallTimer and SteadyTimer API (`#1565 <https://github.com/ros/ros_comm/issues/1565>`_)
++* remove signals from find_package(Boost COMPONENTS ...) (`#1580 <https://github.com/ros/ros_comm/issues/1580>`_)
++* fix string error on windows (`#1582 <https://github.com/ros/ros_comm/issues/1582>`_)
++* visibility macros update (`#1591 <https://github.com/ros/ros_comm/issues/1591>`_)
++* fix race due tounprotected access to callbacks\_ (`#1595 <https://github.com/ros/ros_comm/issues/1595>`_)
++* fix nullptr access from Timer().hasStarted() (`#1541 <https://github.com/ros/ros_comm/issues/1541>`_)
++* add const specifier to `NodeHandle::param(param_name, default_val)`. (`#1539 <https://github.com/ros/ros_comm/issues/1539>`_)
++* update wiki.ros.org URLs (`#1536 <https://github.com/ros/ros_comm/issues/1536>`_)
++* fix stamp_age_mean overflow when stamp age very big (`#1526 <https://github.com/ros/ros_comm/issues/1526>`_)
++* remove explicit -std=c++11, default to 14
++* fix memory error due to missing rosout_disable_topics_generation parameter (`#1507 <https://github.com/ros/ros_comm/issues/1507>`_)
++* fix issues when built or run on Windows (`#1466 <https://github.com/ros/ros_comm/issues/1466>`_)
++
++1.14.3 (2018-08-06)
++-------------------
+ * add hasStarted() to Timer API (`#1464 <https://github.com/ros/ros_comm/issues/1464>`_)
++* fix compiler warnings about unused variables (`#1428 <https://github.com/ros/ros_comm/issues/1428>`_)
++
++1.14.2 (2018-06-06)
++-------------------
++
++1.14.1 (2018-05-21)
++-------------------
++
++1.14.0 (2018-05-21)
++-------------------
+ * force a rebuild of the pollset on flag changes (`#1393 <https://github.com/ros/ros_comm/issues/1393>`_)
+ * fix integer overflow for oneshot timers (`#1382 <https://github.com/ros/ros_comm/issues/1382>`_)
+ * convert the period standard deviation in StatisticsLogger to Duration at the end (`#1361 <https://github.com/ros/ros_comm/issues/1361>`_)
++* add time when timer expired to timer events (`#1130 <https://github.com/ros/ros_comm/issues/1130>`_)
+ * replace DCL pattern with static variable (`#1365 <https://github.com/ros/ros_comm/issues/1365>`_)
++* add parameter to stop clients from generating rosout topics list (`#1241 <https://github.com/ros/ros_comm/issues/1241>`_)
+ 
+-1.12.13 (2018-02-21)
+---------------------
++1.13.6 (2018-02-05)
++-------------------
+ * avoid recreating poll set (`#1281 <https://github.com/ros/ros_comm/pull/1281>`_)
+ * switch to using epoll (`#1217 <https://github.com/ros/ros_comm/pull/1217>`_)
+ * monotonic clock for callback queue timeouts (`#1250 <https://github.com/ros/ros_comm/pull/1250>`_)
+ * fix IPv6 initialization order (`#1262 <https://github.com/ros/ros_comm/issues/1262>`_)
+ * changed error message for single threaded spinner  (`#1164 <https://github.com/ros/ros_comm/pull/1164>`_)
+ 
+-1.12.12 (2017-11-16)
+---------------------
+-
+-1.12.11 (2017-11-07)
+---------------------
+-
+-1.12.10 (2017-11-06)
+---------------------
++1.13.5 (2017-11-09)
++-------------------
+ 
+-1.12.9 (2017-11-06)
++1.13.4 (2017-11-02)
+ -------------------
+ 
+-1.12.8 (2017-11-06)
++1.13.3 (2017-10-25)
+ -------------------
++* avoid unused parameter warning in TransportTCP (`#1195 <https://github.com/ros/ros_comm/issues/1195>`_)
+ * check if socket options are available before using them (`#1172 <https://github.com/ros/ros_comm/issues/1172>`_)
++
++1.13.2 (2017-08-15)
++-------------------
+ * only use CLOCK_MONOTONIC if not on OS X (`#1142 <https://github.com/ros/ros_comm/issues/1142>`_)
+ * xmlrpc_manager: use SteadyTime for timeout (`#1134 <https://github.com/ros/ros_comm/issues/1134>`_)
+ * ignore headers with zero stamp in statistics (`#1127 <https://github.com/ros/ros_comm/issues/1127>`_)
++
++1.13.1 (2017-07-27)
++-------------------
+ * add SteadyTimer, used in TimerManager (`#1014 <https://github.com/ros/ros_comm/issues/1014>`_)
+ * include missing header for writev() (`#1105 <https://github.com/ros/ros_comm/pull/1105>`_)
++* clean the namespace to get rid of double or trailing forward slashes (`#1100 <https://github.com/ros/ros_comm/issues/1100>`_)
+ * add missing mutex lock for publisher links (`#1090 <https://github.com/ros/ros_comm/pull/1090>`_)
+ * fix race condition that lead to miss first message (`#1058 <https://github.com/ros/ros_comm/issues/1058>`_)
+ * fix bug in transport_tcp on Windows (`#1050 <https://github.com/ros/ros_comm/issues/1050>`_)
+ * add subscriber to connection log messages (`#1023 <https://github.com/ros/ros_comm/issues/1023>`_)
+ * avoid deleting XmlRpcClient while being used in another thread (`#1013 <https://github.com/ros/ros_comm/issues/1013>`_)
+ 
++1.13.0 (2017-02-22)
++-------------------
++* remove support for multiple spinners on the same queue which existed only for backward compatibily (`#988 <https://github.com/ros/ros_comm/pull/988>`_)
++
+ 1.12.7 (2017-02-17)
+ -------------------
+ * move connection specific log message to new name roscpp_internal.connections (`#980 <https://github.com/ros/ros_comm/pull/980>`_)
+diff --git a/clients/roscpp/CMakeLists.txt b/clients/roscpp/CMakeLists.txt
+index af68f8e..fe506f1 100644
+--- a/clients/roscpp/CMakeLists.txt
++++ b/clients/roscpp/CMakeLists.txt
+@@ -1,8 +1,8 @@
+-cmake_minimum_required(VERSION 2.8.3)
++cmake_minimum_required(VERSION 3.0.2)
+ project(roscpp)
+ 
+ if(NOT WIN32)
+-  set_directory_properties(PROPERTIES COMPILE_OPTIONS "-std=c++11;-Wall;-Wextra")
++  set_directory_properties(PROPERTIES COMPILE_OPTIONS "-Wall;-Wextra")
+ endif()
+ 
+ find_package(catkin REQUIRED COMPONENTS
+@@ -22,9 +22,11 @@ list(GET roscpp_VERSION_LIST 2 roscpp_VERSION_PATCH)
+ 
+ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/include/ros/common.h.in ${CATKIN_DEVEL_PREFIX}/${CATKIN_GLOBAL_INCLUDE_DESTINATION}/ros/common.h)
+ 
+-find_package(Boost REQUIRED COMPONENTS chrono filesystem signals system)
++find_package(Boost REQUIRED COMPONENTS chrono filesystem system)
+ 
+ include_directories(include ${CATKIN_DEVEL_PREFIX}/${CATKIN_GLOBAL_INCLUDE_DESTINATION}/ros ${catkin_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
++# this is needed for use within a bazel workspace. See #1548 for details.
++include_directories(${CATKIN_DEVEL_PREFIX}/${CATKIN_GLOBAL_INCLUDE_DESTINATION})
+ 
+ add_message_files(
+   DIRECTORY msg
+@@ -124,6 +126,10 @@ add_library(roscpp
+   src/libros/steady_timer.cpp
+   )
+ 
++if(WIN32)
++  add_definitions(-DNOGDI)
++endif()
++
+ add_dependencies(roscpp ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+ 
+ target_link_libraries(roscpp
+@@ -131,6 +137,10 @@ target_link_libraries(roscpp
+   ${Boost_LIBRARIES}
+   )
+ 
++if(WIN32)
++  target_link_libraries(roscpp ws2_32)
++endif()
++
+ #explicitly install library and includes
+ install(TARGETS roscpp
+   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+diff --git a/clients/roscpp/include/ros/callback_queue.h b/clients/roscpp/include/ros/callback_queue.h
+index 4fe811d..1881f1c 100644
+--- a/clients/roscpp/include/ros/callback_queue.h
++++ b/clients/roscpp/include/ros/callback_queue.h
+@@ -35,22 +35,8 @@
+ #ifndef ROSCPP_CALLBACK_QUEUE_H
+ #define ROSCPP_CALLBACK_QUEUE_H
+ 
+-// check if we might need to include our own backported version boost::condition_variable
+-// in order to use CLOCK_MONOTONIC for the condition variable
+-// the include order here is important!
+-#ifdef BOOST_THREAD_HAS_CONDATTR_SET_CLOCK_MONOTONIC
+-#include <boost/version.hpp>
+-#if BOOST_VERSION < 106100
+-// use backported version of boost condition variable, see https://svn.boost.org/trac/boost/ticket/6377
+-#include "boost_161_condition_variable.h"
+-#else // Boost version is 1.61 or greater and has the steady clock fixes
+-#include <boost/thread/condition_variable.hpp>
+-#endif
+-#else // !BOOST_THREAD_HAS_CONDATTR_SET_CLOCK_MONOTONIC
+-#include <boost/thread/condition_variable.hpp>
+-#endif // BOOST_THREAD_HAS_CONDATTR_SET_CLOCK_MONOTONIC
+-
+ #include "ros/callback_queue_interface.h"
++#include "ros/internal/condition_variable.h"
+ #include "ros/time.h"
+ #include "common.h"
+ 
+@@ -177,7 +163,7 @@ protected:
+   D_CallbackInfo callbacks_;
+   size_t calling_;
+   boost::mutex mutex_;
+-  boost::condition_variable condition_;
++  ros::internal::condition_variable_monotonic condition_;
+ 
+   boost::mutex id_info_mutex_;
+   M_IDInfo id_info_;
+diff --git a/clients/roscpp/include/ros/forwards.h b/clients/roscpp/include/ros/forwards.h
+index 8ac7406..d08937c 100644
+--- a/clients/roscpp/include/ros/forwards.h
++++ b/clients/roscpp/include/ros/forwards.h
+@@ -132,9 +132,11 @@ struct TimerEvent
+ {
+   Time last_expected;                     ///< In a perfect world, this is when the last callback should have happened
+   Time last_real;                         ///< When the last callback actually happened
++  Time last_expired;                      ///< When the last timer actually expired and the callback was added to the queue
+ 
+   Time current_expected;                  ///< In a perfect world, this is when the current callback should be happening
+   Time current_real;                      ///< This is when the current callback was actually called (Time::now() as of the beginning of the callback)
++  Time current_expired;                   ///< When the current timer actually expired and the callback was added to the queue
+ 
+   struct
+   {
+@@ -150,9 +152,11 @@ struct WallTimerEvent
+ {
+   WallTime last_expected;                 ///< In a perfect world, this is when the last callback should have happened
+   WallTime last_real;                     ///< When the last callback actually happened
++  WallTime last_expired;                  ///< When the last timer actually expired and the callback was added to the queue
+ 
+   WallTime current_expected;              ///< In a perfect world, this is when the current callback should be happening
+   WallTime current_real;                  ///< This is when the current callback was actually called (Time::now() as of the beginning of the callback)
++  WallTime current_expired;               ///< When the current timer actually expired and the callback was added to the queue
+ 
+   struct
+   {
+@@ -168,9 +172,11 @@ struct SteadyTimerEvent
+ {
+   SteadyTime last_expected;            ///< In a perfect world, this is when the last callback should have happened
+   SteadyTime last_real;                ///< When the last callback actually happened
++  SteadyTime last_expired;             ///< When the last timer actually expired and the callback was added to the queue
+ 
+   SteadyTime current_expected;         ///< In a perfect world, this is when the current callback should be happening
+   SteadyTime current_real;             ///< This is when the current callback was actually called (SteadyTime::now() as of the beginning of the callback)
++  SteadyTime current_expired;          ///< When the current timer actually expired and the callback was added to the queue
+ 
+   struct
+   {
+diff --git a/clients/roscpp/include/ros/init.h b/clients/roscpp/include/ros/init.h
+index 02e84c3..e87a388 100644
+--- a/clients/roscpp/include/ros/init.h
++++ b/clients/roscpp/include/ros/init.h
+@@ -215,6 +215,11 @@ ROSCPP_DECL std::string getROSArg(int argc, const char* const* argv, const std::
+  */
+ ROSCPP_DECL void removeROSArgs(int argc, const char* const* argv, V_string& args_out);
+ 
++/**
++ * \brief returns the default master uri that is used if no other is specified, e.g. by defining ROS_MASTER_URI.
++ */
++ROSCPP_DECL const std::string& getDefaultMasterURI();
++
+ }
+ 
+ #endif
+diff --git a/clients/roscpp/include/ros/internal/condition_variable.h b/clients/roscpp/include/ros/internal/condition_variable.h
+new file mode 100644
+index 0000000..d5a57fe
+--- /dev/null
++++ b/clients/roscpp/include/ros/internal/condition_variable.h
+@@ -0,0 +1,228 @@
++/*
++ * Copyright (C) 2020, Willow Garage, Inc.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions are met:
++ *   * Redistributions of source code must retain the above copyright notice,
++ *     this list of conditions and the following disclaimer.
++ *   * Redistributions in binary form must reproduce the above copyright
++ *     notice, this list of conditions and the following disclaimer in the
++ *     documentation and/or other materials provided with the distribution.
++ *   * Neither the names of Stanford University or Willow Garage, Inc. nor the names of its
++ *     contributors may be used to endorse or promote products derived from
++ *     this software without specific prior written permission.
++ *
++ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
++ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
++ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
++ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
++ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
++ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
++ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
++ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
++ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
++ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
++ * POSSIBILITY OF SUCH DAMAGE.
++ */
++
++// Distributed under the Boost Software License, Version 1.0. (See
++// accompanying file LICENSE_1_0.txt or copy at
++// http://www.boost.org/LICENSE_1_0.txt)
++// (C) Copyright 2007-10 Anthony Williams
++// (C) Copyright 2011-2012 Vicente J. Botet Escriba
++
++#ifndef ROSCPP_INTERNAL_CONDITION_VARIABLE_H
++#define ROSCPP_INTERNAL_CONDITION_VARIABLE_H
++
++#include <boost/thread/condition_variable.hpp>
++
++namespace ros {
++namespace internal {
++
++#if !defined(BOOST_THREAD_PLATFORM_PTHREAD) || \
++    defined(BOOST_THREAD_HAS_CONDATTR_SET_CLOCK_MONOTONIC) || \
++    defined(BOOST_THREAD_INTERNAL_CLOCK_IS_MONO)
++using condition_variable_monotonic = boost::condition_variable;
++
++#else
++
++class condition_variable_monotonic {
++private:
++#if defined BOOST_THREAD_PROVIDES_INTERRUPTIONS
++  pthread_mutex_t internal_mutex;
++#endif
++  pthread_cond_t cond;
++
++public:
++  condition_variable_monotonic() {
++    int res;
++#if defined BOOST_THREAD_PROVIDES_INTERRUPTIONS
++    res = pthread_mutex_init(&internal_mutex, NULL);
++    if (res)
++    {
++      boost::throw_exception(boost::thread_resource_error(res, "ros::internal::condition_variable_monotonic::condition_variable_monotonic() constructor failed in pthread_mutex_init"));
++    }
++#endif
++
++    // res = boost::detail::monotonic_pthread_cond_init(cond);
++    pthread_condattr_t attr;
++    res = pthread_condattr_init(&attr);
++    if (res == 0) {
++      pthread_condattr_setclock(&attr, CLOCK_MONOTONIC);
++      res = pthread_cond_init(&cond, &attr);
++      pthread_condattr_destroy(&attr);
++    }
++
++    if (res)
++    {
++#if defined BOOST_THREAD_PROVIDES_INTERRUPTIONS
++      BOOST_VERIFY(!pthread_mutex_destroy(&internal_mutex));
++#endif
++      boost::throw_exception(boost::thread_resource_error(res, "ros::internal::condition_variable_monotonic::condition_variable() constructor failed in detail::monotonic_pthread_cond_init"));
++    }
++  }
++
++  void notify_one() BOOST_NOEXCEPT
++  {
++#if defined BOOST_THREAD_PROVIDES_INTERRUPTIONS
++    boost::pthread::pthread_mutex_scoped_lock internal_lock(&internal_mutex);
++#endif
++    BOOST_VERIFY(!pthread_cond_signal(&cond));
++  }
++
++  void notify_all() BOOST_NOEXCEPT
++  {
++#if defined BOOST_THREAD_PROVIDES_INTERRUPTIONS
++    boost::pthread::pthread_mutex_scoped_lock internal_lock(&internal_mutex);
++#endif
++    BOOST_VERIFY(!pthread_cond_broadcast(&cond));
++  }
++
++  template <class Duration>
++  boost::cv_status wait_until(
++      boost::unique_lock<boost::mutex> &lock,
++      const boost::chrono::time_point<boost::chrono::steady_clock, Duration> &t)
++  {
++    typedef boost::chrono::time_point<boost::chrono::steady_clock, boost::chrono::nanoseconds>
++      nano_sys_tmpt;
++    wait_until(lock,
++               nano_sys_tmpt(boost::chrono::ceil<boost::chrono::nanoseconds>(t.time_since_epoch())));
++    return boost::chrono::steady_clock::now() < t ?
++      boost::cv_status::no_timeout :
++      boost::cv_status::timeout;
++  }
++
++  template <class Clock, class Duration>
++  boost::cv_status wait_until(
++      boost::unique_lock<boost::mutex> &lock,
++      const boost::chrono::time_point<Clock, Duration> &t)
++  {
++    boost::chrono::steady_clock::time_point s_now = boost::chrono::steady_clock::now();
++    typename Clock::time_point c_now = Clock::now();
++    wait_until(lock, s_now + boost::chrono::ceil<boost::chrono::nanoseconds>(t - c_now));
++    return Clock::now() < t ? boost::cv_status::no_timeout : boost::cv_status::timeout;
++  }
++
++  template <class Rep, class Period>
++  boost::cv_status wait_for(
++      boost::unique_lock<boost::mutex> &lock,
++      const boost::chrono::duration<Rep, Period> &d)
++  {
++    boost::chrono::steady_clock::time_point c_now = boost::chrono::steady_clock::now();
++    wait_until(lock, c_now + boost::chrono::ceil<boost::chrono::nanoseconds>(d));
++    return boost::chrono::steady_clock::now() - c_now < d ?
++      boost::cv_status::no_timeout :
++      boost::cv_status::timeout;
++  }
++
++  boost::cv_status wait_until(
++      boost::unique_lock<boost::mutex> &lk,
++      boost::chrono::time_point<boost::chrono::steady_clock, boost::chrono::nanoseconds> tp)
++  {
++    boost::chrono::nanoseconds d = tp.time_since_epoch();
++    timespec ts = boost::detail::to_timespec(d);
++    if (do_wait_until(lk, ts))
++      return boost::cv_status::no_timeout;
++    else
++      return boost::cv_status::timeout;
++  }
++
++  void wait(boost::unique_lock<boost::mutex> &m)
++  {
++    int res = 0;
++    {
++#if defined BOOST_THREAD_PROVIDES_INTERRUPTIONS
++      boost::thread_cv_detail::lock_on_exit<boost::unique_lock<boost::mutex>> guard;
++      boost::detail::interruption_checker check_for_interruption(&internal_mutex, &cond);
++      pthread_mutex_t *the_mutex = &internal_mutex;
++      guard.activate(m);
++      res = pthread_cond_wait(&cond, the_mutex);
++#if BOOST_VERSION >= 106600
++      check_for_interruption.unlock_if_locked();
++      guard.deactivate();
++#elif BOOST_VERSION >= 106500
++      check_for_interruption.check();
++      guard.deactivate();
++#endif
++#else
++      pthread_mutex_t *the_mutex = m.mutex()->native_handle();
++      res = pthread_cond_wait(&cond, the_mutex);
++#endif
++    }
++#if defined BOOST_THREAD_PROVIDES_INTERRUPTIONS
++    boost::this_thread::interruption_point();
++#endif
++    if (res && res != EINTR)
++    {
++      boost::throw_exception(boost::condition_error(res, "ros::internal::condition_variable_monotonic::wait failed in pthread_cond_wait"));
++    }
++  }
++
++  bool do_wait_until(
++      boost::unique_lock<boost::mutex> &m,
++      struct timespec const &timeout)
++  {
++    int cond_res;
++    {
++#if defined BOOST_THREAD_PROVIDES_INTERRUPTIONS
++      boost::thread_cv_detail::lock_on_exit<boost::unique_lock<boost::mutex>> guard;
++      boost::detail::interruption_checker check_for_interruption(&internal_mutex, &cond);
++      pthread_mutex_t *the_mutex = &internal_mutex;
++      guard.activate(m);
++      cond_res = pthread_cond_timedwait(&cond, the_mutex, &timeout);
++#if BOOST_VERSION >= 106600
++      check_for_interruption.unlock_if_locked();
++      guard.deactivate();
++#elif BOOST_VERSION >= 106500
++      check_for_interruption.check();
++      guard.deactivate();
++#endif
++#else
++      pthread_mutex_t *the_mutex = m.mutex()->native_handle();
++      cond_res = pthread_cond_timedwait(&cond, the_mutex, &timeout);
++#endif
++    }
++#if defined BOOST_THREAD_PROVIDES_INTERRUPTIONS
++    boost::this_thread::interruption_point();
++#endif
++    if (cond_res == ETIMEDOUT)
++    {
++      return false;
++    }
++    if (cond_res)
++    {
++      boost::throw_exception(boost::condition_error(cond_res, "ros::internal::condition_variable_monotonic::do_wait_until failed in pthread_cond_timedwait"));
++    }
++    return true;
++  }
++};
++static_assert(
++    sizeof(condition_variable_monotonic) == sizeof(boost::condition_variable),
++    "sizeof(ros::internal::condition_variable_monotonic) != sizeof(boost::condition_variable)");
++
++#endif
++
++}  // namespace internal
++}  // namespaec ros
++
++#endif  // ROSCPP_INTERNAL_CONDITION_VARIABLE_H
+diff --git a/clients/roscpp/include/ros/names.h b/clients/roscpp/include/ros/names.h
+index 8c82ee5..c76e2d8 100644
+--- a/clients/roscpp/include/ros/names.h
++++ b/clients/roscpp/include/ros/names.h
+@@ -47,7 +47,7 @@ ROSCPP_DECL std::string clean(const std::string& name);
+ /**
+  * \brief Resolve a graph resource name into a fully qualified graph resource name
+  *
+- * See http://www.ros.org/wiki/Names for more details
++ * See http://wiki.ros.org/Names for more details
+  *
+  * \param name Name to resolve
+  * \param remap Whether or not to apply remappings to the name
+@@ -57,7 +57,7 @@ ROSCPP_DECL std::string resolve(const std::string& name, bool remap = true);
+ /**
+  * \brief Resolve a graph resource name into a fully qualified graph resource name
+  *
+- * See http://www.ros.org/wiki/Names for more details
++ * See http://wiki.ros.org/Names for more details
+  *
+  * \param ns Namespace to use in resolution
+  * \param name Name to resolve
+diff --git a/clients/roscpp/include/ros/node_handle.h b/clients/roscpp/include/ros/node_handle.h
+index fcb6c78..d084e5e 100644
+--- a/clients/roscpp/include/ros/node_handle.h
++++ b/clients/roscpp/include/ros/node_handle.h
+@@ -2150,7 +2150,7 @@ if (service)  // Enter if advertised service is valid
+    * or is an otherwise invalid graph resource name.
+    */
+   template<typename T>
+-  T param(const std::string& param_name, const T& default_val)
++  T param(const std::string& param_name, const T& default_val) const
+   {
+       T param_val;
+       param(param_name, param_val, default_val);
+diff --git a/clients/roscpp/include/ros/param.h b/clients/roscpp/include/ros/param.h
+index 699f212..2270ad6 100644
+--- a/clients/roscpp/include/ros/param.h
++++ b/clients/roscpp/include/ros/param.h
+@@ -591,6 +591,17 @@ ROSCPP_DECL bool search(const std::string& key, std::string& result);
+  */
+ ROSCPP_DECL bool getParamNames(std::vector<std::string>& keys);
+ 
++/**
++ * \brief Unsubscribe cached parameter from the master
++ * \param key the cached parameter to be unsubscribed
++ */
++ROSCPP_DECL void unsubscribeCachedParam(const std::string& key);
++
++/**
++ * \brief Unsubscribe all cached parameter from the master
++ */
++ROSCPP_DECL void unsubscribeCachedParam(void);
++
+ /** \brief Assign value from parameter server, with default.
+  *
+  * This method tries to retrieve the indicated parameter value from the
+diff --git a/clients/roscpp/include/ros/publisher.h b/clients/roscpp/include/ros/publisher.h
+index 0533639..7ee05a8 100644
+--- a/clients/roscpp/include/ros/publisher.h
++++ b/clients/roscpp/include/ros/publisher.h
+@@ -50,6 +50,7 @@ namespace ros
+     Publisher() {}
+     Publisher(const Publisher& rhs);
+     ~Publisher();
++    Publisher& operator=(const Publisher& other) = default;
+ 
+     /**
+      * \brief Publish a message on the topic associated with this Publisher.
+@@ -75,11 +76,14 @@ namespace ros
+           ROS_ASSERT_MSG(false, "Call to publish() on an invalid Publisher (topic [%s])", impl_->topic_.c_str());
+           return;
+         }
+-
+-      ROS_ASSERT_MSG(impl_->md5sum_ == "*" || std::string(mt::md5sum<M>(*message)) == "*" || impl_->md5sum_ == mt::md5sum<M>(*message),
+-                     "Trying to publish message of type [%s/%s] on a publisher with type [%s/%s]",
+-                     mt::datatype<M>(*message), mt::md5sum<M>(*message),
+-                     impl_->datatype_.c_str(), impl_->md5sum_.c_str());
++        if (impl_->md5sum_ == "*" ||
++            std::string(mt::md5sum<M>(*message)) == "*" ||
++            impl_->md5sum_ == mt::md5sum<M>(*message)) {
++          ROS_DEBUG_ONCE("Trying to publish message of type [%s/%s] on a "
++                    "publisher with type [%s/%s]",
++                    mt::datatype<M>(*message), mt::md5sum<M>(*message),
++                    impl_->datatype_.c_str(), impl_->md5sum_.c_str());
++        }
+ 
+       SerializedMessage m;
+       m.type_info = &typeid(M);
+@@ -108,11 +112,14 @@ namespace ros
+           ROS_ASSERT_MSG(false, "Call to publish() on an invalid Publisher (topic [%s])", impl_->topic_.c_str());
+           return;
+         }
+-
+-      ROS_ASSERT_MSG(impl_->md5sum_ == "*" || std::string(mt::md5sum<M>(message)) == "*" || impl_->md5sum_ == mt::md5sum<M>(message),
+-                     "Trying to publish message of type [%s/%s] on a publisher with type [%s/%s]",
+-                     mt::datatype<M>(message), mt::md5sum<M>(message),
+-                     impl_->datatype_.c_str(), impl_->md5sum_.c_str());
++        if (impl_->md5sum_ == "*" ||
++            std::string(mt::md5sum<M>(message)) == "*" ||
++            impl_->md5sum_ == mt::md5sum<M>(message)) {
++          ROS_DEBUG_ONCE("Trying to publish message of type [%s/%s] on a "
++                    "publisher with type [%s/%s]",
++                    mt::datatype<M>(message), mt::md5sum<M>(message),
++                    impl_->datatype_.c_str(), impl_->md5sum_.c_str());
++        }
+ 
+       SerializedMessage m;
+       publish(boost::bind(serializeMessage<M>, boost::ref(message)), m);
+diff --git a/clients/roscpp/include/ros/roscpp.dox b/clients/roscpp/include/ros/roscpp.dox
+index f5dd49d..46ff1d0 100644
+--- a/clients/roscpp/include/ros/roscpp.dox
++++ b/clients/roscpp/include/ros/roscpp.dox
+@@ -15,6 +15,6 @@
+ 
+ @par Examples
+ 
+-Many examples of using ROS can be found <a href="http://www.ros.org/wiki/ROS/Tutorials">on the wiki</a> and in the <a href="http://www.ros.org/wiki/roscpp_tutorials">roscpp_tutorials</a> package.
++Many examples of using ROS can be found <a href="http://wiki.ros.org/ROS/Tutorials">on the wiki</a> and in the <a href="http://wiki.ros.org/roscpp_tutorials">roscpp_tutorials</a> package.
+ 
+ */
+diff --git a/clients/roscpp/include/ros/rosout_appender.h b/clients/roscpp/include/ros/rosout_appender.h
+index 5ca4966..032fd5a 100644
+--- a/clients/roscpp/include/ros/rosout_appender.h
++++ b/clients/roscpp/include/ros/rosout_appender.h
+@@ -38,6 +38,8 @@
+ #include <ros/message_forward.h>
+ #include "common.h"
+ 
++#include "ros/internal/condition_variable.h"
++
+ #include <boost/shared_ptr.hpp>
+ #include <boost/weak_ptr.hpp>
+ 
+@@ -73,8 +75,9 @@ protected:
+   typedef std::vector<rosgraph_msgs::LogPtr> V_Log;
+   V_Log log_queue_;
+   boost::mutex queue_mutex_;
+-  boost::condition_variable queue_condition_;
++  ros::internal::condition_variable_monotonic queue_condition_;
+   bool shutting_down_;
++  bool disable_topics_;
+ 
+   boost::thread publish_thread_;
+ };
+diff --git a/clients/roscpp/include/ros/service.h b/clients/roscpp/include/ros/service.h
+index 7c63a24..4316dbb 100644
+--- a/clients/roscpp/include/ros/service.h
++++ b/clients/roscpp/include/ros/service.h
+@@ -97,6 +97,7 @@ bool call(const std::string& service_name, Service& service)
+  * \param service_name Name of the service to wait for.
+  * \param timeout The amount of time to wait for, in milliseconds.  If timeout is -1,
+  * waits until the node is shutdown
++ * \note rospy wait_for_service() has timeout in seconds.
+  * \return true on success, false otherwise
+  */
+ ROSCPP_DECL bool waitForService(const std::string& service_name, int32_t timeout);
+diff --git a/clients/roscpp/include/ros/service_client.h b/clients/roscpp/include/ros/service_client.h
+index efe2acb..3a51f15 100644
+--- a/clients/roscpp/include/ros/service_client.h
++++ b/clients/roscpp/include/ros/service_client.h
+@@ -46,6 +46,7 @@ public:
+   ServiceClient(const std::string& service_name, bool persistent, const M_string& header_values, const std::string& service_md5sum);
+   ServiceClient(const ServiceClient& rhs);
+   ~ServiceClient();
++  ServiceClient& operator=(const ServiceClient& other) = default;
+ 
+   /**
+    * @brief Call the service aliased by this handle with the specified request/response messages.
+diff --git a/clients/roscpp/include/ros/service_server.h b/clients/roscpp/include/ros/service_server.h
+index fbe40bf..e7d253e 100644
+--- a/clients/roscpp/include/ros/service_server.h
++++ b/clients/roscpp/include/ros/service_server.h
+@@ -48,6 +48,7 @@ public:
+   ServiceServer() {}
+   ServiceServer(const ServiceServer& rhs);
+   ~ServiceServer();
++  ServiceServer& operator=(const ServiceServer& other) = default;
+ 
+   /**
+    * \brief Unadvertise the service associated with this ServiceServer
+diff --git a/clients/roscpp/include/ros/service_server_link.h b/clients/roscpp/include/ros/service_server_link.h
+index 55b6109..22258c5 100644
+--- a/clients/roscpp/include/ros/service_server_link.h
++++ b/clients/roscpp/include/ros/service_server_link.h
+@@ -36,6 +36,7 @@
+ #define ROSCPP_SERVICE_SERVER_LINK_H
+ 
+ #include "ros/common.h"
++#include "ros/internal/condition_variable.h"
+ 
+ #include <boost/thread/mutex.hpp>
+ #include <boost/shared_array.hpp>
+@@ -64,7 +65,7 @@ private:
+     SerializedMessage* resp_;
+ 
+     bool finished_;
+-    boost::condition_variable finished_condition_;
++    ros::internal::condition_variable_monotonic finished_condition_;
+     boost::mutex finished_mutex_;
+     boost::thread::id caller_thread_id_;
+ 
+diff --git a/clients/roscpp/include/ros/spinner.h b/clients/roscpp/include/ros/spinner.h
+index d09f0a0..b862e1b 100644
+--- a/clients/roscpp/include/ros/spinner.h
++++ b/clients/roscpp/include/ros/spinner.h
+@@ -55,7 +55,7 @@ public:
+ /**
+  * \brief Spinner which runs in a single thread.
+  */
+-class SingleThreadedSpinner : public Spinner
++class ROSCPP_DECL SingleThreadedSpinner : public Spinner
+ {
+ public:
+   virtual void spin(CallbackQueue* queue = 0);
+diff --git a/clients/roscpp/include/ros/statistics.h b/clients/roscpp/include/ros/statistics.h
+index 738fc4f..a0a6a1c 100644
+--- a/clients/roscpp/include/ros/statistics.h
++++ b/clients/roscpp/include/ros/statistics.h
+@@ -67,11 +67,13 @@ public:
+ 
+ private:
+ 
+-  // these are hard constrains
++  // Range of window length, in seconds
+   int max_window;
+   int min_window;
+ 
+-  // these are soft constrains
++  // Range of acceptable messages in window.
++  // Window size will be adjusted if number of observed is
++  // outside this range.
+   int max_elements;
+   int min_elements;
+ 
+@@ -95,7 +97,7 @@ private:
+     std::list<ros::Duration> age_list;
+     // number of dropped messages
+     uint64_t dropped_msgs;
+-    // latest sequence number observered (if available)
++    // latest sequence number observed (if available)
+     uint64_t last_seq;
+     // latest total traffic volume observed
+     uint64_t stat_bytes_last;
+diff --git a/clients/roscpp/include/ros/steady_timer.h b/clients/roscpp/include/ros/steady_timer.h
+index c16f282..c88388d 100644
+--- a/clients/roscpp/include/ros/steady_timer.h
++++ b/clients/roscpp/include/ros/steady_timer.h
+@@ -49,6 +49,7 @@ public:
+   SteadyTimer() {}
+   SteadyTimer(const SteadyTimer& rhs);
+   ~SteadyTimer();
++  SteadyTimer& operator=(const SteadyTimer& other) = default;
+ 
+   /**
+    * \brief Start the timer.  Does nothing if the timer is already started.
+@@ -67,9 +68,11 @@ public:
+ 
+   /**
+    * \brief Set the period of this timer
++   * \param reset Whether to reset the timer. If true, timer ignores elapsed time and next cb occurs at now()+period
+    */
+   void setPeriod(const WallDuration& period, bool reset=true);
+ 
++  bool hasStarted() const { return impl_ && impl_->hasStarted(); }
+   bool isValid() { return impl_ && impl_->isValid(); }
+   operator void*() { return isValid() ? (void *) 1 : (void *) 0; }
+ 
+@@ -97,6 +100,7 @@ private:
+     Impl();
+     ~Impl();
+ 
++    bool hasStarted() const;
+     bool isValid();
+     bool hasPending();
+     void setPeriod(const WallDuration &period, bool reset=true);
+diff --git a/clients/roscpp/include/ros/subscriber.h b/clients/roscpp/include/ros/subscriber.h
+index 9f93198..da05d14 100644
+--- a/clients/roscpp/include/ros/subscriber.h
++++ b/clients/roscpp/include/ros/subscriber.h
+@@ -49,6 +49,7 @@ public:
+   Subscriber() {}
+   Subscriber(const Subscriber& rhs);
+   ~Subscriber();
++  Subscriber& operator=(const Subscriber& other) = default;
+ 
+   /**
+    * \brief Unsubscribe the callback associated with this Subscriber
+diff --git a/clients/roscpp/include/ros/timer.h b/clients/roscpp/include/ros/timer.h
+index 2d5663e..a62cfa4 100644
+--- a/clients/roscpp/include/ros/timer.h
++++ b/clients/roscpp/include/ros/timer.h
+@@ -49,6 +49,7 @@ public:
+   Timer() {}
+   Timer(const Timer& rhs);
+   ~Timer();
++  Timer& operator=(const Timer& other) = default;
+ 
+   /**
+    * \brief Start the timer.  Does nothing if the timer is already started.
+@@ -71,8 +72,9 @@ public:
+    */
+   void setPeriod(const Duration& period, bool reset=true);
+ 
+-  bool hasStarted() const { return impl_->hasStarted(); }
++  bool hasStarted() const { return impl_ && impl_->hasStarted(); }
+   bool isValid() { return impl_ && impl_->isValid(); }
++  bool isValid() const { return impl_ && impl_->isValid(); }
+   operator void*() { return isValid() ? (void*)1 : (void*)0; }
+ 
+   bool operator<(const Timer& rhs)
+@@ -101,6 +103,7 @@ private:
+ 
+     bool hasStarted() const;
+     bool isValid();
++    bool isValid() const;
+     bool hasPending();
+     void setPeriod(const Duration& period, bool reset=true);
+ 
+diff --git a/clients/roscpp/include/ros/timer_manager.h b/clients/roscpp/include/ros/timer_manager.h
+index 354c7da..a938ae6 100644
+--- a/clients/roscpp/include/ros/timer_manager.h
++++ b/clients/roscpp/include/ros/timer_manager.h
+@@ -28,21 +28,6 @@
+ #ifndef ROSCPP_TIMER_MANAGER_H
+ #define ROSCPP_TIMER_MANAGER_H
+ 
+-// check if we might need to include our own backported version boost::condition_variable
+-// in order to use CLOCK_MONOTONIC for the SteadyTimer
+-// the include order here is important!
+-#ifdef BOOST_THREAD_HAS_CONDATTR_SET_CLOCK_MONOTONIC
+-#include <boost/version.hpp>
+-#if BOOST_VERSION < 106100
+-// use backported version of boost condition variable, see https://svn.boost.org/trac/boost/ticket/6377
+-#include "boost_161_condition_variable.h"
+-#else // Boost version is 1.61 or greater and has the steady clock fixes
+-#include <boost/thread/condition_variable.hpp>
+-#endif
+-#else // !BOOST_THREAD_HAS_CONDATTR_SET_CLOCK_MONOTONIC
+-#include <boost/thread/condition_variable.hpp>
+-#endif // BOOST_THREAD_HAS_CONDATTR_SET_CLOCK_MONOTONIC
+-
+ #include "ros/forwards.h"
+ #include "ros/time.h"
+ #include "ros/file_log.h"
+@@ -53,6 +38,7 @@
+ 
+ #include "ros/assert.h"
+ #include "ros/callback_queue_interface.h"
++#include "ros/internal/condition_variable.h"
+ 
+ #include <vector>
+ #include <list>
+@@ -60,6 +46,24 @@
+ namespace ros
+ {
+ 
++namespace {
++  template<class T>
++  class TimerManagerTraits
++  {
++  public:
++    typedef boost::chrono::system_clock::time_point time_point;
++    typedef boost::chrono::system_clock::duration duration;
++  };
++
++  template<>
++  class TimerManagerTraits<SteadyTime>
++  {
++  public:
++    typedef boost::chrono::steady_clock::time_point time_point;
++    typedef boost::chrono::steady_clock::duration duration;
++  };
++}
++
+ template<class T, class D, class E>
+ class TimerManager
+ {
+@@ -78,6 +82,7 @@ private:
+     T next_expected;
+ 
+     T last_real;
++    T last_expired;
+ 
+     bool removed;
+ 
+@@ -125,7 +130,7 @@ private:
+ 
+   V_TimerInfo timers_;
+   boost::mutex timers_mutex_;
+-  boost::condition_variable timers_cond_;
++  ros::internal::condition_variable_monotonic timers_cond_;
+   volatile bool new_timer_;
+ 
+   boost::mutex waiting_mutex_;
+@@ -143,12 +148,14 @@ private:
+   class TimerQueueCallback : public CallbackInterface
+   {
+   public:
+-    TimerQueueCallback(TimerManager<T, D, E>* parent, const TimerInfoPtr& info, T last_expected, T last_real, T current_expected)
++    TimerQueueCallback(TimerManager<T, D, E>* parent, const TimerInfoPtr& info, T last_expected, T last_real, T current_expected, T last_expired, T current_expired)
+     : parent_(parent)
+     , info_(info)
+     , last_expected_(last_expected)
+     , last_real_(last_real)
+     , current_expected_(current_expected)
++    , last_expired_(last_expired)
++    , current_expired_(current_expired)
+     , called_(false)
+     {
+       boost::mutex::scoped_lock lock(info->waiting_mutex);
+@@ -190,8 +197,10 @@ private:
+         E event;
+         event.last_expected = last_expected_;
+         event.last_real = last_real_;
++        event.last_expired = last_expired_;
+         event.current_expected = current_expected_;
+         event.current_real = T::now();
++        event.current_expired = current_expired_;
+         event.profile.last_duration = info->last_cb_duration;
+ 
+         SteadyTime cb_start = SteadyTime::now();
+@@ -200,6 +209,7 @@ private:
+         info->last_cb_duration = cb_end - cb_start;
+ 
+         info->last_real = event.current_real;
++        info->last_expired = event.current_expired;
+ 
+         parent_->schedule(info);
+       }
+@@ -213,6 +223,8 @@ private:
+     T last_expected_;
+     T last_real_;
+     T current_expected_;
++    T last_expired_;
++    T current_expired_;
+ 
+     bool called_;
+   };
+@@ -221,9 +233,7 @@ private:
+ template<class T, class D, class E>
+ TimerManager<T, D, E>::TimerManager() :
+   new_timer_(false), id_counter_(0), thread_started_(false), quit_(false)
+-{
+-
+-}
++{}
+ 
+ template<class T, class D, class E>
+ TimerManager<T, D, E>::~TimerManager()
+@@ -529,7 +539,7 @@ void TimerManager<T, D, E>::threadFunc()
+           current = T::now();
+ 
+           //ROS_DEBUG("Scheduling timer callback for timer [%d] of period [%f], [%f] off expected", info->handle, info->period.toSec(), (current - info->next_expected).toSec());
+-          CallbackInterfacePtr cb(boost::make_shared<TimerQueueCallback>(this, info, info->last_expected, info->last_real, info->next_expected));
++          CallbackInterfacePtr cb(boost::make_shared<TimerQueueCallback>(this, info, info->last_expected, info->last_real, info->next_expected, info->last_expired, current));
+           info->callback_queue->addCallback(cb, (uint64_t)info.get());
+ 
+           waiting_.pop_front();
+@@ -570,14 +580,18 @@ void TimerManager<T, D, E>::threadFunc()
+       // since simulation time may be running faster than real time.
+       if (!T::isSystemTime())
+       {
+-        timers_cond_.timed_wait(lock, boost::posix_time::milliseconds(1));
++        timers_cond_.wait_for(lock, boost::chrono::milliseconds(1));
+       }
+       else
+       {
+         // On system time we can simply sleep for the rest of the wait time, since anything else requiring processing will
+         // signal the condition variable
+-        int64_t remaining_time = std::max<int64_t>((sleep_end - current).toSec() * 1000.0f, 1);
+-        timers_cond_.timed_wait(lock, boost::posix_time::milliseconds(remaining_time));
++        typename TimerManagerTraits<T>::time_point end_tp(
++          boost::chrono::duration_cast<typename TimerManagerTraits<T>::duration>(
++            boost::chrono::nanoseconds(sleep_end.toNSec())
++          )
++        );
++        timers_cond_.wait_until(lock, end_tp);
+       }
+     }
+ 
+diff --git a/clients/roscpp/include/ros/transport/transport.h b/clients/roscpp/include/ros/transport/transport.h
+index e856358..595729d 100644
+--- a/clients/roscpp/include/ros/transport/transport.h
++++ b/clients/roscpp/include/ros/transport/transport.h
+@@ -35,6 +35,7 @@
+ #ifndef ROSCPP_TRANSPORT_H
+ #define ROSCPP_TRANSPORT_H
+ 
++#include <ros/common.h>
+ #include <ros/types.h>
+ #include <boost/function.hpp>
+ #include <boost/shared_ptr.hpp>
+@@ -52,7 +53,7 @@ class Header;
+ /**
+  * \brief Abstract base class that allows abstraction of the transport type, eg. TCP, shared memory, UDP...
+  */
+-class Transport : public boost::enable_shared_from_this<Transport>
++class ROSCPP_DECL Transport : public boost::enable_shared_from_this<Transport>
+ {
+ public:
+   Transport();
+diff --git a/clients/roscpp/include/ros/wall_timer.h b/clients/roscpp/include/ros/wall_timer.h
+index 6664abd..04379c6 100644
+--- a/clients/roscpp/include/ros/wall_timer.h
++++ b/clients/roscpp/include/ros/wall_timer.h
+@@ -49,6 +49,7 @@ public:
+   WallTimer() {}
+   WallTimer(const WallTimer& rhs);
+   ~WallTimer();
++  WallTimer& operator=(const WallTimer& other) = default;
+ 
+   /**
+    * \brief Start the timer.  Does nothing if the timer is already started.
+@@ -71,6 +72,7 @@ public:
+    */
+   void setPeriod(const WallDuration& period, bool reset=true);
+ 
++  bool hasStarted() const { return impl_ && impl_->hasStarted(); }
+   bool isValid() { return impl_ && impl_->isValid(); }
+   operator void*() { return isValid() ? (void*)1 : (void*)0; }
+ 
+@@ -98,6 +100,7 @@ private:
+     Impl();
+     ~Impl();
+ 
++    bool hasStarted() const;
+     bool isValid();
+     bool hasPending();
+     void setPeriod(const WallDuration& period, bool reset=true);
+diff --git a/clients/roscpp/include/ros/xmlrpc_manager.h b/clients/roscpp/include/ros/xmlrpc_manager.h
+index b621e93..0d41f12 100644
+--- a/clients/roscpp/include/ros/xmlrpc_manager.h
++++ b/clients/roscpp/include/ros/xmlrpc_manager.h
+@@ -49,9 +49,9 @@ namespace ros
+  */
+ namespace xmlrpc
+ {
+-XmlRpc::XmlRpcValue responseStr(int code, const std::string& msg, const std::string& response);
+-XmlRpc::XmlRpcValue responseInt(int code, const std::string& msg, int response);
+-XmlRpc::XmlRpcValue responseBool(int code, const std::string& msg, bool response);
++ROSCPP_DECL XmlRpc::XmlRpcValue responseStr(int code, const std::string& msg, const std::string& response);
++ROSCPP_DECL XmlRpc::XmlRpcValue responseInt(int code, const std::string& msg, int response);
++ROSCPP_DECL XmlRpc::XmlRpcValue responseBool(int code, const std::string& msg, bool response);
+ }
+ 
+ class XMLRPCCallWrapper;
+diff --git a/clients/roscpp/package.xml b/clients/roscpp/package.xml
+index 9519a0d..57efb10 100644
+--- a/clients/roscpp/package.xml
++++ b/clients/roscpp/package.xml
+@@ -1,9 +1,9 @@
+ <package>
+   <name>roscpp</name>
+-  <version>1.12.14</version>
++  <version>1.14.11</version>
+   <description>
+     roscpp is a C++ implementation of ROS. It provides
+-    a <a href="http://www.ros.org/wiki/Client%20Libraries">client
++    a <a href="http://wiki.ros.org/Client%20Libraries">client
+     library</a> that enables C++ programmers to quickly interface with
+     ROS <a href="http://ros.org/wiki/Topics">Topics</a>,
+     <a href="http://ros.org/wiki/Services">Services</a>,
+@@ -12,7 +12,9 @@
+     roscpp is the most widely used ROS client library and is designed to
+     be the high-performance library for ROS.
+   </description>
+-  <maintainer email="dthomas@osrfoundation.org">Dirk Thomas</maintainer>
++  <maintainer email="jacob@openrobotics.org">Jacob Perron</maintainer>
++  <maintainer email="michael@openrobotics.org">Michael Carroll</maintainer>
++  <maintainer email="sloretz@openrobotics.org">Shane Loretz</maintainer>
+   <license>BSD</license>
+ 
+   <url>http://ros.org/wiki/roscpp</url>
+@@ -20,6 +22,7 @@
+   <author>Josh Faust</author>
+   <author>Brian Gerkey</author>
+   <author>Troy Straszheim</author>
++  <author email="dthomas@osrfoundation.org">Dirk Thomas</author>
+ 
+   <buildtool_depend version_gte="0.5.78">catkin</buildtool_depend>
+ 
+diff --git a/clients/roscpp/src/libros/callback_queue.cpp b/clients/roscpp/src/libros/callback_queue.cpp
+index b2bab57..c87a66e 100644
+--- a/clients/roscpp/src/libros/callback_queue.cpp
++++ b/clients/roscpp/src/libros/callback_queue.cpp
+@@ -32,23 +32,10 @@
+  *  POSSIBILITY OF SUCH DAMAGE.
+  */
+ 
+-// Make sure we use CLOCK_MONOTONIC for the condition variable wait_for if not Apple.
+-#ifndef __APPLE__
+-#define BOOST_THREAD_HAS_CONDATTR_SET_CLOCK_MONOTONIC
+-#endif
+-
+ #include "ros/callback_queue.h"
+ #include "ros/assert.h"
+ #include <boost/scope_exit.hpp>
+ 
+-// check if we have really included the backported boost condition variable
+-// just in case someone messes with the include order...
+-#if BOOST_VERSION < 106100
+-#ifndef USING_BACKPORTED_BOOST_CONDITION_VARIABLE
+-#error "needs boost version >= 1.61 or the backported headers!"
+-#endif
+-#endif
+-
+ namespace ros
+ {
+ 
+@@ -137,7 +124,10 @@ void CallbackQueue::addCallback(const CallbackInterfacePtr& callback, uint64_t r
+     callbacks_.push_back(info);
+   }
+ 
+-  condition_.notify_one();
++  if (callback->ready())
++  {
++    condition_.notify_one();
++  }
+ }
+ 
+ CallbackQueue::IDInfoPtr CallbackQueue::getIDInfo(uint64_t id)
+@@ -179,19 +169,36 @@ void CallbackQueue::removeByID(uint64_t removal_id)
+     }
+ 
+     {
+-      boost::unique_lock<boost::shared_mutex> rw_lock(id_info->calling_rw_mutex);
+-      boost::mutex::scoped_lock lock(mutex_);
+-      D_CallbackInfo::iterator it = callbacks_.begin();
+-      for (; it != callbacks_.end();)
++      boost::unique_lock<boost::shared_mutex> rw_lock(id_info->calling_rw_mutex, boost::defer_lock);
++      if (rw_lock.try_lock())
+       {
+-        CallbackInfo& info = *it;
+-        if (info.removal_id == removal_id)
++        boost::mutex::scoped_lock lock(mutex_);
++        D_CallbackInfo::iterator it = callbacks_.begin();
++        for (; it != callbacks_.end();)
+         {
+-          it = callbacks_.erase(it);
++          CallbackInfo& info = *it;
++          if (info.removal_id == removal_id)
++          {
++            it = callbacks_.erase(it);
++          }
++          else
++          {
++            ++it;
++          }
+         }
+-        else
++      }
++      else
++      {
++        // We failed to acquire the lock, it can be that we are trying to remove something from the callback queue
++        // while it is being executed. Mark it for removal and let it be cleaned up later.
++        boost::mutex::scoped_lock lock(mutex_);
++        for (D_CallbackInfo::iterator it = callbacks_.begin(); it != callbacks_.end(); it++)
+         {
+-          ++it;
++          CallbackInfo& info = *it;
++          if (info.removal_id == removal_id)
++          {
++            info.marked_for_removal = true;
++          }
+         }
+       }
+     }
+@@ -238,11 +245,39 @@ CallbackQueue::CallOneResult CallbackQueue::callOne(ros::WallDuration timeout)
+       return Disabled;
+     }
+ 
+-    if (callbacks_.empty())
+-    {
++    boost::chrono::steady_clock::time_point wait_until =
++        boost::chrono::steady_clock::now() + boost::chrono::nanoseconds(timeout.toNSec());
++    while (!cb_info.callback) {
++      D_CallbackInfo::iterator it = callbacks_.begin();
++      for (; it != callbacks_.end();)
++      {
++        CallbackInfo& info = *it;
++
++        if (info.marked_for_removal)
++        {
++          it = callbacks_.erase(it);
++          continue;
++        }
++
++        if (info.callback->ready())
++        {
++          cb_info = info;
++          it = callbacks_.erase(it);
++          break;
++        }
++
++        ++it;
++      }
++
++      // Found a ready callback?
++      if (cb_info.callback) {
++        break;
++      }
++
++      boost::cv_status wait_status = boost::cv_status::timeout;
+       if (!timeout.isZero())
+       {
+-        condition_.wait_for(lock, boost::chrono::nanoseconds(timeout.toNSec()));
++        wait_status = condition_.wait_until(lock, wait_until);
+       }
+ 
+       if (callbacks_.empty())
+@@ -254,32 +289,11 @@ CallbackQueue::CallOneResult CallbackQueue::callOne(ros::WallDuration timeout)
+       {
+         return Disabled;
+       }
+-    }
+-
+-    D_CallbackInfo::iterator it = callbacks_.begin();
+-    for (; it != callbacks_.end();)
+-    {
+-      CallbackInfo& info = *it;
+-
+-      if (info.marked_for_removal)
+-      {
+-        it = callbacks_.erase(it);
+-        continue;
+-      }
+ 
+-      if (info.callback->ready())
++      if (wait_status == boost::cv_status::timeout)
+       {
+-        cb_info = info;
+-        it = callbacks_.erase(it);
+-        break;
++        return TryAgain;
+       }
+-
+-      ++it;
+-    }
+-
+-    if (!cb_info.callback)
+-    {
+-      return TryAgain;
+     }
+ 
+     ++calling_;
+@@ -404,6 +418,10 @@ CallbackQueue::CallOneResult CallbackQueue::callOneCB(TLS* tls)
+       {
+         tls->cb_it = tls->callbacks.erase(tls->cb_it);
+         result = cb->call();
++        if (result == CallbackInterface::Success)
++        {
++          condition_.notify_one();
++        }
+       }
+     }
+ 
+diff --git a/clients/roscpp/src/libros/connection.cpp b/clients/roscpp/src/libros/connection.cpp
+index cb92aa7..fb97ecd 100644
+--- a/clients/roscpp/src/libros/connection.cpp
++++ b/clients/roscpp/src/libros/connection.cpp
+@@ -337,8 +337,8 @@ void Connection::drop(DropReason reason)
+ 
+   if (did_drop)
+   {
+-    drop_signal_(shared_from_this(), reason);
+     transport_->close();
++    drop_signal_(shared_from_this(), reason);
+   }
+ }
+ 
+diff --git a/clients/roscpp/src/libros/file_log.cpp b/clients/roscpp/src/libros/file_log.cpp
+index a91413a..974fafe 100644
+--- a/clients/roscpp/src/libros/file_log.cpp
++++ b/clients/roscpp/src/libros/file_log.cpp
+@@ -34,14 +34,6 @@
+ 
+ #include <boost/filesystem.hpp>
+ 
+-#ifdef _MSC_VER
+-  #ifdef snprintf
+-    #undef snprintf
+-  #endif
+-  #define snprintf _snprintf_s
+-#endif
+-
+-
+ namespace fs = boost::filesystem;
+ 
+ namespace ros
+@@ -112,7 +104,7 @@ void init(const M_string& remappings)
+       }
+ 
+       char pid_str[100];
+-      snprintf(pid_str, sizeof(pid_str), "%d", pid);
++      std::snprintf(pid_str, sizeof(pid_str), "%d", pid);
+       log_file_name += std::string("_") + std::string(pid_str) + std::string(".log");
+     }
+ 
+diff --git a/clients/roscpp/src/libros/init.cpp b/clients/roscpp/src/libros/init.cpp
+index 7a38aaa..23904cd 100644
+--- a/clients/roscpp/src/libros/init.cpp
++++ b/clients/roscpp/src/libros/init.cpp
+@@ -316,13 +316,6 @@ void start()
+     }
+   }
+ 
+-#ifdef _MSC_VER
+-  if (env_ipv6)
+-  {
+-    free(env_ipv6);
+-  }
+-#endif
+-
+   param::param("/tcp_keepalive", TransportTCP::s_use_keepalive_, TransportTCP::s_use_keepalive_);
+ 
+   PollManager::instance()->addPollThreadListener(checkForShutdown);
+@@ -343,7 +336,20 @@ void start()
+ 
+   ros::Time::init();
+ 
+-  if (!(g_init_options & init_options::NoRosout))
++  bool no_rosout = false;
++  std::string no_rosout_env;
++  if (get_environment_variable(no_rosout_env,"ROSCPP_NO_ROSOUT"))
++  {
++    try
++    {
++      no_rosout = boost::lexical_cast<bool>(no_rosout_env.c_str());
++    }
++    catch (boost::bad_lexical_cast&)
++    {
++    }
++  }
++
++  if (!(no_rosout || (g_init_options & init_options::NoRosout)))
+   {
+     g_rosout_appender = new ROSOutAppender;
+     ros::console::register_appender(g_rosout_appender);
+@@ -430,6 +436,13 @@ void check_ipv6_environment() {
+   bool use_ipv6 = (env_ipv6 && strcmp(env_ipv6,"on") == 0);
+   TransportTCP::s_use_ipv6_ = use_ipv6;
+   XmlRpc::XmlRpcSocket::s_use_ipv6_ = use_ipv6;
++
++#ifdef _MSC_VER
++  if (env_ipv6)
++  {
++    free(env_ipv6);
++  }
++#endif
+ }
+ 
+ void init(const M_string& remappings, const std::string& name, uint32_t options)
+@@ -454,6 +467,9 @@ void init(const M_string& remappings, const std::string& name, uint32_t options)
+     // Disable SIGPIPE
+ #ifndef WIN32
+     signal(SIGPIPE, SIG_IGN);
++#else
++    WSADATA wsaData;
++    WSAStartup(MAKEWORD(2, 0), &wsaData);
+ #endif
+     check_ipv6_environment();
+     network::init(remappings);
+@@ -592,7 +608,8 @@ void shutdown()
+   {
+     g_internal_queue_thread.join();
+   }
+-
++  //ros::console::deregister_appender(g_rosout_appender);
++  delete g_rosout_appender;
+   g_rosout_appender = 0;
+ 
+   if (g_started)
+@@ -604,11 +621,14 @@ void shutdown()
+     XMLRPCManager::instance()->shutdown();
+   }
+ 
+-  WallTime end = WallTime::now();
+-
+   g_started = false;
+   g_ok = false;
+   Time::shutdown();
+ }
+ 
++const std::string& getDefaultMasterURI() {
++  static const std::string uri = "http://localhost:11311";
++  return uri;
++}
++
+ }
+diff --git a/clients/roscpp/src/libros/internal_timer_manager.cpp b/clients/roscpp/src/libros/internal_timer_manager.cpp
+index 564c2bf..67bb5d2 100644
+--- a/clients/roscpp/src/libros/internal_timer_manager.cpp
++++ b/clients/roscpp/src/libros/internal_timer_manager.cpp
+@@ -25,22 +25,9 @@
+  * POSSIBILITY OF SUCH DAMAGE.
+  */
+ 
+-// Make sure we use CLOCK_MONOTONIC for the condition variable if not Apple.
+-#ifndef __APPLE__
+-#define BOOST_THREAD_HAS_CONDATTR_SET_CLOCK_MONOTONIC
+-#endif
+-
+ #include "ros/timer_manager.h"
+ #include "ros/internal_timer_manager.h"
+ 
+-// check if we have really included the backported boost condition variable
+-// just in case someone messes with the include order...
+-#if BOOST_VERSION < 106100
+-#ifndef USING_BACKPORTED_BOOST_CONDITION_VARIABLE
+-#error "steady timer needs boost version >= 1.61 or the backported headers!"
+-#endif
+-#endif
+-
+ namespace ros
+ {
+ 
+diff --git a/clients/roscpp/src/libros/master.cpp b/clients/roscpp/src/libros/master.cpp
+index c0e2e10..6d2c66a 100644
+--- a/clients/roscpp/src/libros/master.cpp
++++ b/clients/roscpp/src/libros/master.cpp
+@@ -63,19 +63,15 @@ void init(const M_string& remappings)
+     #else
+       master_uri_env = getenv("ROS_MASTER_URI");
+     #endif
+-    if (!master_uri_env)
++
++    if (master_uri_env)
+     {
+-      ROS_FATAL( "ROS_MASTER_URI is not defined in the environment. Either " \
+-                 "type the following or (preferrably) add this to your " \
+-                 "~/.bashrc file in order set up your " \
+-                 "local machine as a ROS master:\n\n" \
+-                 "export ROS_MASTER_URI=http://localhost:11311\n\n" \
+-                 "then, type 'roscore' in another shell to actually launch " \
+-                 "the master program.");
+-      ROS_BREAK();
++      g_uri = master_uri_env;
++    }
++    else
++    {
++      g_uri = ros::getDefaultMasterURI();
+     }
+-
+-    g_uri = master_uri_env;
+ 
+ #ifdef _MSC_VER
+     // http://msdn.microsoft.com/en-us/library/ms175774(v=vs.80).aspx
+diff --git a/clients/roscpp/src/libros/names.cpp b/clients/roscpp/src/libros/names.cpp
+index adc84e9..eeca263 100644
+--- a/clients/roscpp/src/libros/names.cpp
++++ b/clients/roscpp/src/libros/names.cpp
+@@ -107,7 +107,7 @@ std::string clean(const std::string& name)
+     pos = clean.find("//", pos);
+   }
+ 
+-  if (*clean.rbegin() == '/')
++  if (!name.empty() && *clean.rbegin() == '/')
+   {
+     clean.erase(clean.size() - 1, 1);
+   }
+diff --git a/clients/roscpp/src/libros/network.cpp b/clients/roscpp/src/libros/network.cpp
+index 749b8fc..192f163 100644
+--- a/clients/roscpp/src/libros/network.cpp
++++ b/clients/roscpp/src/libros/network.cpp
+@@ -34,6 +34,7 @@
+ #include <ros/assert.h>
+ #ifdef HAVE_IFADDRS_H
+   #include <ifaddrs.h>
++  #include <sys/socket.h>  // supports FreeBSD, which does not include this in ifaddrs.h
+ #endif
+ 
+ #include <boost/lexical_cast.hpp>
+diff --git a/clients/roscpp/src/libros/node_handle.cpp b/clients/roscpp/src/libros/node_handle.cpp
+index 67caeee..82d094c 100644
+--- a/clients/roscpp/src/libros/node_handle.cpp
++++ b/clients/roscpp/src/libros/node_handle.cpp
+@@ -68,6 +68,10 @@ public:
+   V_SrvCImpl srv_cs_;
+ 
+   boost::mutex mutex_;
++
++  // keep shared_ptrs to these managers to avoid assertions. Fixes #838
++  TopicManagerPtr keep_alive_topic_manager = TopicManager::instance();
++  ServiceManagerPtr keep_alive_service_manager = ServiceManager::instance();
+ };
+ 
+ NodeHandle::NodeHandle(const std::string& ns, const M_string& remappings)
+diff --git a/clients/roscpp/src/libros/param.cpp b/clients/roscpp/src/libros/param.cpp
+index e7b1ffb..35da7e8 100644
+--- a/clients/roscpp/src/libros/param.cpp
++++ b/clients/roscpp/src/libros/param.cpp
+@@ -232,7 +232,11 @@ bool del(const std::string& key)
+   {
+     boost::mutex::scoped_lock lock(g_params_mutex);
+ 
+-    g_subscribed_params.erase(mapped_key);
++    if (g_subscribed_params.find(mapped_key) != g_subscribed_params.end())
++    {
++      g_subscribed_params.erase(mapped_key);
++      unsubscribeCachedParam(mapped_key);
++    }
+     g_params.erase(mapped_key);
+   }
+ 
+@@ -266,14 +270,11 @@ bool getImpl(const std::string& key, XmlRpc::XmlRpcValue& v, bool use_cache)
+       {
+         if (it->second.valid())
+         {
+-          ROS_DEBUG_NAMED("cached_parameters", "Using cached parameter value for key [%s]", mapped_key.c_str());
+-
+           v = it->second;
+           return true;
+         }
+         else
+         {
+-          ROS_DEBUG_NAMED("cached_parameters", "Cached parameter is invalid for key [%s]", mapped_key.c_str());
+           return false;
+         }
+       }
+@@ -290,14 +291,9 @@ bool getImpl(const std::string& key, XmlRpc::XmlRpcValue& v, bool use_cache)
+ 
+         if (!master::execute("subscribeParam", params, result, payload, false))
+         {
+-          ROS_DEBUG_NAMED("cached_parameters", "Subscribe to parameter [%s]: call to the master failed", mapped_key.c_str());
+           g_subscribed_params.erase(mapped_key);
+           use_cache = false;
+         }
+-        else
+-        {
+-          ROS_DEBUG_NAMED("cached_parameters", "Subscribed to parameter [%s]", mapped_key.c_str());
+-        }
+       }
+     }
+   }
+@@ -314,8 +310,6 @@ bool getImpl(const std::string& key, XmlRpc::XmlRpcValue& v, bool use_cache)
+   if (use_cache)
+   {
+     boost::mutex::scoped_lock lock(g_params_mutex);
+-
+-    ROS_DEBUG_NAMED("cached_parameters", "Caching parameter [%s] with value type [%d]", mapped_key.c_str(), v.getType());
+     g_params[mapped_key] = v;
+   }
+ 
+@@ -807,6 +801,28 @@ void paramUpdateCallback(XmlRpc::XmlRpcValue& params, XmlRpc::XmlRpcValue& resul
+   ros::param::update((std::string)params[1], params[2]);
+ }
+ 
++void unsubscribeCachedParam(const std::string& key)
++{
++  XmlRpc::XmlRpcValue params, result, payload;
++  params[0] = this_node::getName();
++  params[1] = XMLRPCManager::instance()->getServerURI();
++  params[2] = key;
++  master::execute("unsubscribeParam", params, result, payload, false);
++}
++
++void unsubscribeCachedParam(void)
++{
++  // lock required, all of the cached parameter will be unsubscribed.
++  boost::mutex::scoped_lock lock(g_params_mutex);
++
++  for(S_string::iterator itr = g_subscribed_params.begin();
++    itr != g_subscribed_params.end(); ++itr)
++  {
++    const std::string mapped_key(*itr);
++    unsubscribeCachedParam(mapped_key);
++  }
++}
++
+ void init(const M_string& remappings)
+ {
+   M_string::const_iterator it = remappings.begin();
+diff --git a/clients/roscpp/src/libros/poll_set.cpp b/clients/roscpp/src/libros/poll_set.cpp
+index 50580ee..065a607 100644
+--- a/clients/roscpp/src/libros/poll_set.cpp
++++ b/clients/roscpp/src/libros/poll_set.cpp
+@@ -191,7 +191,10 @@ void PollSet::update(int poll_timeout)
+   boost::shared_ptr<std::vector<socket_pollfd> > ofds = poll_sockets(epfd_, &ufds_.front(), ufds_.size(), poll_timeout);
+   if (!ofds)
+   {
+-    ROS_ERROR_STREAM("poll failed with error " << last_socket_error_string());
++    if (last_socket_error() != EINTR)
++    {
++      ROS_ERROR_STREAM("poll failed with error " << last_socket_error_string());
++    }
+   }
+   else
+   {
+diff --git a/clients/roscpp/src/libros/publication.cpp b/clients/roscpp/src/libros/publication.cpp
+index c51edf3..0b30da9 100644
+--- a/clients/roscpp/src/libros/publication.cpp
++++ b/clients/roscpp/src/libros/publication.cpp
+@@ -324,6 +324,8 @@ void Publication::dropAllConnections()
+ 
+ void Publication::peerConnect(const SubscriberLinkPtr& sub_link)
+ {
++  boost::mutex::scoped_lock lock(callbacks_mutex_);
++
+   V_Callback::iterator it = callbacks_.begin();
+   V_Callback::iterator end = callbacks_.end();
+   for (; it != end; ++it)
+@@ -339,6 +341,8 @@ void Publication::peerConnect(const SubscriberLinkPtr& sub_link)
+ 
+ void Publication::peerDisconnect(const SubscriberLinkPtr& sub_link)
+ {
++  boost::mutex::scoped_lock lock(callbacks_mutex_);
++
+   V_Callback::iterator it = callbacks_.begin();
+   V_Callback::iterator end = callbacks_.end();
+   for (; it != end; ++it)
+diff --git a/clients/roscpp/src/libros/rosout_appender.cpp b/clients/roscpp/src/libros/rosout_appender.cpp
+index 085e753..9053a55 100644
+--- a/clients/roscpp/src/libros/rosout_appender.cpp
++++ b/clients/roscpp/src/libros/rosout_appender.cpp
+@@ -38,6 +38,7 @@
+ #include "ros/topic_manager.h"
+ #include "ros/advertise_options.h"
+ #include "ros/names.h"
++#include "ros/param.h"
+ 
+ #include <rosgraph_msgs/Log.h>
+ 
+@@ -46,6 +47,7 @@ namespace ros
+ 
+ ROSOutAppender::ROSOutAppender()
+ : shutting_down_(false)
++, disable_topics_(false)
+ , publish_thread_(boost::bind(&ROSOutAppender::logThread, this))
+ {
+   AdvertiseOptions ops;
+@@ -102,7 +104,14 @@ void ROSOutAppender::log(::ros::console::Level level, const char* str, const cha
+   msg->file = file;
+   msg->function = function;
+   msg->line = line;
+-  this_node::getAdvertisedTopics(msg->topics);
++  
++  // check parameter server/cache for omit_topics flag
++  // the same parameter is checked in rosout.py for the same purpose
++  ros::param::getCached("/rosout_disable_topics_generation", disable_topics_);
++
++  if (!disable_topics_){
++    this_node::getAdvertisedTopics(msg->topics);
++  }
+ 
+   if (level == ::ros::console::levels::Fatal || level == ::ros::console::levels::Error)
+   {
+@@ -128,7 +137,10 @@ void ROSOutAppender::logThread()
+         return;
+       }
+ 
+-      queue_condition_.wait(lock);
++      if (log_queue_.empty())
++      {
++        queue_condition_.wait(lock);
++      }
+ 
+       if (shutting_down_)
+       {
+diff --git a/clients/roscpp/src/libros/service.cpp b/clients/roscpp/src/libros/service.cpp
+index c1efc4e..495e492 100644
+--- a/clients/roscpp/src/libros/service.cpp
++++ b/clients/roscpp/src/libros/service.cpp
+@@ -88,7 +88,8 @@ bool service::waitForService(const std::string& service_name, ros::Duration time
+ {
+   std::string mapped_name = names::resolve(service_name);
+ 
+-  Time start_time = Time::now();
++  const WallTime start_time = WallTime::now();
++  const WallDuration wall_timeout{timeout.toSec()};
+ 
+   bool printed = false;
+   bool result = false;
+@@ -103,17 +104,17 @@ bool service::waitForService(const std::string& service_name, ros::Duration time
+     {
+       printed = true;
+ 
+-      if (timeout >= Duration(0))
++      if (wall_timeout >= WallDuration(0))
+       {
+-        Time current_time = Time::now();
++        const WallTime current_time = WallTime::now();
+ 
+-        if ((current_time - start_time) >= timeout)
++        if ((current_time - start_time) >= wall_timeout)
+         {
+           return false;
+         }
+       }
+ 
+-      Duration(0.02).sleep();
++      WallDuration(0.02).sleep();
+     }
+   }
+ 
+diff --git a/clients/roscpp/src/libros/service_manager.cpp b/clients/roscpp/src/libros/service_manager.cpp
+index 1f1e94a..496dfe8 100644
+--- a/clients/roscpp/src/libros/service_manager.cpp
++++ b/clients/roscpp/src/libros/service_manager.cpp
+@@ -146,7 +146,7 @@ bool ServiceManager::advertiseService(const AdvertiseServiceOptions& ops)
+   args[0] = this_node::getName();
+   args[1] = ops.service;
+   char uri_buf[1024];
+-  snprintf(uri_buf, sizeof(uri_buf), "rosrpc://%s:%d",
++  std::snprintf(uri_buf, sizeof(uri_buf), "rosrpc://%s:%d",
+            network::getHost().c_str(), connection_manager_->getTCPPort());
+   args[2] = string(uri_buf);
+   args[3] = xmlrpc_manager_->getServerURI();
+@@ -196,13 +196,11 @@ bool ServiceManager::unregisterService(const std::string& service)
+   args[0] = this_node::getName();
+   args[1] = service;
+   char uri_buf[1024];
+-  snprintf(uri_buf, sizeof(uri_buf), "rosrpc://%s:%d",
++  std::snprintf(uri_buf, sizeof(uri_buf), "rosrpc://%s:%d",
+            network::getHost().c_str(), connection_manager_->getTCPPort());
+   args[2] = string(uri_buf);
+ 
+-  master::execute("unregisterService", args, result, payload, false);
+-
+-  return true;
++  return master::execute("unregisterService", args, result, payload, false);
+ }
+ 
+ bool ServiceManager::isServiceAdvertised(const string& serv_name)
+diff --git a/clients/roscpp/src/libros/service_publication.cpp b/clients/roscpp/src/libros/service_publication.cpp
+index 624ffef..d30a568 100644
+--- a/clients/roscpp/src/libros/service_publication.cpp
++++ b/clients/roscpp/src/libros/service_publication.cpp
+@@ -123,7 +123,7 @@ public:
+     {
+ 
+       bool ok = helper_->call(params);
+-      if (ok != 0)
++      if (ok)
+       {
+         link_->processResponse(true, params.response);
+       }
+diff --git a/clients/roscpp/src/libros/service_server_link.cpp b/clients/roscpp/src/libros/service_server_link.cpp
+index 62fbbdc..47d88ce 100644
+--- a/clients/roscpp/src/libros/service_server_link.cpp
++++ b/clients/roscpp/src/libros/service_server_link.cpp
+@@ -262,6 +262,7 @@ void ServiceServerLink::callFinished()
+ 
+     current_call_->finished_ = true;
+     current_call_->finished_condition_.notify_all();
++    current_call_->call_finished_ = true;
+ 
+     saved_call = current_call_;
+     current_call_ = CallInfoPtr();
+diff --git a/clients/roscpp/src/libros/spinner.cpp b/clients/roscpp/src/libros/spinner.cpp
+index 9b1f8d0..7842a01 100644
+--- a/clients/roscpp/src/libros/spinner.cpp
++++ b/clients/roscpp/src/libros/spinner.cpp
+@@ -34,10 +34,6 @@
+ 
+ namespace {
+ 
+-const std::string DEFAULT_ERROR_MESSAGE =
+-    "Attempt to spin a callback queue from two spinners, one of them being single-threaded."
+-    "\nIn the future this will throw an exception!";
+-
+ /** class to monitor running single-threaded spinners.
+  *
+  *  Calling the callbacks of a callback queue _in order_, requires a unique SingleThreadedSpinner
+@@ -60,11 +56,9 @@ struct SpinnerMonitor
+   */
+   struct Entry
+   {
+-    Entry(const boost::thread::id &tid,
+-          const boost::thread::id &initial_tid) : tid(tid), initial_tid(initial_tid), num(0) {}
++    Entry(const boost::thread::id &tid) : tid(tid), num(0) {}
+ 
+     boost::thread::id tid; // proper thread id of single-threaded spinner
+-    boost::thread::id initial_tid; // to retain old behaviour, store first spinner's thread id
+     unsigned int num; // number of (alike) spinners serving this queue
+   };
+ 
+@@ -73,35 +67,19 @@ struct SpinnerMonitor
+   {
+     boost::mutex::scoped_lock lock(mutex_);
+ 
+-    boost::thread::id current_tid = boost::this_thread::get_id();
+     boost::thread::id tid; // current thread id for single-threaded spinners, zero for multi-threaded ones
+     if (single_threaded)
+-      tid = current_tid;
++      tid = boost::this_thread::get_id();
+ 
+     std::map<ros::CallbackQueue*, Entry>::iterator it = spinning_queues_.find(queue);
+     bool can_spin = ( it == spinning_queues_.end() || // we will spin on any new queue
+                       it->second.tid == tid ); // otherwise spinner must be alike (all multi-threaded: 0, or single-threaded on same thread id)
+ 
+     if (!can_spin)
+-    {
+-      // Previous behavior (up to Kinetic) was to accept multiple spinners on a queue
+-      // as long as they were started from the same thread. Although this is wrong behavior,
+-      // we retain it here for backwards compatibility, i.e. we allow spinning of a
+-      // single-threaded spinner after several multi-threaded ones, given that they
+-      // were started from the same initial thread
+-      if (it->second.initial_tid == tid)
+-      {
+-        ROS_ERROR_STREAM("SpinnerMonitor: single-threaded spinner after multi-threaded one(s)."
+-                         << DEFAULT_ERROR_MESSAGE
+-                         << " Only allowed for backwards compatibility.");
+-        it->second.tid = tid; // "upgrade" tid to represent single-threaded spinner
+-      }
+-      else
+-        return false;
+-    }
++      return false;
+ 
+     if (it == spinning_queues_.end())
+-      it = spinning_queues_.insert(it, std::make_pair(queue, Entry(tid, current_tid)));
++      it = spinning_queues_.insert(it, std::make_pair(queue, Entry(tid)));
+ 
+     // increment number of active spinners
+     it->second.num += 1;
+@@ -134,6 +112,8 @@ struct SpinnerMonitor
+ };
+ 
+ SpinnerMonitor spinner_monitor;
++const std::string DEFAULT_ERROR_MESSAGE =
++    "Attempt to spin a callback queue from two spinners, one of them being single-threaded.";
+ }
+ 
+ namespace ros
+@@ -149,8 +129,9 @@ void SingleThreadedSpinner::spin(CallbackQueue* queue)
+ 
+   if (!spinner_monitor.add(queue, true))
+   {
+-    ROS_ERROR_STREAM("SingleThreadedSpinner: " << DEFAULT_ERROR_MESSAGE + " You might want to use a MultiThreadedSpinner instead.");
+-    return;
++    std::string errorMessage = "SingleThreadedSpinner: " + DEFAULT_ERROR_MESSAGE + " You might want to use a MultiThreadedSpinner instead.";
++    ROS_FATAL_STREAM(errorMessage);
++    throw std::runtime_error(errorMessage);
+   }
+ 
+   ros::WallDuration timeout(0.1f);
+@@ -239,8 +220,9 @@ void AsyncSpinnerImpl::start()
+ 
+   if (!spinner_monitor.add(callback_queue_, false))
+   {
+-    ROS_ERROR_STREAM("AsyncSpinnerImpl: " << DEFAULT_ERROR_MESSAGE);
+-    return;
++    std::string errorMessage = "AsyncSpinnerImpl: " + DEFAULT_ERROR_MESSAGE;
++    ROS_FATAL_STREAM(errorMessage);
++    throw std::runtime_error(errorMessage);
+   }
+ 
+   continue_ = true;
+diff --git a/clients/roscpp/src/libros/statistics.cpp b/clients/roscpp/src/libros/statistics.cpp
+index a618936..e96b727 100644
+--- a/clients/roscpp/src/libros/statistics.cpp
++++ b/clients/roscpp/src/libros/statistics.cpp
+@@ -113,7 +113,8 @@ void StatisticsLogger::callback(const boost::shared_ptr<M_string>& connection_he
+   }
+ 
+   // should publish new statistics?
+-  if (stats.last_publish + ros::Duration(pub_frequency_) < received_time)
++  double pub_period = 1.0 / pub_frequency_;
++  if (stats.last_publish + ros::Duration(pub_period) < received_time)
+   {
+     ros::Time window_start = stats.last_publish;
+     stats.last_publish = received_time;
+@@ -132,13 +133,13 @@ void StatisticsLogger::callback(const boost::shared_ptr<M_string>& connection_he
+     // not all message types have this
+     if (stats.age_list.size() > 0)
+     {
+-      msg.stamp_age_mean = ros::Duration(0);
++      double stamp_age_sum = 0.0;
+       msg.stamp_age_max = ros::Duration(0);
+ 
+       for(std::list<ros::Duration>::iterator it = stats.age_list.begin(); it != stats.age_list.end(); it++)
+       {
+         ros::Duration age = *it;
+-        msg.stamp_age_mean += age;
++        stamp_age_sum += age.toSec();
+ 
+         if (age > msg.stamp_age_max)
+         {
+@@ -146,7 +147,7 @@ void StatisticsLogger::callback(const boost::shared_ptr<M_string>& connection_he
+         }
+       }
+ 
+-      msg.stamp_age_mean *= 1.0 / stats.age_list.size();
++      msg.stamp_age_mean = ros::Duration(stamp_age_sum / stats.age_list.size());
+ 
+       double stamp_age_variance = 0.0;
+       for(std::list<ros::Duration>::iterator it = stats.age_list.begin(); it != stats.age_list.end(); it++)
+@@ -236,11 +237,11 @@ void StatisticsLogger::callback(const boost::shared_ptr<M_string>& connection_he
+     pub_.publish(msg);
+ 
+     // dynamic window resizing
+-    if (stats.arrival_time_list.size() > static_cast<size_t>(max_elements) && pub_frequency_ * 2 <= max_window)
++    if (stats.arrival_time_list.size() > static_cast<size_t>(max_elements) && pub_period / 2.0 >= min_window)
+     {
+       pub_frequency_ *= 2;
+     }
+-    if (stats.arrival_time_list.size() < static_cast<size_t>(min_elements) && pub_frequency_ / 2 >= min_window)
++    if (stats.arrival_time_list.size() < static_cast<size_t>(min_elements) && pub_period * 2.0 <= max_window)
+     {
+       pub_frequency_ /= 2;
+     }
+diff --git a/clients/roscpp/src/libros/steady_timer.cpp b/clients/roscpp/src/libros/steady_timer.cpp
+index ff3bac5..12ee1cc 100644
+--- a/clients/roscpp/src/libros/steady_timer.cpp
++++ b/clients/roscpp/src/libros/steady_timer.cpp
+@@ -25,93 +25,12 @@
+  * POSSIBILITY OF SUCH DAMAGE.
+  */
+ 
+-// Make sure we use CLOCK_MONOTONIC for the condition variable if not Apple.
+-#ifndef __APPLE__
+-#define BOOST_THREAD_HAS_CONDATTR_SET_CLOCK_MONOTONIC
+-#endif
+-
+ #include "ros/steady_timer.h"
+ #include "ros/timer_manager.h"
+ 
+-// check if we have really included the backported boost condition variable
+-// just in case someone messes with the include order...
+-#if BOOST_VERSION < 106100
+-#ifndef USING_BACKPORTED_BOOST_CONDITION_VARIABLE
+-#error "steady timer needs boost version >= 1.61 or the backported headers!"
+-#endif
+-#endif
+-
+ namespace ros
+ {
+ 
+-// specialization for SteadyTimer, to make sure we use a version with wait_until that uses the monotonic clock
+-template<>
+-void TimerManager<SteadyTime, WallDuration, SteadyTimerEvent>::threadFunc()
+-{
+-  SteadyTime current;
+-  while (!quit_)
+-  {
+-    SteadyTime sleep_end;
+-
+-    boost::mutex::scoped_lock lock(timers_mutex_);
+-
+-    current = SteadyTime::now();
+-
+-    {
+-      boost::mutex::scoped_lock waitlock(waiting_mutex_);
+-
+-      if (waiting_.empty())
+-      {
+-        sleep_end = current + WallDuration(0.1);
+-      }
+-      else
+-      {
+-        TimerInfoPtr info = findTimer(waiting_.front());
+-
+-        while (!waiting_.empty() && info && info->next_expected <= current)
+-        {
+-          current = SteadyTime::now();
+-
+-          //ROS_DEBUG("Scheduling timer callback for timer [%d] of period [%f], [%f] off expected", info->handle, info->period.toSec(), (current - info->next_expected).toSec());
+-          CallbackInterfacePtr cb(boost::make_shared<TimerQueueCallback>(this, info, info->last_expected, info->last_real, info->next_expected));
+-          info->callback_queue->addCallback(cb, (uint64_t)info.get());
+-
+-          waiting_.pop_front();
+-
+-          if (waiting_.empty())
+-          {
+-            break;
+-          }
+-
+-          info = findTimer(waiting_.front());
+-        }
+-
+-        if (info)
+-        {
+-          sleep_end = info->next_expected;
+-        }
+-      }
+-    }
+-
+-    while (!new_timer_ && SteadyTime::now() < sleep_end && !quit_)
+-    {
+-      current = SteadyTime::now();
+-
+-      if (current >= sleep_end)
+-      {
+-        break;
+-      }
+-
+-      // requires boost 1.61 for wait_until to actually use the steady clock
+-      // see: https://svn.boost.org/trac/boost/ticket/6377
+-      boost::chrono::steady_clock::time_point end_tp(boost::chrono::nanoseconds(sleep_end.toNSec()));
+-      timers_cond_.wait_until(lock, end_tp);
+-    }
+-
+-    new_timer_ = false;
+-  }
+-}
+-
+ SteadyTimer::Impl::Impl()
+   : started_(false)
+   , timer_handle_(-1)
+@@ -123,6 +42,11 @@ SteadyTimer::Impl::~Impl()
+   stop();
+ }
+ 
++bool SteadyTimer::Impl::hasStarted() const
++{
++  return started_;
++}
++
+ void SteadyTimer::Impl::start()
+ {
+   if (!started_)
+diff --git a/clients/roscpp/src/libros/subscription.cpp b/clients/roscpp/src/libros/subscription.cpp
+index 9a9e71e..684b938 100644
+--- a/clients/roscpp/src/libros/subscription.cpp
++++ b/clients/roscpp/src/libros/subscription.cpp
+@@ -141,8 +141,19 @@ void Subscription::getInfo(XmlRpc::XmlRpcValue& info)
+ 
+ uint32_t Subscription::getNumPublishers()
+ {
+-	boost::mutex::scoped_lock lock(publisher_links_mutex_);
+-	return (uint32_t)publisher_links_.size();
++  boost::mutex::scoped_lock lock(publisher_links_mutex_);
++  uint32_t num_connected_publishers = 0;
++  for (V_PublisherLink::iterator c = publisher_links_.begin();
++       c != publisher_links_.end(); ++c)
++  {
++    // Only count a connection with a received header.
++    // Discern this by a non-zero length callerid.
++    if ((*c)->getCallerID().size() > 0)
++    {
++      num_connected_publishers++;
++    }
++  }
++  return num_connected_publishers;
+ }
+ 
+ void Subscription::drop()
+diff --git a/clients/roscpp/src/libros/subscription_queue.cpp b/clients/roscpp/src/libros/subscription_queue.cpp
+index 67b3255..5f1117a 100644
+--- a/clients/roscpp/src/libros/subscription_queue.cpp
++++ b/clients/roscpp/src/libros/subscription_queue.cpp
+@@ -169,7 +169,12 @@ CallbackInterface::CallResult SubscriptionQueue::call()
+ 
+ bool SubscriptionQueue::ready()
+ {
+-  return true;
++  if (allow_concurrent_callbacks_)
++  {
++    return true;
++  }
++  boost::recursive_mutex::scoped_try_lock lock(callback_mutex_, boost::try_to_lock);
++  return lock.owns_lock();
+ }
+ 
+ bool SubscriptionQueue::full()
+diff --git a/clients/roscpp/src/libros/this_node.cpp b/clients/roscpp/src/libros/this_node.cpp
+index 7f15d73..0a24976 100644
+--- a/clients/roscpp/src/libros/this_node.cpp
++++ b/clients/roscpp/src/libros/this_node.cpp
+@@ -31,13 +31,6 @@
+ #include "ros/topic_manager.h"
+ #include "ros/init.h"
+ 
+-#ifdef _MSC_VER
+-  #ifdef snprintf
+-    #undef snprintf
+-  #endif
+-  #define snprintf _snprintf_s
+-#endif
+-
+ namespace ros
+ {
+ 
+@@ -140,17 +133,12 @@ void ThisNode::init(const std::string& name, const M_string& remappings, uint32_
+     namespace_ = it->second;
+   }
+ 
+-  if (namespace_.empty())
++  namespace_ = names::clean(namespace_);
++  if (namespace_.empty() || (namespace_[0] != '/'))
+   {
+-    namespace_ = "/";
++    namespace_ = "/" + namespace_;
+   }
+ 
+-  namespace_ = (namespace_ == "/")
+-    ? std::string("/") 
+-    : ("/" + namespace_)
+-    ;
+-
+-
+   std::string error;
+   if (!names::validate(namespace_, error))
+   {
+@@ -177,7 +165,7 @@ void ThisNode::init(const std::string& name, const M_string& remappings, uint32_
+   if (options & init_options::AnonymousName && !disable_anon)
+   {
+     char buf[200];
+-    snprintf(buf, sizeof(buf), "_%llu", (unsigned long long)WallTime::now().toNSec());
++    std::snprintf(buf, sizeof(buf), "_%llu", (unsigned long long)WallTime::now().toNSec());
+     name_ += buf;
+   }
+ 
+diff --git a/clients/roscpp/src/libros/timer.cpp b/clients/roscpp/src/libros/timer.cpp
+index a063bc4..13ff569 100644
+--- a/clients/roscpp/src/libros/timer.cpp
++++ b/clients/roscpp/src/libros/timer.cpp
+@@ -52,6 +52,11 @@ bool Timer::Impl::isValid()
+   return !period_.isZero();
+ }
+ 
++bool Timer::Impl::isValid() const
++{
++  return !period_.isZero();
++}
++
+ void Timer::Impl::start()
+ {
+   if (!started_)
+diff --git a/clients/roscpp/src/libros/topic_manager.cpp b/clients/roscpp/src/libros/topic_manager.cpp
+index 363fb05..40c3aca 100644
+--- a/clients/roscpp/src/libros/topic_manager.cpp
++++ b/clients/roscpp/src/libros/topic_manager.cpp
+@@ -97,9 +97,10 @@ void TopicManager::shutdown()
+   }
+ 
+   {
+-    boost::recursive_mutex::scoped_lock lock1(advertised_topics_mutex_);
+-    boost::mutex::scoped_lock lock2(subs_mutex_);
++    boost::lock(subs_mutex_, advertised_topics_mutex_);
+     shutting_down_ = true;
++    subs_mutex_.unlock();
++    advertised_topics_mutex_.unlock();
+   }
+ 
+   // actually one should call poll_manager_->removePollThreadListener(), but the connection is not stored above
+@@ -1000,8 +1001,6 @@ void TopicManager::getPublications(XmlRpcValue &pubs)
+   }
+ }
+ 
+-extern std::string console::g_last_error_message;
+-
+ void TopicManager::pubUpdateCallback(XmlRpc::XmlRpcValue& params, XmlRpc::XmlRpcValue& result)
+ {
+   std::vector<std::string> pubs;
+diff --git a/clients/roscpp/src/libros/transport/transport.cpp b/clients/roscpp/src/libros/transport/transport.cpp
+index b4c3fbb..1fdda36 100644
+--- a/clients/roscpp/src/libros/transport/transport.cpp
++++ b/clients/roscpp/src/libros/transport/transport.cpp
+@@ -34,11 +34,15 @@
+ 
+ #include "ros/transport/transport.h"
+ #include "ros/console.h"
++#if defined(WIN32)
++#include <winsock2.h>
++#else
+ #include <netinet/in.h>
+ #include <sys/socket.h>
+ #include <netdb.h>
++#endif
+ 
+-#if !defined(__ANDROID__)
++#if !defined(__ANDROID__) && !defined(WIN32)
+ #include <ifaddrs.h>
+ #endif
+ 
+@@ -71,7 +75,7 @@ Transport::Transport()
+   gethostname(our_hostname, sizeof(our_hostname)-1);
+   allowed_hosts_.push_back(std::string(our_hostname));
+   allowed_hosts_.push_back("localhost");
+-#if !defined(__ANDROID__)
++#if !defined(__ANDROID__) && !defined(WIN32)
+   // for ipv4 loopback, we'll explicitly search for 127.* in isHostAllowed()
+   // now we need to iterate all local interfaces and add their addresses
+   // from the getifaddrs manpage:  (maybe something similar for windows ?) 
+diff --git a/clients/roscpp/src/libros/transport/transport_tcp.cpp b/clients/roscpp/src/libros/transport/transport_tcp.cpp
+index e3e1528..946b714 100644
+--- a/clients/roscpp/src/libros/transport/transport_tcp.cpp
++++ b/clients/roscpp/src/libros/transport/transport_tcp.cpp
+@@ -42,6 +42,9 @@
+ #include <boost/bind.hpp>
+ #include <fcntl.h>
+ #include <errno.h>
++#ifndef _WIN32
++  #include <sys/socket.h>  // explicit include required for FreeBSD
++#endif
+ namespace ros
+ {
+ 
+@@ -138,6 +141,10 @@ bool TransportTCP::initializeSocket()
+   {
+     ROS_DEBUG("Adding tcp socket [%d] to pollset", sock_);
+     poll_set_->addSocket(sock_, boost::bind(&TransportTCP::socketUpdate, this, _1), shared_from_this());
++#if defined(POLLRDHUP) // POLLRDHUP is not part of POSIX!
++    // This is needed to detect dead connections. #1704
++    poll_set_->addEvents(sock_, POLLRDHUP);
++#endif
+   }
+ 
+   if (!(flags_ & SYNCHRONOUS))
+@@ -185,6 +192,8 @@ void TransportTCP::setKeepAlive(bool use, uint32_t idle, uint32_t interval, uint
+     {
+       ROS_DEBUG("setsockopt failed to set TCP_KEEPIDLE on socket [%d] [%s]", sock_, cached_remote_host_.c_str());
+     }
++#else
++    (void)idle;
+ #endif
+ 
+ #if defined(SOL_TCP) && defined(TCP_KEEPINTVL)
+@@ -193,6 +202,8 @@ void TransportTCP::setKeepAlive(bool use, uint32_t idle, uint32_t interval, uint
+     {
+       ROS_DEBUG("setsockopt failed to set TCP_KEEPINTVL on socket [%d] [%s]", sock_, cached_remote_host_.c_str());
+     }
++#else
++    (void)interval;
+ #endif
+ 
+ #if defined(SOL_TCP) && defined(TCP_KEEPCNT)
+@@ -201,6 +212,8 @@ void TransportTCP::setKeepAlive(bool use, uint32_t idle, uint32_t interval, uint
+     {
+       ROS_DEBUG("setsockopt failed to set TCP_KEEPCNT on socket [%d] [%s]", sock_, cached_remote_host_.c_str());
+     }
++#else
++    (void)count;
+ #endif
+   }
+   else
+@@ -270,7 +283,7 @@ bool TransportTCP::connect(const std::string& host, int port)
+ 
+     bool found = false;
+     struct addrinfo* it = addr;
+-    char namebuf[128];
++    char namebuf[128] = {};
+     for (; it; it = it->ai_next)
+     {
+       if (!s_use_ipv6_ && it->ai_family == AF_INET)
+@@ -282,7 +295,7 @@ bool TransportTCP::connect(const std::string& host, int port)
+         address->sin_family = it->ai_family;
+         address->sin_port = htons(port);
+ 	
+-        strcpy(namebuf, inet_ntoa(address->sin_addr));
++        strncpy(namebuf, inet_ntoa(address->sin_addr), sizeof(namebuf)-1);
+         found = true;
+         break;
+       }
+@@ -383,7 +396,7 @@ bool TransportTCP::listen(int port, int backlog, const AcceptCallback& accept_cb
+     sa_len_ = sizeof(sockaddr_in);
+   }
+ 
+-  if (sock_ <= 0)
++  if (sock_ == ROS_INVALID_SOCKET)
+   {
+     ROS_ERROR("socket() failed with error [%s]", last_socket_error_string());
+     return false;
+@@ -690,6 +703,9 @@ void TransportTCP::socketUpdate(int events)
+ 
+   if((events & POLLERR) ||
+      (events & POLLHUP) ||
++#if defined(POLLRDHUP) // POLLRDHUP is not part of POSIX!
++     (events & POLLRDHUP) ||
++#endif
+      (events & POLLNVAL))
+   {
+     uint32_t error = -1;
+@@ -728,14 +744,14 @@ std::string TransportTCP::getClientURI()
+   sockaddr_in *sin = (sockaddr_in *)&sas;
+   sockaddr_in6 *sin6 = (sockaddr_in6 *)&sas;
+ 
+-  char namebuf[128];
++  char namebuf[128] = {};
+   int port;
+ 
+   switch (sas.ss_family)
+   {
+     case AF_INET:
+       port = ntohs(sin->sin_port);
+-      strcpy(namebuf, inet_ntoa(sin->sin_addr));
++      strncpy(namebuf, inet_ntoa(sin->sin_addr), sizeof(namebuf)-1);
+       break;
+     case AF_INET6:
+       port = ntohs(sin6->sin6_port);
+diff --git a/clients/roscpp/src/libros/transport/transport_udp.cpp b/clients/roscpp/src/libros/transport/transport_udp.cpp
+index 47d969e..77e5549 100644
+--- a/clients/roscpp/src/libros/transport/transport_udp.cpp
++++ b/clients/roscpp/src/libros/transport/transport_udp.cpp
+@@ -38,6 +38,9 @@
+ 
+ #include <ros/assert.h>
+ #include <boost/bind.hpp>
++#ifndef _WIN32
++  #include <sys/socket.h>  // explicit include required for FreeBSD
++#endif
+ 
+ #include <fcntl.h>
+ #if defined(__APPLE__)
+@@ -62,6 +65,8 @@ TransportUDP::TransportUDP(PollSet* poll_set, int flags, int max_datagram_size)
+ , expecting_read_(false)
+ , expecting_write_(false)
+ , is_server_(false)
++, server_address_{}
++, local_address_{}
+ , server_port_(-1)
+ , local_port_(-1)
+ , poll_set_(poll_set)
+@@ -157,7 +162,7 @@ bool TransportUDP::connect(const std::string& host, int port, int connection_id)
+     return false;
+   }
+ 
+-  sockaddr_in sin;
++  sockaddr_in sin = {};
+   sin.sin_family = AF_INET;
+   if (inet_addr(host.c_str()) == INADDR_NONE)
+   {
+@@ -240,7 +245,7 @@ bool TransportUDP::createIncoming(int port, bool is_server)
+ 
+   sock_ = socket(AF_INET, SOCK_DGRAM, 0);
+ 
+-  if (sock_ <= 0)
++  if (sock_ == ROS_INVALID_SOCKET)
+   {
+     ROS_ERROR("socket() failed with error [%s]", last_socket_error_string());
+     return false;
+@@ -710,9 +715,9 @@ std::string TransportUDP::getClientURI()
+ 
+   sockaddr_in *sin = (sockaddr_in *)&sas;
+ 
+-  char namebuf[128];
++  char namebuf[128] = {};
+   int port = ntohs(sin->sin_port);
+-  strcpy(namebuf, inet_ntoa(sin->sin_addr));
++  strncpy(namebuf, inet_ntoa(sin->sin_addr), sizeof(namebuf)-1);
+ 
+   std::string ip = namebuf;
+   std::stringstream uri;
+diff --git a/clients/roscpp/src/libros/transport_publisher_link.cpp b/clients/roscpp/src/libros/transport_publisher_link.cpp
+index 092585d..82bd140 100644
+--- a/clients/roscpp/src/libros/transport_publisher_link.cpp
++++ b/clients/roscpp/src/libros/transport_publisher_link.cpp
+@@ -89,6 +89,10 @@ bool TransportPublisherLink::initialize(const ConnectionPtr& connection)
+     connection_->setHeaderReceivedCallback(boost::bind(&TransportPublisherLink::onHeaderReceived, this, _1, _2));
+ 
+     SubscriptionPtr parent = parent_.lock();
++    if (!parent)
++    {
++      return false;
++    }
+ 
+     M_string header;
+     header["topic"] = parent->getName();
+@@ -230,9 +234,10 @@ void TransportPublisherLink::onRetryTimer(const ros::SteadyTimerEvent&)
+       {
+         ConnectionPtr connection(boost::make_shared<Connection>());
+         connection->initialize(transport, false, HeaderReceivedFunc());
+-        initialize(connection);
+-
+-        ConnectionManager::instance()->addConnection(connection);
++        if (initialize(connection))
++        {
++          ConnectionManager::instance()->addConnection(connection);
++        }
+       }
+       else
+       {
+diff --git a/clients/roscpp/src/libros/transport_subscriber_link.cpp b/clients/roscpp/src/libros/transport_subscriber_link.cpp
+index 898b9ec..8e57ada 100644
+--- a/clients/roscpp/src/libros/transport_subscriber_link.cpp
++++ b/clients/roscpp/src/libros/transport_subscriber_link.cpp
+@@ -198,7 +198,7 @@ void TransportSubscriberLink::enqueueMessage(const SerializedMessage& m, bool se
+       if (!queue_full_)
+       {
+         ROS_DEBUG("Outgoing queue full for topic [%s].  "
+-               "Discarding oldest message\n",
++               "Discarding oldest message",
+                topic_.c_str());
+       }
+ 
+diff --git a/clients/roscpp/src/libros/wall_timer.cpp b/clients/roscpp/src/libros/wall_timer.cpp
+index 6ed8493..a0f8d52 100644
+--- a/clients/roscpp/src/libros/wall_timer.cpp
++++ b/clients/roscpp/src/libros/wall_timer.cpp
+@@ -42,6 +42,11 @@ WallTimer::Impl::~Impl()
+   stop();
+ }
+ 
++bool WallTimer::Impl::hasStarted() const
++{
++  return started_;
++}
++
+ void WallTimer::Impl::start()
+ {
+   if (!started_)
+diff --git a/clients/roscpp/src/libros/xmlrpc_manager.cpp b/clients/roscpp/src/libros/xmlrpc_manager.cpp
+index 15175ff..7a1bbf8 100644
+--- a/clients/roscpp/src/libros/xmlrpc_manager.cpp
++++ b/clients/roscpp/src/libros/xmlrpc_manager.cpp
+@@ -139,6 +139,9 @@ void XMLRPCManager::shutdown()
+     return;
+   }
+ 
++  // before shutting down, unsubscribe all the cached parameter
++  ros::param::unsubscribeCachedParam();
++
+   shutting_down_ = true;
+   server_thread_.join();
+ 
+-- 
+2.29.0
+

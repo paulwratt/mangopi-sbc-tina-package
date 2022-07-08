@@ -1,0 +1,204 @@
+From 8badb1eea7f7023420c436cc7364e83feb73da3d Mon Sep 17 00:00:00 2001
+From: anruliu <anruliu@allwinnertech.com>
+Date: Tue, 27 Apr 2021 14:55:17 +0800
+Subject: [PATCH] add g2d interface and use ion buffer for pictures
+
+Signed-off-by: anruliu <anruliu@allwinnertech.com>
+---
+ include/gdi.h              |  3 +++
+ src/newgal/blit.c          |  1 +
+ src/newgal/fbcon/fbvideo.c |  3 +++
+ src/newgal/surface.c       | 18 +++++++++++++++---
+ src/newgal/sysvideo.h      |  4 +++-
+ src/newgdi/readbmp.c       | 28 +++++++++++++++++++++++++---
+ 6 files changed, 50 insertions(+), 7 deletions(-)
+
+diff --git a/include/gdi.h b/include/gdi.h
+index 14389b8..8461fab 100644
+--- a/include/gdi.h
++++ b/include/gdi.h
+@@ -7433,6 +7433,9 @@ struct _BITMAP
+     Uint32  bmPitch;
+     /** The bits of the bitmap */
+     Uint8*  bmBits;
++#ifdef _MGIMAGE_G2D
++    unsigned long  bmBitsPhy;
++#endif
+ 
+     /** The private pixel format */
+     /*void*   bmAlphaPixelFormat;*/
+diff --git a/src/newgal/blit.c b/src/newgal/blit.c
+index 5f2e94d..cc2c522 100644
+--- a/src/newgal/blit.c
++++ b/src/newgal/blit.c
+@@ -305,6 +305,7 @@ int GAL_CalculateBlit(GAL_Surface *surface)
+         if (video && video->HWAccelBlit) {
+             surface->flags |= GAL_HWACCEL;
+             surface->map->hw_blit = GAL_HWBlit;
++            surface->map->sw_blit = GAL_SoftBlit;
+         } else {
+             surface->map->sw_blit = GAL_SoftBlit;
+         }
+diff --git a/src/newgal/fbcon/fbvideo.c b/src/newgal/fbcon/fbvideo.c
+index 71afd96..cfc26e8 100644
+--- a/src/newgal/fbcon/fbvideo.c
++++ b/src/newgal/fbcon/fbvideo.c
+@@ -1185,6 +1185,7 @@ static int FB_DoubleBufferEnable(_THIS, GAL_Surface *current, BOOL enable)
+ 	FB_LockHWSurface(this, current);
+ 	if (ioctl(console_fd, FBIO_ENABLE_CACHE, args) < 0) {
+ 		GAL_SetError("FBIO_ENABLE_CACHE disable failed\n");
++		FB_UnlockHWSurface(this, current);
+ 		return (-1);
+ 	}
+ 	if (mapped_mem) {
+@@ -1197,6 +1198,7 @@ static int FB_DoubleBufferEnable(_THIS, GAL_Surface *current, BOOL enable)
+ 	if(mapped_mem == (char *)-1){
+ 		GAL_SetError("NEWGAL>FBCON: Unable to memory map the video hardware\n");
+ 		mapped_mem = NULL;
++		FB_UnlockHWSurface(this, current);
+ 		return (-1);
+ 	}
+ 	current->pixels = mapped_mem + mapped_offset;
+@@ -1293,6 +1295,7 @@ static int FB_FlipHWSurface(_THIS, GAL_Surface *surface, GAL_Rect *rects,
+ 	wait_vbl(this);
+ 	if (ioctl(console_fd, FBIOPAN_DISPLAY, &cache_vinfo) < 0) {
+ 		GAL_SetError("ioctl(FBIOPAN_DISPLAY) failed\n");
++		FB_UnlockHWSurface(this, surface);
+ 		return (-1);
+ 	}
+ 
+diff --git a/src/newgal/surface.c b/src/newgal/surface.c
+index 8700619..670c0fe 100644
+--- a/src/newgal/surface.c
++++ b/src/newgal/surface.c
+@@ -530,8 +530,10 @@ int GAL_LowerBlit (GAL_Surface *src, GAL_Rect *srcrect,
+         }
+     }
+ 
+-    /* Figure out which blitter to use */
+-    if ( (src->flags & GAL_HWACCEL) == GAL_HWACCEL ) {
++    /* Figure out which blitter to use
++     * g2d hardware does not support output width of 1
++     */
++    if ( (src->flags & GAL_HWACCEL) == GAL_HWACCEL && dstrect->w != 1) {
+         do_blit = src->map->hw_blit;
+     } else {
+         do_blit = src->map->sw_blit;
+@@ -1074,7 +1076,6 @@ static int _PutBoxAlpha (GAL_Surface* dst, BYTE* dstrow, BYTE* srcrow, Uint32 w,
+     GAL_PixelFormat *dstfmt = dst->format;
+     int bpp = dstfmt->BytesPerPixel;
+     unsigned alpha = dstfmt->Amask ? GAL_ALPHA_OPAQUE : 0;
+-
+     
+     if (bpp == 1)
+         return -1;
+@@ -1563,7 +1564,18 @@ int GAL_PutBox (GAL_Surface *dst, const GAL_Rect *dstrect, BITMAP* box)
+             return _PutBoxKeyAlpha (dst, dstrow, srcrow, w, h, box);
+         }
+         else if (box->bmType & BMP_TYPE_ALPHA) {
++#ifdef _MGIMAGE_G2D
++            /* g2d hardware does not support output width of 1 */
++            if (my_dstrect.w != 1 && current_video->HWPutBoxAlpha) {
++                GAL_Rect srcrect = { off_x, off_y, w, h };
++                return current_video->HWPutBoxAlpha(current_video, box, &srcrect,
++                        dst, &my_dstrect);
++            } else {
++                return _PutBoxAlpha(dst, dstrow, srcrow, w, h, box);
++            }
++#else
+             return _PutBoxAlpha (dst, dstrow, srcrow, w, h, box);
++#endif
+         }
+     }
+     else if ((box->bmType & BMP_TYPE_ALPHACHANNEL) && (box->bmType & BMP_TYPE_COLORKEY)) {
+diff --git a/src/newgal/sysvideo.h b/src/newgal/sysvideo.h
+index 61ac764..1ab99af 100644
+--- a/src/newgal/sysvideo.h
++++ b/src/newgal/sysvideo.h
+@@ -141,7 +141,9 @@ struct GAL_VideoDevice {
+ 	/* Allocates a surface in video memory */
+ 	int (*AllocHWSurface)(_THIS, GAL_Surface *surface);
+ #ifdef _MGIMAGE_G2D
+-	void * (*AllocIONBUF)(_THIS, GAL_Surface *surface);
++	int (*AllocHWBuffer)(_THIS, PBITMAP bmp, int nSize);
++	void (*FreeHWBuffer)(_THIS, PBITMAP bmp);
++	int (*HWPutBoxAlpha)(_THIS, PBITMAP src, GAL_Rect *srcrect, GAL_Surface *dst, GAL_Rect *dstrect);
+ #endif
+ 	/* Sets the hardware accelerated blit function, if any, based
+ 	   on the current flags of the surface (colorkey, alpha, etc.)
+diff --git a/src/newgdi/readbmp.c b/src/newgdi/readbmp.c
+index f7ec1aa..d7082bd 100644
+--- a/src/newgdi/readbmp.c
++++ b/src/newgdi/readbmp.c
+@@ -55,6 +55,7 @@
+ #include "misc.h"
+ #include "readbmp.h"
+ #include "bitmap.h"
++#include "../newgal/sysvideo.h"
+ 
+ inline static BOOL device_has_alpha(HDC hdc);
+ 
+@@ -78,8 +79,13 @@ BOOL GUIAPI InitBitmap (HDC hdc, Uint32 w, Uint32 h, Uint32 pitch, BYTE* bits,
+     else if (!bits) {
+ 
+         size_t size = GAL_GetBoxSize (pdc->surface, w, h, &bmp->bmPitch);
+-        if (!(bmp->bmBits = malloc (size)))
+-            return FALSE;
++#ifdef _MGIMAGE_G2D
++    if (current_video->AllocHWBuffer(current_video, bmp, size))
++        return FALSE;
++#else
++    if (!(bmp->bmBits = malloc (size)))
++        return FALSE;
++#endif
+     }
+     else /* bits is not zero, but pitch is zero */
+         return FALSE;
+@@ -208,10 +214,18 @@ static int init_bitmap_from_mybmp (HDC hdc, PBITMAP bmp,
+ 
+     size = GAL_GetBoxSize (pdc->surface, my_bmp->w, my_bmp->h, &bmp->bmPitch);
+ 
++#ifdef _MGIMAGE_G2D
++    if (current_video->AllocHWBuffer(current_video, bmp,
++            alloc_all ? size : bmp->bmPitch)) {
++        ret = ERR_BMP_MEM;
++        goto cleanup_and_ret;
++    }
++#else
+     if (!(bmp->bmBits = malloc (alloc_all?size:bmp->bmPitch))) {
+         ret = ERR_BMP_MEM;
+         goto cleanup_and_ret;
+     }
++#endif
+ 
+     bmp->bmWidth = my_bmp->w;
+     bmp->bmHeight = my_bmp->h;
+@@ -279,8 +293,12 @@ cleanup_and_ret:
+     if (ret != ERR_BMP_OK) {
+         DeleteBitmapAlphaPixel (bmp);
+         if (bmp->bmBits) {
++#ifdef _MGIMAGE_G2D
++            current_video->FreeHWBuffer(current_video, bmp);
++#else
+             free (bmp->bmBits);
+-            bmp->bmBits = NULL;
++#endif
++        bmp->bmBits = NULL;
+         }
+     }
+ 
+@@ -567,7 +585,11 @@ void GUIAPI UnloadBitmap (PBITMAP bmp)
+ {
+     DeleteBitmapAlphaPixel (bmp);
+ 
++#ifdef _MGIMAGE_G2D
++    current_video->FreeHWBuffer(current_video, bmp);
++#else
+     free (bmp->bmBits);
++#endif
+     bmp->bmBits = NULL;
+ }
+ 
+-- 
+2.29.0
+

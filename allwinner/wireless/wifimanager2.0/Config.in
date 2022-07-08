@@ -1,0 +1,27 @@
+if PACKAGE_wifimanager-v2.0
+	if PACKAGE_wifimanager-v2.0-demo
+		config WMG_PROTOCOL_SOFTAP
+			bool "CONFIG_WMG_PROTOCOL_SOFTAP"
+			default n
+			help
+				softap net config.
+
+		config WMG_PROTOCOL_BLE
+			bool "CONFIG_WMG_PROTOCOL_BLE"
+			default n
+			help
+				ble net config.
+
+		config WMG_PROTOCOL_XCONFIG
+			bool "CONFIG_WMG_PROTOCOL_XCONFIG"
+			default n
+			help
+				xconfig net config.
+
+		config WMG_PROTOCOL_SOUNDWAVE
+			bool "CONFIG_WMG_PROTOCOL_SOUNDWAVE"
+			default n
+			help
+				soundwave net config.
+	endif
+endif

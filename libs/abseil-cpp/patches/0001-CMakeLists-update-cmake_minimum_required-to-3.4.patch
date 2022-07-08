@@ -1,0 +1,26 @@
+From b66f8ffe5cdfde4ed34cbc7beabeb0ef49946e00 Mon Sep 17 00:00:00 2001
+From: chengweipeng <chengweipeng@allwinnertech.com>
+Date: Wed, 20 Oct 2021 15:43:31 +0800
+Subject: [PATCH] CMakeLists: update cmake_minimum_required to 3.4
+
+Signed-off-by: chengweipeng <chengweipeng@allwinnertech.com>
+---
+ CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 3a73f70..89a2b36 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -19,7 +19,7 @@
+ # version of CMake by first installing Extra Packages for Enterprise Linux
+ # (https://fedoraproject.org/wiki/EPEL#Extra_Packages_for_Enterprise_Linux_.28EPEL.29)
+ # and then issuing `yum install cmake3` on the command line.
+-cmake_minimum_required(VERSION 3.5)
++cmake_minimum_required(VERSION 3.4)
+ 
+ # Compiler id for Apple Clang is now AppleClang.
+ if (POLICY CMP0025)
+-- 
+2.29.0
+

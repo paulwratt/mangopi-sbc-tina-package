@@ -1,0 +1,201 @@
+From ca08917653b916dd7e365484be86367b877f8e1f Mon Sep 17 00:00:00 2001
+From: chengweipeng <chengweipeng@allwinnertech.com>
+Date: Thu, 25 Feb 2021 14:03:00 +0800
+Subject: [PATCH] fix openssl1_1_0 support
+
+Signed-off-by: chengweipeng <chengweipeng@allwinnertech.com>
+---
+ Crypto/src/CipherImpl.cpp         |  1 -
+ Crypto/src/OpenSSLInitializer.cpp | 38 ++++++++++++++++++++++++++++++-
+ Crypto/src/X509Certificate.cpp    | 13 +++++++++++
+ NetSSL_OpenSSL/src/Context.cpp    |  6 +++++
+ 4 files changed, 56 insertions(+), 2 deletions(-)
+
+diff --git a/Crypto/src/CipherImpl.cpp b/Crypto/src/CipherImpl.cpp
+index 2edfd1c..bcc46a2 100644
+--- a/Crypto/src/CipherImpl.cpp
++++ b/Crypto/src/CipherImpl.cpp
+@@ -130,7 +130,6 @@ namespace
+ 	CryptoTransformImpl::~CryptoTransformImpl()
+ 	{
+ #if OPENSSL_VERSION_NUMBER >= 0x10100000L
+-		EVP_CIPHER_CTX_cleanup(_pContext);
+ 		EVP_CIPHER_CTX_free(_pContext);
+ #else
+ 		EVP_CIPHER_CTX_cleanup(&_context);
+diff --git a/Crypto/src/OpenSSLInitializer.cpp b/Crypto/src/OpenSSLInitializer.cpp
+index a3bc1d0..b1a2545 100644
+--- a/Crypto/src/OpenSSLInitializer.cpp
++++ b/Crypto/src/OpenSSLInitializer.cpp
+@@ -85,20 +85,39 @@ void OpenSSLInitializer::initialize()
+ {
+ 	if (++_rc == 1)
+ 	{
+-#if OPENSSL_VERSION_NUMBER >= 0x0907000L
++#if OPENSSL_API_COMPAT < 0x10100000L && OPENSSL_VERSION_NUMBER >= 0x0907000L
+ 		OPENSSL_config(NULL);
+ #endif
++#if OPENSSL_API_COMPAT >= 0x10100000L
++		OPENSSL_init_ssl(0, NULL);
++		OPENSSL_init_ssl(OPENSSL_INIT_LOAD_SSL_STRINGS \
++				| OPENSSL_INIT_LOAD_CRYPTO_STRINGS, NULL);
++#ifdef OPENSSL_LOAD_CONF
++		OPENSSL_init_crypto(OPENSSL_INIT_ADD_ALL_CIPHERS \
++				| OPENSSL_INIT_ADD_ALL_DIGESTS \
++				| OPENSSL_INIT_LOAD_CONFIG, NULL);
++#else
++		OPENSSL_init_crypto(OPENSSL_INIT_ADD_ALL_CIPHERS \
++				| OPENSSL_INIT_ADD_ALL_DIGESTS, NULL);
++#endif
++#else
+ 		SSL_library_init();
+ 		SSL_load_error_strings();
+ 		OpenSSL_add_all_algorithms();
++#endif
+ 		
+ 		char seed[SEEDSIZE];
+ 		RandomInputStream rnd;
+ 		rnd.read(seed, sizeof(seed));
+ 		RAND_seed(seed, SEEDSIZE);
+ 		
++#if OPENSSL_API_COMPAT >= 0x10100000L
++		int nMutexes = 1;
++#else
+ 		int nMutexes = CRYPTO_num_locks();
++#endif
+ 		_mutexes = new Poco::FastMutex[nMutexes];
++#if OPENSSL_API_COMPAT < 0x10100000L
+ 		CRYPTO_set_locking_callback(&OpenSSLInitializer::lock);
+ #ifndef POCO_OS_FAMILY_WINDOWS
+ // Not needed on Windows (see SF #110: random unhandled exceptions when linking with ssl).
+@@ -113,6 +132,7 @@ void OpenSSLInitializer::initialize()
+ 		CRYPTO_set_dynlock_create_callback(&OpenSSLInitializer::dynlockCreate);
+ 		CRYPTO_set_dynlock_lock_callback(&OpenSSLInitializer::dynlock);
+ 		CRYPTO_set_dynlock_destroy_callback(&OpenSSLInitializer::dynlockDestroy);
++#endif
+ 	}
+ }
+ 
+@@ -121,22 +141,34 @@ void OpenSSLInitializer::uninitialize()
+ {
+ 	if (--_rc == 0)
+ 	{
++#if OPENSSL_API_COMPAT >= 0x10100000L
++		while(0) continue;
++#else
+ 		EVP_cleanup();
+ 		ERR_free_strings();
+ 		CRYPTO_set_locking_callback(0);
+ #ifndef POCO_OS_FAMILY_WINDOWS
+ 		CRYPTO_set_id_callback(0);
++#endif
+ #endif
+ 		delete [] _mutexes;
+ 		
++#if OPENSSL_API_COMPAT >= 0x10100000L
++		while(0) continue;
++#else
+ 		CONF_modules_free();
++#endif
+ 	}
+ }
+ 
+ 
+ void OpenSSLInitializer::lock(int mode, int n, const char* file, int line)
+ {
++#if OPENSSL_API_COMPAT >= 0x10100000L
++	if (mode)
++#else
+ 	if (mode & CRYPTO_LOCK)
++#endif
+ 		_mutexes[n].lock();
+ 	else
+ 		_mutexes[n].unlock();
+@@ -162,7 +194,11 @@ void OpenSSLInitializer::dynlock(int mode, struct CRYPTO_dynlock_value* lock, co
+ {
+ 	poco_check_ptr (lock);
+ 
++#if OPENSSL_API_COMPAT >= 0x10100000L
++	if (mode)
++#else
+ 	if (mode & CRYPTO_LOCK)
++#endif
+ 		lock->_mutex.lock();
+ 	else
+ 		lock->_mutex.unlock();
+diff --git a/Crypto/src/X509Certificate.cpp b/Crypto/src/X509Certificate.cpp
+index bea1e45..bb1c48c 100644
+--- a/Crypto/src/X509Certificate.cpp
++++ b/Crypto/src/X509Certificate.cpp
+@@ -27,6 +27,7 @@
+ #include <openssl/x509v3.h>
+ #include <openssl/err.h>
+ #include <openssl/evp.h>
++#include <openssl/bn.h>
+ 
+ 
+ namespace Poco {
+@@ -255,7 +256,11 @@ void X509Certificate::extractNames(std::string& cmnName, std::set<std::string>&
+ 			const GENERAL_NAME* name = sk_GENERAL_NAME_value(names, i);
+ 			if (name->type == GEN_DNS)
+ 			{
++#if OPENSSL_API_COMPAT < 0x10100000L
+ 				const char* data = reinterpret_cast<char*>(ASN1_STRING_data(name->d.ia5));
++#else
++				const char* data = reinterpret_cast<char*>(name->d.ia5->data);
++#endif
+ 				std::size_t len = ASN1_STRING_length(name->d.ia5);
+ 				domainNames.insert(std::string(data, len));
+ 			}
+@@ -273,7 +278,11 @@ void X509Certificate::extractNames(std::string& cmnName, std::set<std::string>&
+ 
+ Poco::DateTime X509Certificate::validFrom() const
+ {
++#if OPENSSL_API_COMPAT < 0x10100000L
+ 	ASN1_TIME* certTime = X509_get_notBefore(_pCert);
++#else
++	ASN1_TIME* certTime = X509_getm_notBefore(_pCert);
++#endif
+ 	std::string dateTime(reinterpret_cast<char*>(certTime->data));
+ 	int tzd;
+ 	return DateTimeParser::parse("%y%m%d%H%M%S", dateTime, tzd);
+@@ -282,7 +291,11 @@ Poco::DateTime X509Certificate::validFrom() const
+ 	
+ Poco::DateTime X509Certificate::expiresOn() const
+ {
++#if OPENSSL_API_COMPAT < 0x10100000L
+ 	ASN1_TIME* certTime = X509_get_notAfter(_pCert);
++#else
++	ASN1_TIME* certTime = X509_getm_notAfter(_pCert);
++#endif
+ 	std::string dateTime(reinterpret_cast<char*>(certTime->data));
+ 	int tzd;
+ 	return DateTimeParser::parse("%y%m%d%H%M%S", dateTime, tzd);
+diff --git a/NetSSL_OpenSSL/src/Context.cpp b/NetSSL_OpenSSL/src/Context.cpp
+index 8815f6d..c1956db 100644
+--- a/NetSSL_OpenSSL/src/Context.cpp
++++ b/NetSSL_OpenSSL/src/Context.cpp
+@@ -24,6 +24,8 @@
+ #include <openssl/err.h>
+ #include <openssl/ssl.h>
+ #include <openssl/x509v3.h>
++#include <openssl/bn.h>
++#include <openssl/dh.h>
+ 
+ 
+ namespace Poco {
+@@ -378,7 +380,11 @@ void Context::createSSLContext()
+ {
+ 	if (SSLManager::isFIPSEnabled())
+ 	{
++#if OPENSSL_VERSION_NUMBER >= 0x1010009fL
++		_pSSLContext = SSL_CTX_new(TLS_method());
++#else
+ 		_pSSLContext = SSL_CTX_new(TLSv1_method());
++#endif
+ 	}
+ 	else
+ 	{
+-- 
+2.29.0
+

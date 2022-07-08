@@ -1,0 +1,156 @@
+<html>
+<%+header%>
+<script type="text/javascript" src="<%=resource%>/cbi.js"></script>
+<body>
+<div id="content_syslog">
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=3, minimum-scale=1, user-scalable=no">
+	<title>list</title>
+	<script type="text/javascript" src="<%=resource%>/jquery.js"></script>
+	<style type="text/css">
+    body,ul,ol,li,p,h1,h2,h3,h4,h5,h6,form,fieldset,table,td,img,div,dl,dt,dd,input{margin:0;padding:0;}
+    body{font-size:12px;}
+    img{border:none;}
+    ul,ol{list-style:none;}
+    input,select,textarea{outline:none; border:none; background:#FFF;}
+    textarea{resize:none;}
+    a{text-decoration:none;}
+	.list{
+		width: 100%;
+	}
+	.list-head{
+		height: 70px;
+		background-color: #9e9e9e17;
+		position: relative;
+	}
+	.list-head a{
+		display: inline-block;
+		padding: 15px;
+	}
+	.list-head a img{
+		width: 50px;
+		height: 50px;
+	}
+	.list-tie{
+		display: inline-block;
+	    font-size: large;
+	    margin-left: 10%;
+	    position: absolute;
+    	top: 30px;
+    	color: #004fff85;
+	}
+	.list-con{
+		height: 50px;
+    	line-height: 50px;
+   		border-bottom: 1px solid #999;
+    	border-top: 1px solid #999;
+    	position: relative;
+	}
+	.list-con a{
+		display: block;
+		font-size: small;
+    	color: #333;
+    	margin-left: 26px;
+    	width: 264px;
+    	overflow: hidden;
+	}
+	.list-con img{
+		width: 40px;
+   		position: absolute;
+    	right: 50px;
+    	top: 3px;
+	}
+	</style>
+</head>
+<body>
+<%
+	local baseurl = luci.dispatcher.build_url('networkd', 'wifi_station', 'wifi_input');
+-%>
+<div id="demo">
+	<div class="list-head">
+		<a href="<%=url("networkd/wifi_station/select")%>">
+			<img src="<%=resource%>/icons/networkd_back.png" alt="back">
+		</a>
+		<div class="list-tie">Scan Results</div>
+	</div>
+	<div class="list">
+
+	</div>
+</div>
+
+<div id="data" style="display:none"><%=scanlist:pcdata()%></div>
+<script type="text/javascript" src="<%=resource%>/cbi.js"></script>
+<script src="<%=resource%>/utf8.js"></script>
+<script type="text/javascript">//<![CDATA[
+String.prototype.convert = function() {
+    return this.replace(/\\x([0-9A-Fa-f]{2})/g, function() {
+        return String.fromCharCode(parseInt(arguments[1], 16));
+    });
+};
+$(function(){
+	var str = $("#data").text();
+	var arr = str.split('\n');
+	var SSIDlist = [];
+	var SSID = [];
+	var n = 0;
+	for(var i = 0; i < arr.length; i++){
+		var arr1 = [];
+		//var mx= arr[i].replace(/\t/g," ");
+		//var m = mx.split(" ");
+		var m = arr[i].split("\t");
+
+		for(var j = 0; j < m.length; j++){
+			if(m[j] != ""){
+				arr1.push(m[j]);
+			}
+		}
+		if(arr1.length == 5){
+			SSIDlist.push(arr1);
+		}
+	}
+	$.each(SSIDlist, function(index,item){
+		SSID.push({ssid:item[4],signal:Math.abs(item[2])});
+	})
+	var SSIDS = SSID.sort(compare("signal"));
+	var html = '';
+	$.each(SSID, function(index,item){
+		var ssid1=item['ssid'].trim();
+		var ssid2=utf8.decode(ssid1.convert());
+		var ssid3=ssid1.match(/\\x00\\x00/g);
+
+		if(ssid2 && !ssid3){
+			html += '<div class="list-con">';
+			var wifi_msg = item['signal'];
+
+			html += '<a href="<%=baseurl%>?ssid='+ssid2+'">'+ssid2+'</a>';
+			if(wifi_msg == 0){
+				html += '<img src="<%=resource%>/icons/wifi_3.png"/>';
+			}else if(wifi_msg < 60){
+				html += '<img src="<%=resource%>/icons/wifi_3.png"/>';
+			}else if(wifi_msg < 80){
+				html += '<img src="<%=resource%>/icons/wifi_2.png"/>';
+			}else if(wifi_msg < 100){
+				html += '<img src="<%=resource%>/icons/wifi_1.png"/>';
+			}else{
+				html += '<img src="<%=resource%>/icons/wifi_0.png"/>';
+			}
+			html += '</div>';
+		}
+	});
+	$(".list").html(html);
+});
+
+function compare(property) {
+  return (firstobj, secondobj) => {
+    const firstValue = firstobj[property];
+    const secondValue = secondobj[property];
+    return  firstValue - secondValue;
+  };
+}
+</script>
+</body>
+<%+footer%>
+</html>
+

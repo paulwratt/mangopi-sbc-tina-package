@@ -1,0 +1,26 @@
+From fd1cd7748b7d3190ab0bb86cb06c85a341d8ea13 Mon Sep 17 00:00:00 2001
+From: anruliu <anruliu@allwinnertech.com>
+Date: Thu, 18 Mar 2021 11:39:43 +0800
+Subject: [PATCH] init fix compile rv failed
+
+Signed-off-by: anruliu <anruliu@allwinnertech.com>
+---
+ src/agg/agg_renderer_outline_aa.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/agg/agg_renderer_outline_aa.h b/src/agg/agg_renderer_outline_aa.h
+index ce25a2e..9a12d35 100644
+--- a/src/agg/agg_renderer_outline_aa.h
++++ b/src/agg/agg_renderer_outline_aa.h
+@@ -1375,7 +1375,7 @@ namespace agg
+         //---------------------------------------------------------------------
+         void profile(const line_profile_aa& prof) { m_profile = &prof; }
+         const line_profile_aa& profile() const { return *m_profile; }
+-        line_profile_aa& profile() { return *m_profile; }
++        const line_profile_aa& profile() { return *m_profile; }
+ 
+         //---------------------------------------------------------------------
+         int subpixel_width() const { return m_profile->subpixel_width(); }
+-- 
+2.29.0
+

@@ -1,0 +1,97 @@
+{
+    "lvgl": {
+        "name": "ota.lvgl",
+        "resolution": {
+            "height": 480,
+            "width": 800
+        },
+        "widgets": [
+            {
+                "accessible": true,
+                "anim time": 0,
+                "class": "lv_slider",
+                "drag": false,
+                "geometry": {
+                    "height": 20,
+                    "width": 495,
+                    "x": 121,
+                    "y": 232
+                },
+                "knob inside": false,
+                "locked": false,
+                "name": "progressbar",
+                "range": {
+                    "max": 100,
+                    "min": 0
+                },
+                "styles": [
+                    {
+                        "base": "lv_style_pretty",
+                        "body": {
+                            "radius": 15
+                        },
+                        "type": "LV_SLIDER_STYLE_KNOB"
+                    },
+                    {
+                        "base": "lv_style_pretty_color",
+                        "body": {
+                            "padding": {
+                                "bottom": 0,
+                                "inner": 0,
+                                "left": 0,
+                                "right": 0,
+                                "top": 0
+                            }
+                        },
+                        "type": "LV_SLIDER_STYLE_INDIC"
+                    }
+                ],
+                "value": 0,
+                "visible": true,
+                "widget": "Slider"
+            },
+            {
+                "accessible": true,
+                "align": "Left",
+                "anim speed": 25,
+                "body draw": false,
+                "class": "lv_label",
+                "drag": false,
+                "geometry": {
+                    "height": 29,
+                    "width": 95,
+                    "x": 636,
+                    "y": 232
+                },
+                "locked": false,
+                "long mode": "Corp",
+                "name": "label_progress",
+                "recolor": false,
+                "text": "0%",
+                "visible": true,
+                "widget": "Label"
+            },
+            {
+                "accessible": true,
+                "align": "Left",
+                "anim speed": 25,
+                "body draw": false,
+                "class": "lv_label",
+                "drag": false,
+                "geometry": {
+                    "height": 22,
+                    "width": 300,
+                    "x": 117,
+                    "y": 189
+                },
+                "locked": false,
+                "long mode": "Corp",
+                "name": "prompt_lable",
+                "recolor": false,
+                "text": "updating please wating",
+                "visible": true,
+                "widget": "Label"
+            }
+        ]
+    }
+}

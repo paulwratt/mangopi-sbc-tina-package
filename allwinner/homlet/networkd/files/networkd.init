@@ -1,0 +1,147 @@
+#!/bin/sh /etc/rc.common
+# Copyright (C) 2006-2011 OpenWrt.org
+
+START=99
+STOP=99
+
+USE_PROCD=1
+DEPEND=wpa_supplicant
+PROG=networkd
+OOM_ADJ=-17
+
+awcast_config="/usr/local/etc/awcast.cfg"
+share_interface=""
+
+function get_share_interface()
+{
+    local str=""
+
+    str=`sed -n '/^share_interface/p' ${awcast_config}`
+    share_interface=${str##*=}
+
+    if [ -z ${share_interface} ]; then
+        share_interface=0
+    fi
+
+    echo "share_interface=${share_interface}"
+}
+
+function backup_wpa_supplicant_config() {
+    local config_file1="/etc/wifi/wpa_supplicant.conf"
+    local config_back1="/etc/wifi/wpa_supplicant_back.conf"
+    local config_file2="/etc/wifi/wpa_supplicant_p2p.conf"
+    local config_back2="/etc/wifi/wpa_supplicant_p2p_back.conf"
+    local config_file=""
+    local config_back=""
+
+    get_share_interface
+    if [ ${share_interface} -eq 0 ]; then
+        config_file=${config_file1}
+        config_back=${config_back1}
+    else
+        config_file=${config_file2}
+        config_back=${config_back2}
+    fi
+
+    echo "config_file=${config_file}"
+    echo "config_back=${config_back}"
+
+    if [ -f ${config_back} ]; then
+        echo "${config_back} is exist"
+    else
+        cp ${config_file} ${config_back}
+    fi
+}
+
+function wait_wifi_driver() {
+    MAC_ADDR=
+    i=0
+    while [ -z $MAC_ADDR ]
+    do
+        MAC_ADDR=`ifconfig wlan0 |grep HWaddr |head -n 1 | grep -o  "[a-f0-9A-F]\\([a-f0-9A-F]\\:[a-f0-9A-F]\\)\\{5\\}[a-f0-9A-F]"`
+        [ ! -z $MAC_ADDR ] && break;
+        i=`expr $i + 1`
+        usleep 500
+        if [ $i -eq 200 ]; then
+                break
+        fi
+    done
+}
+
+function wait_for_hostapd() {
+	local pid=99999
+	local i=0
+	local str=""
+
+	str=`sed -n '/^network={/p' /etc/wifi/wpa_supplicant.conf`
+	if [ ${str} ]; then
+		return;
+	fi
+
+    while [ 1 ]
+    do
+    	pid=`ps | grep "hostapd" | grep -v "grep" | awk 'NR==1{print $1}'`
+	    if [ ${pid} ]; then
+	        break
+	    else
+	    	i=`expr $i + 1`
+	    	usleep 500
+	    	if [ $i -eq 100 ]; then
+                break
+        	fi
+	    fi
+    done
+}
+
+function wait_for_wlan0_free() {
+	local pid=99999
+	local i=0
+
+	while [ 1 ]
+	do
+		pid=`ps | grep "wpa_supplicant -iwlan0" | grep -v "grep" | awk 'NR==1{print $1}'`
+		if [ ${pid} ]; then
+			i=`expr $i + 1`
+			usleep 500
+			if [ $i -eq 100 ]; then
+				break
+			fi
+		else
+			break
+		fi
+	done
+}
+
+function kill_wlan0_process()
+{
+    local pid=99999
+
+    pid=`ps | grep "wpa_supplicant -iwlan0" | grep -v "grep" | awk 'NR==1{print $1}'`
+    if [ ${pid} ]; then
+        kill -9 ${pid}
+    fi
+}
+
+start_service() {
+    procd_open_instance
+    backup_wpa_supplicant_config
+    wait_wifi_driver
+    wait_for_hostapd
+    ifconfig p2p0 up
+    ifconfig wlan0 up
+    procd_set_param oom_adj $OOM_ADJ
+    procd_set_param command $PROG
+    procd_set_param respawn
+    procd_close_instance
+}
+
+stop_service() {
+    procd_open_instance
+	kill_wlan0_process
+	procd_close_instance
+}
+
+restart() {
+    stop $@
+    start $@
+}

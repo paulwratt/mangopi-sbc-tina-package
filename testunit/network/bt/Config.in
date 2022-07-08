@@ -1,0 +1,5 @@
+menuconfig TESTUNIT_NETWORK_BT
+    bool "bt"
+    default y
+    select PACKAGE_btmanager-core
+    select PACKAGE_btmanager-demo

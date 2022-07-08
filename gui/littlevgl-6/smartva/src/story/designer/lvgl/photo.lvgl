@@ -1,0 +1,1410 @@
+{
+    "lvgl": {
+        "name": "photo.lvgl",
+        "resolution": {
+            "height": 480,
+            "width": 800
+        },
+        "widgets": [
+            {
+                "accessible": true,
+                "class": "lv_list",
+                "drag": false,
+                "edge flash": true,
+                "geometry": {
+                    "height": 417,
+                    "width": 418,
+                    "x": 361,
+                    "y": 35
+                },
+                "items": [
+                    {
+                        "img": "movie_item.png",
+                        "name": "1"
+                    },
+                    {
+                        "img": "movie_item.png",
+                        "name": "2"
+                    },
+                    {
+                        "img": "movie_item.png",
+                        "name": "3"
+                    },
+                    {
+                        "img": "movie_item.png",
+                        "name": "4"
+                    },
+                    {
+                        "img": "movie_item.png",
+                        "name": "5"
+                    },
+                    {
+                        "img": "movie_item.png",
+                        "name": "6"
+                    }
+                ],
+                "locked": false,
+                "name": "media_list",
+                "scroll propagation": false,
+                "single mode": true,
+                "styles": [
+                    {
+                        "base": "lv_style_btn_rel",
+                        "body": {
+                            "grad_color": "#ff55ff",
+                            "main_color": "#ffaaff",
+                            "radius": 20
+                        },
+                        "type": "LV_LIST_STYLE_BTN_REL"
+                    },
+                    {
+                        "base": "lv_style_pretty_color",
+                        "body": {
+                            "main_color": "#ff557f"
+                        },
+                        "type": "LV_LIST_STYLE_SB"
+                    },
+                    {
+                        "base": "lv_style_pretty",
+                        "body": {
+                            "border": {
+                                "width": 0
+                            },
+                            "grad_color": "#ff557f",
+                            "main_color": "#ff557f"
+                        },
+                        "type": "LV_LIST_STYLE_SCRL"
+                    },
+                    {
+                        "base": "lv_style_btn_tgl_pr",
+                        "body": {
+                            "grad_color": "#55aaff",
+                            "main_color": "#55aaff",
+                            "radius": 20
+                        },
+                        "type": "LV_LIST_STYLE_BTN_TGL_PR"
+                    },
+                    {
+                        "base": "lv_style_btn_tgl_rel",
+                        "body": {
+                            "grad_color": "#55aaff",
+                            "main_color": "#55aaff",
+                            "radius": 20
+                        },
+                        "type": "LV_LIST_STYLE_BTN_TGL_REL"
+                    },
+                    {
+                        "base": "lv_style_btn_pr",
+                        "body": {
+                            "grad_color": "#55aaff",
+                            "main_color": "#55aaff",
+                            "radius": 20
+                        },
+                        "type": "LV_LIST_STYLE_BTN_PR"
+                    }
+                ],
+                "visible": true,
+                "widget": "List"
+            },
+            {
+                "accessible": true,
+                "class": "lv_imgbtn",
+                "drag": false,
+                "geometry": {
+                    "height": 32,
+                    "width": 32,
+                    "x": 11,
+                    "y": 18
+                },
+                "locked": false,
+                "name": "back",
+                "source inactive": "",
+                "source pressed": "home_return.png",
+                "source released": "home_return.png",
+                "source toggled pressed": "",
+                "source toggled released": "",
+                "state": "Released",
+                "styles": [
+                    {
+                        "base": "lv_style_btn_pr",
+                        "image": {
+                            "color": "#ffffff",
+                            "opa": 128
+                        },
+                        "type": "LV_IMGBTN_STYLE_PR"
+                    }
+                ],
+                "toggle": false,
+                "visible": true,
+                "widget": "Image button"
+            },
+            {
+                "accessible": true,
+                "align": "Left",
+                "anim speed": 25,
+                "body draw": false,
+                "class": "lv_label",
+                "drag": false,
+                "geometry": {
+                    "height": 19,
+                    "width": 300,
+                    "x": 55,
+                    "y": 242
+                },
+                "locked": false,
+                "long mode": "Break",
+                "name": "file_name",
+                "recolor": false,
+                "styles": [
+                    {
+                        "base": "lv_style_transp",
+                        "text": {
+                            "color": "#ffffff",
+                            "sel_color": "#ffffff"
+                        },
+                        "type": "LV_LABEL_STYLE_MAIN"
+                    }
+                ],
+                "text": "",
+                "visible": true,
+                "widget": "Label"
+            },
+            {
+                "accessible": true,
+                "class": "lv_imgbtn",
+                "drag": false,
+                "geometry": {
+                    "height": 90,
+                    "width": 150,
+                    "x": 53,
+                    "y": 123
+                },
+                "locked": false,
+                "name": "image_button_preview",
+                "source inactive": "",
+                "source pressed": "background31.jpg",
+                "source released": "background31.jpg",
+                "source toggled pressed": "",
+                "source toggled released": "",
+                "state": "Released",
+                "styles": [
+                    {
+                        "base": "lv_style_btn_pr",
+                        "image": {
+                            "opa": 0
+                        },
+                        "type": "LV_IMGBTN_STYLE_PR"
+                    },
+                    {
+                        "base": "lv_style_btn_rel",
+                        "image": {
+                            "opa": 0
+                        },
+                        "type": "LV_IMGBTN_STYLE_REL"
+                    }
+                ],
+                "toggle": false,
+                "visible": true,
+                "widget": "Image button"
+            },
+            {
+                "accessible": true,
+                "class": "lv_btn",
+                "drag": false,
+                "geometry": {
+                    "height": 480,
+                    "width": 800,
+                    "x": 0,
+                    "y": 0
+                },
+                "ink in time": 0,
+                "ink out time": 0,
+                "ink wait time": 0,
+                "layout": "Center",
+                "locked": false,
+                "name": "button_setting_interface",
+                "state": "Released",
+                "styles": [
+                    {
+                        "base": "lv_style_btn_pr",
+                        "body": {
+                            "border": {
+                                "color": "#0000ff",
+                                "opa": 0,
+                                "width": 0
+                            },
+                            "grad_color": "#00aaff",
+                            "main_color": "#00aaff",
+                            "opa": 0,
+                            "radius": 0
+                        },
+                        "type": "LV_BTN_STYLE_PR"
+                    },
+                    {
+                        "base": "lv_style_btn_rel",
+                        "body": {
+                            "border": {
+                                "color": "#55aaff",
+                                "opa": 0,
+                                "width": 0
+                            },
+                            "grad_color": "#00aaff",
+                            "main_color": "#00aaff",
+                            "opa": 0,
+                            "radius": 0
+                        },
+                        "type": "LV_BTN_STYLE_REL"
+                    }
+                ],
+                "toggle": false,
+                "visible": true,
+                "widget": "Button"
+            },
+            {
+                "accessible": true,
+                "children": [
+                    {
+                        "accessible": true,
+                        "class": "lv_imgbtn",
+                        "drag": false,
+                        "geometry": {
+                            "height": 48,
+                            "width": 48,
+                            "x": 27,
+                            "y": 63
+                        },
+                        "locked": false,
+                        "name": "image_button_play_start",
+                        "source inactive": "",
+                        "source pressed": "play_start.jpeg",
+                        "source released": "play_start.jpeg",
+                        "source toggled pressed": "",
+                        "source toggled released": "",
+                        "state": "Released",
+                        "toggle": false,
+                        "visible": true,
+                        "widget": "Image button"
+                    },
+                    {
+                        "accessible": true,
+                        "class": "lv_imgbtn",
+                        "drag": false,
+                        "geometry": {
+                            "height": 48,
+                            "width": 48,
+                            "x": 33,
+                            "y": 140
+                        },
+                        "locked": false,
+                        "name": "image_button_rotate_left",
+                        "source inactive": "",
+                        "source pressed": "rotate_left.png",
+                        "source released": "rotate_left.png",
+                        "source toggled pressed": "",
+                        "source toggled released": "",
+                        "state": "Released",
+                        "toggle": false,
+                        "visible": true,
+                        "widget": "Image button"
+                    },
+                    {
+                        "accessible": true,
+                        "class": "lv_imgbtn",
+                        "drag": false,
+                        "geometry": {
+                            "height": 48,
+                            "width": 48,
+                            "x": 133,
+                            "y": 141
+                        },
+                        "locked": false,
+                        "name": "image_button_rotate_right",
+                        "source inactive": "",
+                        "source pressed": "rotate_right.png",
+                        "source released": "rotate_right.png",
+                        "source toggled pressed": "",
+                        "source toggled released": "",
+                        "state": "Released",
+                        "toggle": false,
+                        "visible": true,
+                        "widget": "Image button"
+                    },
+                    {
+                        "accessible": true,
+                        "class": "lv_imgbtn",
+                        "drag": false,
+                        "geometry": {
+                            "height": 48,
+                            "width": 48,
+                            "x": 229,
+                            "y": 140
+                        },
+                        "locked": false,
+                        "name": "image_button_scaler_down",
+                        "source inactive": "",
+                        "source pressed": "scaler_down.jpg",
+                        "source released": "scaler_down.jpg",
+                        "source toggled pressed": "",
+                        "source toggled released": "scaler_down.jpg",
+                        "state": "Released",
+                        "toggle": false,
+                        "visible": true,
+                        "widget": "Image button"
+                    },
+                    {
+                        "accessible": true,
+                        "class": "lv_imgbtn",
+                        "drag": false,
+                        "geometry": {
+                            "height": 48,
+                            "width": 48,
+                            "x": 311,
+                            "y": 140
+                        },
+                        "locked": false,
+                        "name": "image_button_scaler_up",
+                        "source inactive": "",
+                        "source pressed": "scaler_up.jpg",
+                        "source released": "scaler_up.jpg",
+                        "source toggled pressed": "",
+                        "source toggled released": "",
+                        "state": "Released",
+                        "toggle": false,
+                        "visible": true,
+                        "widget": "Image button"
+                    },
+                    {
+                        "accessible": true,
+                        "children": [
+                            {
+                                "accessible": true,
+                                "align": "Left",
+                                "anim speed": 25,
+                                "body draw": false,
+                                "class": "lv_label",
+                                "drag": false,
+                                "geometry": {
+                                    "height": 19,
+                                    "width": 107,
+                                    "x": 14,
+                                    "y": 12
+                                },
+                                "locked": false,
+                                "long mode": "Expand",
+                                "name": "label_effect",
+                                "recolor": false,
+                                "styles": [
+                                    {
+                                        "base": "lv_style_transp",
+                                        "text": {
+                                            "color": "#ffffff"
+                                        },
+                                        "type": "LV_LABEL_STYLE_MAIN"
+                                    }
+                                ],
+                                "text": "persian blind H",
+                                "visible": true,
+                                "widget": "Label"
+                            }
+                        ],
+                        "class": "lv_btn",
+                        "drag": false,
+                        "geometry": {
+                            "height": 42,
+                            "width": 135,
+                            "x": 157,
+                            "y": 66
+                        },
+                        "ink in time": 0,
+                        "ink out time": 0,
+                        "ink wait time": 0,
+                        "layout": "Center",
+                        "locked": false,
+                        "name": "button_show_effect",
+                        "state": "Released",
+                        "styles": [
+                            {
+                                "base": "lv_style_btn_pr",
+                                "body": {
+                                    "border": {
+                                        "color": "#0000ff"
+                                    },
+                                    "grad_color": "#00aaff",
+                                    "main_color": "#00aaff"
+                                },
+                                "type": "LV_BTN_STYLE_PR"
+                            },
+                            {
+                                "base": "lv_style_btn_rel",
+                                "body": {
+                                    "border": {
+                                        "color": "#55aaff",
+                                        "width": 1
+                                    },
+                                    "grad_color": "#00aaff",
+                                    "main_color": "#00aaff"
+                                },
+                                "type": "LV_BTN_STYLE_REL"
+                            }
+                        ],
+                        "toggle": false,
+                        "visible": true,
+                        "widget": "Button"
+                    },
+                    {
+                        "accessible": true,
+                        "children": [
+                            {
+                                "accessible": true,
+                                "align": "Left",
+                                "anim speed": 25,
+                                "body draw": false,
+                                "class": "lv_label",
+                                "drag": false,
+                                "geometry": {
+                                    "height": 19,
+                                    "width": 50,
+                                    "x": 8,
+                                    "y": 11
+                                },
+                                "locked": false,
+                                "long mode": "Expand",
+                                "name": "label_speed",
+                                "recolor": false,
+                                "styles": [
+                                    {
+                                        "base": "lv_style_transp",
+                                        "text": {
+                                            "color": "#ffffff"
+                                        },
+                                        "type": "LV_LABEL_STYLE_MAIN"
+                                    }
+                                ],
+                                "text": "normal",
+                                "visible": true,
+                                "widget": "Label"
+                            }
+                        ],
+                        "class": "lv_btn",
+                        "drag": false,
+                        "geometry": {
+                            "height": 41,
+                            "width": 67,
+                            "x": 86,
+                            "y": 67
+                        },
+                        "ink in time": 0,
+                        "ink out time": 0,
+                        "ink wait time": 0,
+                        "layout": "Center",
+                        "locked": false,
+                        "name": "button_show_speed",
+                        "state": "Released",
+                        "styles": [
+                            {
+                                "base": "lv_style_btn_pr",
+                                "body": {
+                                    "border": {
+                                        "color": "#0000ff"
+                                    },
+                                    "grad_color": "#00aaff",
+                                    "main_color": "#00aaff"
+                                },
+                                "type": "LV_BTN_STYLE_PR"
+                            },
+                            {
+                                "base": "lv_style_btn_rel",
+                                "body": {
+                                    "border": {
+                                        "color": "#55aaff",
+                                        "width": 1
+                                    },
+                                    "grad_color": "#00aaff",
+                                    "main_color": "#00aaff"
+                                },
+                                "type": "LV_BTN_STYLE_REL"
+                            }
+                        ],
+                        "toggle": false,
+                        "visible": true,
+                        "widget": "Button"
+                    },
+                    {
+                        "accessible": true,
+                        "children": [
+                            {
+                                "accessible": true,
+                                "align": "Left",
+                                "anim speed": 25,
+                                "body draw": false,
+                                "class": "lv_label",
+                                "drag": false,
+                                "geometry": {
+                                    "height": 19,
+                                    "width": 28,
+                                    "x": 19,
+                                    "y": 12
+                                },
+                                "locked": false,
+                                "long mode": "Expand",
+                                "name": "label_info",
+                                "recolor": false,
+                                "styles": [
+                                    {
+                                        "base": "lv_style_transp",
+                                        "text": {
+                                            "color": "#ffffff"
+                                        },
+                                        "type": "LV_LABEL_STYLE_MAIN"
+                                    }
+                                ],
+                                "text": "info",
+                                "visible": true,
+                                "widget": "Label"
+                            }
+                        ],
+                        "class": "lv_btn",
+                        "drag": false,
+                        "geometry": {
+                            "height": 43,
+                            "width": 66,
+                            "x": 297,
+                            "y": 66
+                        },
+                        "ink in time": 0,
+                        "ink out time": 0,
+                        "ink wait time": 0,
+                        "layout": "Center",
+                        "locked": false,
+                        "name": "button_info",
+                        "state": "Released",
+                        "styles": [
+                            {
+                                "base": "lv_style_btn_pr",
+                                "body": {
+                                    "border": {
+                                        "color": "#0000ff"
+                                    },
+                                    "grad_color": "#00aaff",
+                                    "main_color": "#00aaff"
+                                },
+                                "type": "LV_BTN_STYLE_PR"
+                            },
+                            {
+                                "base": "lv_style_btn_rel",
+                                "body": {
+                                    "border": {
+                                        "color": "#55aaff"
+                                    },
+                                    "grad_color": "#00aaff",
+                                    "main_color": "#00aaff"
+                                },
+                                "type": "LV_BTN_STYLE_REL"
+                            }
+                        ],
+                        "toggle": false,
+                        "visible": true,
+                        "widget": "Button"
+                    }
+                ],
+                "class": "lv_cont",
+                "drag": false,
+                "fit": {
+                    "cont_bottom_fit": 0,
+                    "cont_left_fit": 0,
+                    "cont_right_fit": 0,
+                    "cont_top_fit": 0
+                },
+                "geometry": {
+                    "height": 218,
+                    "width": 364,
+                    "x": 0,
+                    "y": 262
+                },
+                "layout": "Off",
+                "locked": false,
+                "name": "container_control",
+                "styles": [
+                    {
+                        "base": "lv_style_pretty",
+                        "body": {
+                            "border": {
+                                "opa": 0,
+                                "width": 0
+                            },
+                            "opa": 0
+                        },
+                        "type": "LV_CONT_STYLE_MAIN"
+                    }
+                ],
+                "visible": false,
+                "widget": "Container"
+            },
+            {
+                "accessible": true,
+                "children": [
+                    {
+                        "accessible": true,
+                        "class": "lv_btnm",
+                        "drag": false,
+                        "geometry": {
+                            "height": 246,
+                            "width": 516,
+                            "x": 12,
+                            "y": 6
+                        },
+                        "locked": false,
+                        "map": "no effect,random,fade,mosaic,\n,slide up,slide down,slide left,slide right,\n,stretch up,stretch down,stretch left,stretch right,\n,room in,room out,persian blind H,persian blind V,",
+                        "name": "button_matrix_effect",
+                        "styles": [
+                            {
+                                "base": "lv_style_btn_tgl_pr",
+                                "body": {
+                                    "border": {
+                                        "color": "#ff55ff",
+                                        "width": 0
+                                    },
+                                    "grad_color": "#ff557f",
+                                    "main_color": "#ff557f"
+                                },
+                                "type": "LV_BTNM_STYLE_BTN_TGL_PR"
+                            },
+                            {
+                                "base": "lv_style_btn_tgl_rel",
+                                "body": {
+                                    "border": {
+                                        "color": "#000000",
+                                        "width": 0
+                                    },
+                                    "grad_color": "#ff557f",
+                                    "main_color": "#ff557f"
+                                },
+                                "type": "LV_BTNM_STYLE_BTN_TGL_REL"
+                            },
+                            {
+                                "base": "lv_style_btn_pr",
+                                "body": {
+                                    "border": {
+                                        "color": "#55aaff",
+                                        "width": 0
+                                    },
+                                    "grad_color": "#00aaff",
+                                    "main_color": "#00aaff"
+                                },
+                                "type": "LV_BTNM_STYLE_BTN_PR"
+                            },
+                            {
+                                "base": "lv_style_btn_rel",
+                                "body": {
+                                    "border": {
+                                        "color": "#55aaff",
+                                        "width": 1
+                                    },
+                                    "grad_color": "#00aaff",
+                                    "main_color": "#00aaff"
+                                },
+                                "type": "LV_BTNM_STYLE_BTN_REL"
+                            },
+                            {
+                                "base": "lv_style_pretty",
+                                "body": {
+                                    "border": {
+                                        "opa": 0
+                                    },
+                                    "opa": 0
+                                },
+                                "type": "LV_BTNM_STYLE_BG"
+                            },
+                            {
+                                "base": "lv_style_btn_ina",
+                                "body": {
+                                    "border": {
+                                        "color": "#ff55ff",
+                                        "width": 1
+                                    },
+                                    "grad_color": "#ff557f",
+                                    "main_color": "#ff557f"
+                                },
+                                "type": "LV_BTNM_STYLE_BTN_INA"
+                            }
+                        ],
+                        "visible": true,
+                        "widget": "Button Matrix"
+                    },
+                    {
+                        "accessible": true,
+                        "auto size": true,
+                        "class": "lv_img",
+                        "drag": false,
+                        "geometry": {
+                            "height": 32,
+                            "width": 32,
+                            "x": 253,
+                            "y": 257
+                        },
+                        "locked": false,
+                        "name": "image_set_effect",
+                        "offset": {
+                            "X": 0,
+                            "Y": 0
+                        },
+                        "source": "setting_choose.png",
+                        "visible": true,
+                        "widget": "Image"
+                    }
+                ],
+                "class": "lv_cont",
+                "drag": false,
+                "fit": {
+                    "cont_bottom_fit": 0,
+                    "cont_left_fit": 0,
+                    "cont_right_fit": 0,
+                    "cont_top_fit": 0
+                },
+                "geometry": {
+                    "height": 302,
+                    "width": 536,
+                    "x": 137,
+                    "y": 18
+                },
+                "layout": "Off",
+                "locked": false,
+                "name": "container_sel_effect",
+                "styles": [
+                    {
+                        "base": "lv_style_pretty",
+                        "body": {
+                            "border": {
+                                "width": 1
+                            },
+                            "opa": 200
+                        },
+                        "type": "LV_CONT_STYLE_MAIN"
+                    }
+                ],
+                "visible": false,
+                "widget": "Container"
+            },
+            {
+                "accessible": true,
+                "children": [
+                    {
+                        "accessible": true,
+                        "class": "lv_btnm",
+                        "drag": false,
+                        "geometry": {
+                            "height": 90,
+                            "width": 289,
+                            "x": 125,
+                            "y": 90
+                        },
+                        "locked": false,
+                        "map": "slow,normal,fast,",
+                        "name": "button_matrix_speed",
+                        "styles": [
+                            {
+                                "base": "lv_style_btn_tgl_pr",
+                                "body": {
+                                    "border": {
+                                        "color": "#ff55ff",
+                                        "width": 1
+                                    },
+                                    "grad_color": "#ff557f",
+                                    "main_color": "#ff557f"
+                                },
+                                "type": "LV_BTNM_STYLE_BTN_TGL_PR"
+                            },
+                            {
+                                "base": "lv_style_btn_tgl_rel",
+                                "body": {
+                                    "border": {
+                                        "color": "#ff55ff",
+                                        "width": 1
+                                    },
+                                    "grad_color": "#ff557f",
+                                    "main_color": "#ff557f"
+                                },
+                                "type": "LV_BTNM_STYLE_BTN_TGL_REL"
+                            },
+                            {
+                                "base": "lv_style_btn_pr",
+                                "body": {
+                                    "border": {
+                                        "color": "#55aaff",
+                                        "width": 1
+                                    },
+                                    "grad_color": "#00aaff",
+                                    "main_color": "#00aaff"
+                                },
+                                "type": "LV_BTNM_STYLE_BTN_PR"
+                            },
+                            {
+                                "base": "lv_style_btn_rel",
+                                "body": {
+                                    "border": {
+                                        "color": "#55aaff",
+                                        "width": 1
+                                    },
+                                    "grad_color": "#00aaff",
+                                    "main_color": "#00aaff"
+                                },
+                                "type": "LV_BTNM_STYLE_BTN_REL"
+                            },
+                            {
+                                "base": "lv_style_pretty",
+                                "body": {
+                                    "border": {
+                                        "opa": 0
+                                    },
+                                    "opa": 0
+                                },
+                                "type": "LV_BTNM_STYLE_BG"
+                            }
+                        ],
+                        "visible": true,
+                        "widget": "Button Matrix"
+                    },
+                    {
+                        "accessible": true,
+                        "auto size": true,
+                        "class": "lv_img",
+                        "drag": false,
+                        "geometry": {
+                            "height": 32,
+                            "width": 32,
+                            "x": 253,
+                            "y": 257
+                        },
+                        "locked": false,
+                        "name": "image_set_speed",
+                        "offset": {
+                            "X": 0,
+                            "Y": 0
+                        },
+                        "source": "setting_choose.png",
+                        "visible": true,
+                        "widget": "Image"
+                    }
+                ],
+                "class": "lv_cont",
+                "drag": false,
+                "fit": {
+                    "cont_bottom_fit": 0,
+                    "cont_left_fit": 0,
+                    "cont_right_fit": 0,
+                    "cont_top_fit": 0
+                },
+                "geometry": {
+                    "height": 302,
+                    "width": 536,
+                    "x": 137,
+                    "y": 17
+                },
+                "layout": "Off",
+                "locked": false,
+                "name": "container_sel_speed",
+                "styles": [
+                    {
+                        "base": "lv_style_pretty",
+                        "body": {
+                            "border": {
+                                "width": 1
+                            },
+                            "opa": 200
+                        },
+                        "type": "LV_CONT_STYLE_MAIN"
+                    }
+                ],
+                "visible": false,
+                "widget": "Container"
+            },
+            {
+                "accessible": true,
+                "children": [
+                    {
+                        "accessible": true,
+                        "children": [
+                            {
+                                "accessible": true,
+                                "children": [
+                                    {
+                                        "accessible": true,
+                                        "align": "Left",
+                                        "anim speed": 25,
+                                        "body draw": false,
+                                        "class": "lv_label",
+                                        "drag": false,
+                                        "geometry": {
+                                            "height": 19,
+                                            "width": 21,
+                                            "x": 40,
+                                            "y": 8
+                                        },
+                                        "locked": false,
+                                        "long mode": "Expand",
+                                        "name": "label_dialog_ok",
+                                        "recolor": false,
+                                        "styles": [
+                                            {
+                                                "base": "lv_style_transp",
+                                                "text": {
+                                                    "opa": 0
+                                                },
+                                                "type": "LV_LABEL_STYLE_MAIN"
+                                            }
+                                        ],
+                                        "text": "OK",
+                                        "visible": false,
+                                        "widget": "Label"
+                                    }
+                                ],
+                                "class": "lv_btn",
+                                "drag": false,
+                                "geometry": {
+                                    "height": 35,
+                                    "width": 100,
+                                    "x": 58,
+                                    "y": 74
+                                },
+                                "ink in time": 0,
+                                "ink out time": 0,
+                                "ink wait time": 0,
+                                "layout": "Center",
+                                "locked": false,
+                                "name": "button_1",
+                                "state": "Inactive",
+                                "styles": [
+                                    {
+                                        "base": "lv_style_btn_ina",
+                                        "body": {
+                                            "border": {
+                                                "opa": 0
+                                            },
+                                            "opa": 0
+                                        },
+                                        "type": "LV_BTN_STYLE_INA"
+                                    },
+                                    {
+                                        "base": "lv_style_btn_pr",
+                                        "body": {
+                                            "border": {
+                                                "color": "#55aaff",
+                                                "width": 1
+                                            },
+                                            "grad_color": "#55aaff",
+                                            "main_color": "#5999ff"
+                                        },
+                                        "type": "LV_BTN_STYLE_PR"
+                                    },
+                                    {
+                                        "base": "lv_style_btn_rel",
+                                        "body": {
+                                            "border": {
+                                                "color": "#55aaff",
+                                                "width": 1
+                                            },
+                                            "grad_color": "#00aaff",
+                                            "main_color": "#00aaff"
+                                        },
+                                        "type": "LV_BTN_STYLE_REL"
+                                    }
+                                ],
+                                "toggle": false,
+                                "visible": true,
+                                "widget": "Button"
+                            },
+                            {
+                                "accessible": true,
+                                "align": "Left",
+                                "anim speed": 25,
+                                "body draw": false,
+                                "class": "lv_label",
+                                "drag": false,
+                                "geometry": {
+                                    "height": 19,
+                                    "width": 77,
+                                    "x": 69,
+                                    "y": 44
+                                },
+                                "locked": false,
+                                "long mode": "Expand",
+                                "name": "label_dialog_info",
+                                "recolor": false,
+                                "text": "No picture!",
+                                "visible": true,
+                                "widget": "Label"
+                            }
+                        ],
+                        "class": "lv_cont",
+                        "drag": false,
+                        "fit": {
+                            "cont_bottom_fit": 0,
+                            "cont_left_fit": 0,
+                            "cont_right_fit": 0,
+                            "cont_top_fit": 0
+                        },
+                        "geometry": {
+                            "height": 116,
+                            "width": 214,
+                            "x": 277,
+                            "y": 145
+                        },
+                        "layout": "Off",
+                        "locked": false,
+                        "name": "container_1",
+                        "styles": [
+                            {
+                                "base": "lv_style_pretty",
+                                "body": {
+                                    "border": {
+                                        "width": 1
+                                    },
+                                    "grad_color": "#ffffff",
+                                    "main_color": "#55aaff"
+                                },
+                                "type": "LV_CONT_STYLE_MAIN"
+                            }
+                        ],
+                        "visible": true,
+                        "widget": "Container"
+                    }
+                ],
+                "class": "lv_cont",
+                "drag": false,
+                "fit": {
+                    "cont_bottom_fit": 0,
+                    "cont_left_fit": 0,
+                    "cont_right_fit": 0,
+                    "cont_top_fit": 0
+                },
+                "geometry": {
+                    "height": 480,
+                    "width": 800,
+                    "x": 0,
+                    "y": 0
+                },
+                "layout": "Off",
+                "locked": false,
+                "name": "container_dialog",
+                "styles": [
+                    {
+                        "base": "lv_style_pretty",
+                        "body": {
+                            "border": {
+                                "width": 0
+                            },
+                            "grad_color": "#ffffff",
+                            "opa": 100,
+                            "radius": 0
+                        },
+                        "type": "LV_CONT_STYLE_MAIN"
+                    }
+                ],
+                "visible": false,
+                "widget": "Container"
+            },
+            {
+                "accessible": true,
+                "children": [
+                    {
+                        "accessible": true,
+                        "auto size": true,
+                        "class": "lv_img",
+                        "drag": false,
+                        "geometry": {
+                            "height": 32,
+                            "width": 32,
+                            "x": 253,
+                            "y": 257
+                        },
+                        "locked": true,
+                        "name": "image_get_info",
+                        "offset": {
+                            "X": 0,
+                            "Y": 0
+                        },
+                        "source": "setting_choose.png",
+                        "visible": true,
+                        "widget": "Image"
+                    },
+                    {
+                        "accessible": true,
+                        "align": "Left",
+                        "anim speed": 25,
+                        "body draw": false,
+                        "class": "lv_label",
+                        "drag": false,
+                        "geometry": {
+                            "height": 19,
+                            "width": 71,
+                            "x": 23,
+                            "y": 33
+                        },
+                        "locked": true,
+                        "long mode": "Expand",
+                        "name": "label_title_filename",
+                        "recolor": false,
+                        "styles": [
+                            {
+                                "base": "lv_style_transp",
+                                "body": {
+                                    "shadow": {
+                                        "color": "#ffffff"
+                                    }
+                                },
+                                "text": {
+                                    "color": "#ffffff"
+                                },
+                                "type": "LV_LABEL_STYLE_MAIN"
+                            }
+                        ],
+                        "text": "Filename:",
+                        "visible": true,
+                        "widget": "Label"
+                    },
+                    {
+                        "accessible": true,
+                        "align": "Left",
+                        "anim speed": 25,
+                        "body draw": false,
+                        "class": "lv_label",
+                        "drag": false,
+                        "geometry": {
+                            "height": 19,
+                            "width": 35,
+                            "x": 24,
+                            "y": 95
+                        },
+                        "locked": true,
+                        "long mode": "Expand",
+                        "name": "label_title_file_size",
+                        "recolor": false,
+                        "styles": [
+                            {
+                                "base": "lv_style_transp",
+                                "text": {
+                                    "color": "#ffffff"
+                                },
+                                "type": "LV_LABEL_STYLE_MAIN"
+                            }
+                        ],
+                        "text": "Size:",
+                        "visible": true,
+                        "widget": "Label"
+                    },
+                    {
+                        "accessible": true,
+                        "align": "Left",
+                        "anim speed": 25,
+                        "body draw": false,
+                        "class": "lv_label",
+                        "drag": false,
+                        "geometry": {
+                            "height": 19,
+                            "width": 39,
+                            "x": 24,
+                            "y": 154
+                        },
+                        "locked": true,
+                        "long mode": "Expand",
+                        "name": "label_title_w_h",
+                        "recolor": false,
+                        "styles": [
+                            {
+                                "base": "lv_style_transp",
+                                "text": {
+                                    "color": "#ffffff"
+                                },
+                                "type": "LV_LABEL_STYLE_MAIN"
+                            }
+                        ],
+                        "text": "W&H:",
+                        "visible": true,
+                        "widget": "Label"
+                    },
+                    {
+                        "accessible": true,
+                        "align": "Left",
+                        "anim speed": 25,
+                        "body draw": false,
+                        "class": "lv_label",
+                        "drag": false,
+                        "geometry": {
+                            "height": 19,
+                            "width": 403,
+                            "x": 120,
+                            "y": 25
+                        },
+                        "locked": true,
+                        "long mode": "Break",
+                        "name": "label_filename",
+                        "recolor": false,
+                        "styles": [
+                            {
+                                "base": "lv_style_transp",
+                                "text": {
+                                    "color": "#ffffff"
+                                },
+                                "type": "LV_LABEL_STYLE_MAIN"
+                            }
+                        ],
+                        "text": "asdasd",
+                        "visible": true,
+                        "widget": "Label"
+                    },
+                    {
+                        "accessible": true,
+                        "align": "Left",
+                        "anim speed": 25,
+                        "body draw": false,
+                        "class": "lv_label",
+                        "drag": false,
+                        "geometry": {
+                            "height": 22,
+                            "width": 406,
+                            "x": 116,
+                            "y": 97
+                        },
+                        "locked": true,
+                        "long mode": "Corp",
+                        "name": "label_file_size",
+                        "recolor": false,
+                        "styles": [
+                            {
+                                "base": "lv_style_transp",
+                                "text": {
+                                    "color": "#ffffff"
+                                },
+                                "type": "LV_LABEL_STYLE_MAIN"
+                            }
+                        ],
+                        "text": "Text",
+                        "visible": true,
+                        "widget": "Label"
+                    },
+                    {
+                        "accessible": true,
+                        "align": "Left",
+                        "anim speed": 25,
+                        "body draw": false,
+                        "class": "lv_label",
+                        "drag": false,
+                        "geometry": {
+                            "height": 22,
+                            "width": 399,
+                            "x": 116,
+                            "y": 157
+                        },
+                        "locked": true,
+                        "long mode": "Corp",
+                        "name": "label_w_h",
+                        "recolor": false,
+                        "styles": [
+                            {
+                                "base": "lv_style_transp",
+                                "text": {
+                                    "color": "#ffffff"
+                                },
+                                "type": "LV_LABEL_STYLE_MAIN"
+                            }
+                        ],
+                        "text": "Text",
+                        "visible": true,
+                        "widget": "Label"
+                    },
+                    {
+                        "accessible": true,
+                        "align": "Left",
+                        "anim speed": 25,
+                        "body draw": false,
+                        "class": "lv_label",
+                        "drag": false,
+                        "geometry": {
+                            "height": 19,
+                            "width": 41,
+                            "x": 24,
+                            "y": 212
+                        },
+                        "locked": true,
+                        "long mode": "Expand",
+                        "name": "label_title_file_time",
+                        "recolor": false,
+                        "styles": [
+                            {
+                                "base": "lv_style_transp",
+                                "text": {
+                                    "color": "#ffffff"
+                                },
+                                "type": "LV_LABEL_STYLE_MAIN"
+                            }
+                        ],
+                        "text": "Time:",
+                        "visible": true,
+                        "widget": "Label"
+                    },
+                    {
+                        "accessible": true,
+                        "align": "Left",
+                        "anim speed": 25,
+                        "body draw": false,
+                        "class": "lv_label",
+                        "drag": false,
+                        "geometry": {
+                            "height": 22,
+                            "width": 395,
+                            "x": 116,
+                            "y": 215
+                        },
+                        "locked": true,
+                        "long mode": "Corp",
+                        "name": "label_file_time",
+                        "recolor": false,
+                        "styles": [
+                            {
+                                "base": "lv_style_transp",
+                                "text": {
+                                    "color": "#ffffff"
+                                },
+                                "type": "LV_LABEL_STYLE_MAIN"
+                            }
+                        ],
+                        "text": "Text",
+                        "visible": true,
+                        "widget": "Label"
+                    }
+                ],
+                "class": "lv_cont",
+                "drag": false,
+                "fit": {
+                    "cont_bottom_fit": 0,
+                    "cont_left_fit": 0,
+                    "cont_right_fit": 0,
+                    "cont_top_fit": 0
+                },
+                "geometry": {
+                    "height": 302,
+                    "width": 536,
+                    "x": 137,
+                    "y": 17
+                },
+                "layout": "Off",
+                "locked": false,
+                "name": "container_info",
+                "styles": [
+                    {
+                        "base": "lv_style_pretty",
+                        "body": {
+                            "border": {
+                                "width": 1
+                            },
+                            "opa": 200
+                        },
+                        "type": "LV_CONT_STYLE_MAIN"
+                    }
+                ],
+                "visible": false,
+                "widget": "Container"
+            }
+        ]
+    }
+}

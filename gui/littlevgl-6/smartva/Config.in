@@ -1,0 +1,40 @@
+if PACKAGE_smartva
+
+config lvgl
+    bool "Enabel lvgl core"
+    default y
+        help
+	lvgl core
+
+config lv_drivers
+    bool "Enabel lvgl drivers"
+    default y
+        help
+	lvgl drivers
+
+config lv_examplesp
+    bool "Enabel lvgl examples"
+    default y
+        help
+	lvgl examples
+
+config story
+    bool "Enabel story"
+    default y
+        help
+	story-machine: 800X480 screen
+
+choice TP_USE
+	default CTP_USE
+    bool "Choose the tp type"
+
+    config CTP_USE
+	bool "use ctp"
+
+	config RTP_USE
+	bool "use rtp"
+	select PACKAGE_tslib
+	select TSLIB_ENABLE_input
+	select TSLIB_ENABLE_dejitter
+endchoice
+endif

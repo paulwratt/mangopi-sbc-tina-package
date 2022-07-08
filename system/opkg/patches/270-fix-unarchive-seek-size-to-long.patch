@@ -1,0 +1,26 @@
+From 495f96158ce12933bde276e46371d5782cf1113c Mon Sep 17 00:00:00 2001
+From: chengweipeng <chengweipeng@allwinnertech.com>
+Date: Sat, 18 Sep 2021 10:01:42 +0800
+Subject: [PATCH] fix unarchive seek size to long
+
+Signed-off-by: chengweipeng <chengweipeng@allwinnertech.com>
+---
+ libbb/unarchive.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/libbb/unarchive.c b/libbb/unarchive.c
+index 5d4464f..9bb6a55 100644
+--- a/libbb/unarchive.c
++++ b/libbb/unarchive.c
+@@ -61,7 +61,7 @@ seek_by_read(FILE* fd, size_t len)
+ }
+ 
+ static void
+-seek_sub_file(FILE *fd, const int count)
++seek_sub_file(FILE *fd, const long count)
+ {
+ 	archive_offset += count;
+ 
+-- 
+2.29.0
+

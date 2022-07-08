@@ -1,0 +1,2335 @@
+{
+    "lvgl": {
+        "name": "music.lvgl",
+        "resolution": {
+            "height": 480,
+            "width": 800
+        },
+        "screen color": "#9d9d9d",
+        "widgets": [
+            {
+                "accessible": true,
+                "children": [
+                    {
+                        "accessible": true,
+                        "class": "lv_list",
+                        "drag": false,
+                        "edge flash": true,
+                        "geometry": {
+                            "height": 417,
+                            "width": 306,
+                            "x": 0,
+                            "y": 419
+                        },
+                        "items": [
+                            {
+                                "img": "music_item.png",
+                                "name": "1"
+                            },
+                            {
+                                "img": "music_item.png",
+                                "name": "2"
+                            },
+                            {
+                                "img": "music_item.png",
+                                "name": "3"
+                            },
+                            {
+                                "img": "music_item.png",
+                                "name": "4"
+                            },
+                            {
+                                "img": "music_item.png",
+                                "name": "5"
+                            },
+                            {
+                                "img": "music_item.png",
+                                "name": "6"
+                            }
+                        ],
+                        "locked": false,
+                        "name": "list_1",
+                        "scroll propagation": false,
+                        "single mode": true,
+                        "styles": [
+                            {
+                                "base": "lv_style_btn_pr",
+                                "body": {
+                                    "border": {
+                                        "width": 0
+                                    },
+                                    "grad_color": "#5555ff",
+                                    "main_color": "#55aaff",
+                                    "radius": 20
+                                },
+                                "type": "LV_LIST_STYLE_BTN_PR"
+                            },
+                            {
+                                "base": "lv_style_btn_rel",
+                                "body": {
+                                    "border": {
+                                        "color": "#5555ff",
+                                        "part": 1,
+                                        "width": 0
+                                    },
+                                    "grad_color": "#e5e5e5",
+                                    "main_color": "#ebebeb",
+                                    "radius": 20
+                                },
+                                "image": {
+                                    "color": "#00aa7f",
+                                    "intense": 255
+                                },
+                                "text": {
+                                    "color": "#000000"
+                                },
+                                "type": "LV_LIST_STYLE_BTN_REL"
+                            },
+                            {
+                                "base": "lv_style_btn_tgl_pr",
+                                "body": {
+                                    "border": {
+                                        "color": "#ff0000",
+                                        "width": 0
+                                    },
+                                    "grad_color": "#5555ff",
+                                    "main_color": "#55aaff",
+                                    "radius": 20
+                                },
+                                "type": "LV_LIST_STYLE_BTN_TGL_PR"
+                            },
+                            {
+                                "base": "lv_style_btn_tgl_rel",
+                                "body": {
+                                    "border": {
+                                        "color": "#ff0000",
+                                        "width": 0
+                                    },
+                                    "grad_color": "#5555ff",
+                                    "main_color": "#55aaff",
+                                    "radius": 20
+                                },
+                                "image": {
+                                    "color": "#ff0000"
+                                },
+                                "type": "LV_LIST_STYLE_BTN_TGL_REL"
+                            },
+                            {
+                                "base": "lv_style_pretty",
+                                "body": {
+                                    "border": {
+                                        "width": 0
+                                    },
+                                    "grad_color": "#9d9d9d",
+                                    "main_color": "#9d9d9d",
+                                    "opa": 0,
+                                    "padding": {
+                                        "bottom": 0,
+                                        "left": 0,
+                                        "right": 0
+                                    },
+                                    "radius": 10
+                                },
+                                "type": "LV_LIST_STYLE_SCRL"
+                            },
+                            {
+                                "base": "lv_style_transp_fit",
+                                "body": {
+                                    "border": {
+                                        "color": "#5555ff"
+                                    }
+                                },
+                                "type": "LV_LIST_STYLE_BG"
+                            },
+                            {
+                                "body": {
+                                    "border": {
+                                        "color": "#000000",
+                                        "opa": 255,
+                                        "part": 15,
+                                        "width": 0
+                                    },
+                                    "grad_color": "#5596d8",
+                                    "main_color": "#5596d8",
+                                    "opa": 255,
+                                    "padding": {
+                                        "bottom": 5,
+                                        "inner": 5,
+                                        "left": 5,
+                                        "right": 5,
+                                        "top": 5
+                                    },
+                                    "radius": 0,
+                                    "shadow": {
+                                        "color": "#808080",
+                                        "type": 1,
+                                        "width": 0
+                                    }
+                                },
+                                "image": {
+                                    "color": "#f0f0f0",
+                                    "intense": 0,
+                                    "opa": 255
+                                },
+                                "text": {
+                                    "color": "#f0f0f0",
+                                    "font": "Roboto 16",
+                                    "letter_space": 0,
+                                    "line_space": 2,
+                                    "opa": 255,
+                                    "sel_color": "#5596d8"
+                                },
+                                "type": "LV_LIST_STYLE_EDGE_FLASH"
+                            }
+                        ],
+                        "visible": true,
+                        "widget": "List"
+                    },
+                    {
+                        "accessible": true,
+                        "children": [
+                            {
+                                "accessible": true,
+                                "class": "lv_list",
+                                "drag": false,
+                                "edge flash": true,
+                                "geometry": {
+                                    "height": 417,
+                                    "width": 306,
+                                    "x": 0,
+                                    "y": 419
+                                },
+                                "items": [
+                                    {
+                                        "img": "music_item.png",
+                                        "name": "1"
+                                    },
+                                    {
+                                        "img": "music_item.png",
+                                        "name": "2"
+                                    },
+                                    {
+                                        "img": "music_item.png",
+                                        "name": "3"
+                                    },
+                                    {
+                                        "img": "music_item.png",
+                                        "name": "4"
+                                    },
+                                    {
+                                        "img": "music_item.png",
+                                        "name": "5"
+                                    },
+                                    {
+                                        "img": "music_item.png",
+                                        "name": "6"
+                                    }
+                                ],
+                                "locked": false,
+                                "name": "list_3",
+                                "scroll propagation": false,
+                                "single mode": true,
+                                "styles": [
+                                    {
+                                        "base": "lv_style_btn_pr",
+                                        "body": {
+                                            "border": {
+                                                "width": 0
+                                            },
+                                            "grad_color": "#5555ff",
+                                            "main_color": "#55aaff",
+                                            "radius": 20
+                                        },
+                                        "type": "LV_LIST_STYLE_BTN_PR"
+                                    },
+                                    {
+                                        "base": "lv_style_btn_rel",
+                                        "body": {
+                                            "border": {
+                                                "color": "#5555ff",
+                                                "part": 1,
+                                                "width": 0
+                                            },
+                                            "grad_color": "#e5e5e5",
+                                            "main_color": "#ebebeb",
+                                            "radius": 20
+                                        },
+                                        "image": {
+                                            "color": "#00aa7f",
+                                            "intense": 255
+                                        },
+                                        "text": {
+                                            "color": "#000000"
+                                        },
+                                        "type": "LV_LIST_STYLE_BTN_REL"
+                                    },
+                                    {
+                                        "base": "lv_style_btn_tgl_pr",
+                                        "body": {
+                                            "border": {
+                                                "color": "#ff0000",
+                                                "width": 0
+                                            },
+                                            "grad_color": "#5555ff",
+                                            "main_color": "#55aaff",
+                                            "radius": 20
+                                        },
+                                        "type": "LV_LIST_STYLE_BTN_TGL_PR"
+                                    },
+                                    {
+                                        "base": "lv_style_btn_tgl_rel",
+                                        "body": {
+                                            "border": {
+                                                "color": "#ff0000",
+                                                "width": 0
+                                            },
+                                            "grad_color": "#5555ff",
+                                            "main_color": "#55aaff",
+                                            "radius": 20
+                                        },
+                                        "image": {
+                                            "color": "#ff0000"
+                                        },
+                                        "type": "LV_LIST_STYLE_BTN_TGL_REL"
+                                    },
+                                    {
+                                        "base": "lv_style_pretty",
+                                        "body": {
+                                            "border": {
+                                                "width": 0
+                                            },
+                                            "grad_color": "#9d9d9d",
+                                            "main_color": "#9d9d9d",
+                                            "opa": 0,
+                                            "padding": {
+                                                "bottom": 0,
+                                                "left": 0,
+                                                "right": 0
+                                            },
+                                            "radius": 10
+                                        },
+                                        "type": "LV_LIST_STYLE_SCRL"
+                                    },
+                                    {
+                                        "base": "lv_style_transp_fit",
+                                        "body": {
+                                            "border": {
+                                                "color": "#5555ff"
+                                            }
+                                        },
+                                        "type": "LV_LIST_STYLE_BG"
+                                    },
+                                    {
+                                        "body": {
+                                            "border": {
+                                                "color": "#000000",
+                                                "opa": 255,
+                                                "part": 15,
+                                                "width": 0
+                                            },
+                                            "grad_color": "#5596d8",
+                                            "main_color": "#5596d8",
+                                            "opa": 255,
+                                            "padding": {
+                                                "bottom": 5,
+                                                "inner": 5,
+                                                "left": 5,
+                                                "right": 5,
+                                                "top": 5
+                                            },
+                                            "radius": 0,
+                                            "shadow": {
+                                                "color": "#808080",
+                                                "type": 1,
+                                                "width": 0
+                                            }
+                                        },
+                                        "image": {
+                                            "color": "#f0f0f0",
+                                            "intense": 0,
+                                            "opa": 255
+                                        },
+                                        "text": {
+                                            "color": "#f0f0f0",
+                                            "font": "Roboto 16",
+                                            "letter_space": 0,
+                                            "line_space": 2,
+                                            "opa": 255,
+                                            "sel_color": "#5596d8"
+                                        },
+                                        "type": "LV_LIST_STYLE_EDGE_FLASH"
+                                    }
+                                ],
+                                "visible": true,
+                                "widget": "List"
+                            }
+                        ],
+                        "class": "lv_list",
+                        "drag": false,
+                        "edge flash": true,
+                        "geometry": {
+                            "height": 417,
+                            "width": 306,
+                            "x": 0,
+                            "y": 841
+                        },
+                        "items": [
+                            {
+                                "img": "music_item.png",
+                                "name": "1"
+                            },
+                            {
+                                "img": "music_item.png",
+                                "name": "2"
+                            },
+                            {
+                                "img": "music_item.png",
+                                "name": "3"
+                            },
+                            {
+                                "img": "music_item.png",
+                                "name": "4"
+                            },
+                            {
+                                "img": "music_item.png",
+                                "name": "5"
+                            },
+                            {
+                                "img": "music_item.png",
+                                "name": "6"
+                            }
+                        ],
+                        "locked": false,
+                        "name": "list_2",
+                        "scroll propagation": false,
+                        "single mode": true,
+                        "styles": [
+                            {
+                                "base": "lv_style_btn_pr",
+                                "body": {
+                                    "border": {
+                                        "width": 0
+                                    },
+                                    "grad_color": "#5555ff",
+                                    "main_color": "#55aaff",
+                                    "radius": 20
+                                },
+                                "type": "LV_LIST_STYLE_BTN_PR"
+                            },
+                            {
+                                "base": "lv_style_btn_rel",
+                                "body": {
+                                    "border": {
+                                        "color": "#5555ff",
+                                        "part": 1,
+                                        "width": 0
+                                    },
+                                    "grad_color": "#e5e5e5",
+                                    "main_color": "#ebebeb",
+                                    "radius": 20
+                                },
+                                "image": {
+                                    "color": "#00aa7f",
+                                    "intense": 255
+                                },
+                                "text": {
+                                    "color": "#000000"
+                                },
+                                "type": "LV_LIST_STYLE_BTN_REL"
+                            },
+                            {
+                                "base": "lv_style_btn_tgl_pr",
+                                "body": {
+                                    "border": {
+                                        "color": "#ff0000",
+                                        "width": 0
+                                    },
+                                    "grad_color": "#5555ff",
+                                    "main_color": "#55aaff",
+                                    "radius": 20
+                                },
+                                "type": "LV_LIST_STYLE_BTN_TGL_PR"
+                            },
+                            {
+                                "base": "lv_style_btn_tgl_rel",
+                                "body": {
+                                    "border": {
+                                        "color": "#ff0000",
+                                        "width": 0
+                                    },
+                                    "grad_color": "#5555ff",
+                                    "main_color": "#55aaff",
+                                    "radius": 20
+                                },
+                                "image": {
+                                    "color": "#ff0000"
+                                },
+                                "type": "LV_LIST_STYLE_BTN_TGL_REL"
+                            },
+                            {
+                                "base": "lv_style_pretty",
+                                "body": {
+                                    "border": {
+                                        "width": 0
+                                    },
+                                    "grad_color": "#9d9d9d",
+                                    "main_color": "#9d9d9d",
+                                    "opa": 0,
+                                    "padding": {
+                                        "bottom": 0,
+                                        "left": 0,
+                                        "right": 0
+                                    },
+                                    "radius": 10
+                                },
+                                "type": "LV_LIST_STYLE_SCRL"
+                            },
+                            {
+                                "base": "lv_style_transp_fit",
+                                "body": {
+                                    "border": {
+                                        "color": "#5555ff"
+                                    }
+                                },
+                                "type": "LV_LIST_STYLE_BG"
+                            },
+                            {
+                                "body": {
+                                    "border": {
+                                        "color": "#000000",
+                                        "opa": 255,
+                                        "part": 15,
+                                        "width": 0
+                                    },
+                                    "grad_color": "#5596d8",
+                                    "main_color": "#5596d8",
+                                    "opa": 255,
+                                    "padding": {
+                                        "bottom": 5,
+                                        "inner": 5,
+                                        "left": 5,
+                                        "right": 5,
+                                        "top": 5
+                                    },
+                                    "radius": 0,
+                                    "shadow": {
+                                        "color": "#808080",
+                                        "type": 1,
+                                        "width": 0
+                                    }
+                                },
+                                "image": {
+                                    "color": "#f0f0f0",
+                                    "intense": 0,
+                                    "opa": 255
+                                },
+                                "text": {
+                                    "color": "#f0f0f0",
+                                    "font": "Roboto 16",
+                                    "letter_space": 0,
+                                    "line_space": 2,
+                                    "opa": 255,
+                                    "sel_color": "#5596d8"
+                                },
+                                "type": "LV_LIST_STYLE_EDGE_FLASH"
+                            }
+                        ],
+                        "visible": true,
+                        "widget": "List"
+                    }
+                ],
+                "class": "lv_list",
+                "drag": false,
+                "edge flash": true,
+                "geometry": {
+                    "height": 417,
+                    "width": 306,
+                    "x": 494,
+                    "y": 5
+                },
+                "items": [
+                    {
+                        "img": "music_item.png",
+                        "name": "1"
+                    },
+                    {
+                        "img": "music_item.png",
+                        "name": "2"
+                    },
+                    {
+                        "img": "music_item.png",
+                        "name": "3"
+                    },
+                    {
+                        "img": "music_item.png",
+                        "name": "4"
+                    },
+                    {
+                        "img": "music_item.png",
+                        "name": "5"
+                    },
+                    {
+                        "img": "music_item.png",
+                        "name": "6"
+                    }
+                ],
+                "locked": false,
+                "name": "media_list",
+                "scroll propagation": false,
+                "single mode": true,
+                "styles": [
+                    {
+                        "base": "lv_style_btn_pr",
+                        "body": {
+                            "border": {
+                                "width": 0
+                            },
+                            "grad_color": "#5555ff",
+                            "main_color": "#55aaff",
+                            "radius": 20
+                        },
+                        "type": "LV_LIST_STYLE_BTN_PR"
+                    },
+                    {
+                        "base": "lv_style_btn_rel",
+                        "body": {
+                            "border": {
+                                "color": "#5555ff",
+                                "part": 1,
+                                "width": 0
+                            },
+                            "grad_color": "#e5e5e5",
+                            "main_color": "#ebebeb",
+                            "radius": 20
+                        },
+                        "image": {
+                            "color": "#00aa7f",
+                            "intense": 255
+                        },
+                        "text": {
+                            "color": "#000000"
+                        },
+                        "type": "LV_LIST_STYLE_BTN_REL"
+                    },
+                    {
+                        "base": "lv_style_btn_tgl_pr",
+                        "body": {
+                            "border": {
+                                "color": "#ff0000",
+                                "width": 0
+                            },
+                            "grad_color": "#5555ff",
+                            "main_color": "#55aaff",
+                            "radius": 20
+                        },
+                        "type": "LV_LIST_STYLE_BTN_TGL_PR"
+                    },
+                    {
+                        "base": "lv_style_btn_tgl_rel",
+                        "body": {
+                            "border": {
+                                "color": "#ff0000",
+                                "width": 0
+                            },
+                            "grad_color": "#5555ff",
+                            "main_color": "#55aaff",
+                            "radius": 20
+                        },
+                        "image": {
+                            "color": "#ff0000"
+                        },
+                        "type": "LV_LIST_STYLE_BTN_TGL_REL"
+                    },
+                    {
+                        "base": "lv_style_pretty",
+                        "body": {
+                            "border": {
+                                "width": 0
+                            },
+                            "grad_color": "#9d9d9d",
+                            "main_color": "#9d9d9d",
+                            "opa": 0,
+                            "padding": {
+                                "bottom": 0,
+                                "left": 0,
+                                "right": 0
+                            },
+                            "radius": 10
+                        },
+                        "type": "LV_LIST_STYLE_SCRL"
+                    },
+                    {
+                        "base": "lv_style_transp_fit",
+                        "body": {
+                            "border": {
+                                "color": "#5555ff"
+                            }
+                        },
+                        "type": "LV_LIST_STYLE_BG"
+                    },
+                    {
+                        "body": {
+                            "border": {
+                                "color": "#000000",
+                                "opa": 255,
+                                "part": 15,
+                                "width": 0
+                            },
+                            "grad_color": "#5596d8",
+                            "main_color": "#5596d8",
+                            "opa": 255,
+                            "padding": {
+                                "bottom": 5,
+                                "inner": 5,
+                                "left": 5,
+                                "right": 5,
+                                "top": 5
+                            },
+                            "radius": 0,
+                            "shadow": {
+                                "color": "#808080",
+                                "type": 1,
+                                "width": 0
+                            }
+                        },
+                        "image": {
+                            "color": "#f0f0f0",
+                            "intense": 0,
+                            "opa": 255
+                        },
+                        "text": {
+                            "color": "#f0f0f0",
+                            "font": "Roboto 16",
+                            "letter_space": 0,
+                            "line_space": 2,
+                            "opa": 255,
+                            "sel_color": "#5596d8"
+                        },
+                        "type": "LV_LIST_STYLE_EDGE_FLASH"
+                    }
+                ],
+                "visible": true,
+                "widget": "List"
+            },
+            {
+                "accessible": true,
+                "auto size": true,
+                "class": "lv_img",
+                "drag": false,
+                "geometry": {
+                    "height": 170,
+                    "width": 170,
+                    "x": 142,
+                    "y": 129
+                },
+                "locked": false,
+                "name": "image_1",
+                "offset": {
+                    "X": 0,
+                    "Y": 0
+                },
+                "source": "music_album.png",
+                "visible": true,
+                "widget": "Image"
+            },
+            {
+                "accessible": true,
+                "auto size": true,
+                "class": "lv_img",
+                "drag": false,
+                "geometry": {
+                    "height": 250,
+                    "width": 250,
+                    "x": 102,
+                    "y": 91
+                },
+                "locked": false,
+                "name": "image_2",
+                "offset": {
+                    "X": 0,
+                    "Y": 0
+                },
+                "source": "music_album_out.png",
+                "visible": true,
+                "widget": "Image"
+            },
+            {
+                "accessible": true,
+                "children": [
+                    {
+                        "accessible": true,
+                        "class": "lv_imgbtn",
+                        "drag": false,
+                        "geometry": {
+                            "height": 48,
+                            "width": 48,
+                            "x": 71,
+                            "y": 5
+                        },
+                        "locked": false,
+                        "name": "btn_play",
+                        "source inactive": "",
+                        "source pressed": "music_play.png",
+                        "source released": "music_play.png",
+                        "source toggled pressed": "music_pause.png",
+                        "source toggled released": "music_pause.png",
+                        "state": "Released",
+                        "toggle": true,
+                        "visible": true,
+                        "widget": "Image button"
+                    },
+                    {
+                        "accessible": true,
+                        "anim time": 0,
+                        "class": "lv_slider",
+                        "drag": false,
+                        "geometry": {
+                            "height": 20,
+                            "width": 299,
+                            "x": 210,
+                            "y": 14
+                        },
+                        "knob inside": false,
+                        "locked": false,
+                        "name": "progressbar",
+                        "range": {
+                            "max": 1024,
+                            "min": 0
+                        },
+                        "styles": [
+                            {
+                                "base": "lv_style_pretty_color",
+                                "body": {
+                                    "padding": {
+                                        "bottom": 0,
+                                        "inner": 0,
+                                        "left": 0,
+                                        "right": 0,
+                                        "top": 0
+                                    }
+                                },
+                                "type": "LV_SLIDER_STYLE_INDIC"
+                            },
+                            {
+                                "base": "lv_style_pretty",
+                                "body": {
+                                    "radius": 15
+                                },
+                                "type": "LV_SLIDER_STYLE_KNOB"
+                            }
+                        ],
+                        "value": 0,
+                        "visible": true,
+                        "widget": "Slider"
+                    },
+                    {
+                        "accessible": true,
+                        "anim time": 0,
+                        "class": "lv_slider",
+                        "drag": false,
+                        "geometry": {
+                            "height": 20,
+                            "width": 136,
+                            "x": 652,
+                            "y": 16
+                        },
+                        "knob inside": false,
+                        "locked": false,
+                        "name": "volume_bar",
+                        "range": {
+                            "max": 40,
+                            "min": 0
+                        },
+                        "styles": [
+                            {
+                                "base": "lv_style_pretty_color",
+                                "body": {
+                                    "padding": {
+                                        "bottom": 0,
+                                        "inner": 0,
+                                        "left": 0,
+                                        "right": 0,
+                                        "top": 0
+                                    }
+                                },
+                                "type": "LV_SLIDER_STYLE_INDIC"
+                            },
+                            {
+                                "base": "lv_style_pretty",
+                                "body": {
+                                    "radius": 15
+                                },
+                                "type": "LV_SLIDER_STYLE_KNOB"
+                            }
+                        ],
+                        "value": 30,
+                        "visible": true,
+                        "widget": "Slider"
+                    },
+                    {
+                        "accessible": true,
+                        "align": "Left",
+                        "anim speed": 25,
+                        "body draw": false,
+                        "class": "lv_label",
+                        "drag": false,
+                        "geometry": {
+                            "height": 19,
+                            "width": 62,
+                            "x": 177,
+                            "y": 35
+                        },
+                        "locked": false,
+                        "long mode": "Expand",
+                        "name": "curr_time",
+                        "recolor": false,
+                        "styles": [
+                            {
+                                "base": "lv_style_transp",
+                                "text": {
+                                    "color": "#000000"
+                                },
+                                "type": "LV_LABEL_STYLE_MAIN"
+                            }
+                        ],
+                        "text": "00:00:00",
+                        "visible": true,
+                        "widget": "Label"
+                    },
+                    {
+                        "accessible": true,
+                        "align": "Left",
+                        "anim speed": 25,
+                        "body draw": false,
+                        "class": "lv_label",
+                        "drag": false,
+                        "geometry": {
+                            "height": 19,
+                            "width": 62,
+                            "x": 453,
+                            "y": 32
+                        },
+                        "locked": false,
+                        "long mode": "Expand",
+                        "name": "total_time",
+                        "recolor": false,
+                        "styles": [
+                            {
+                                "base": "lv_style_transp",
+                                "text": {
+                                    "color": "#000000"
+                                },
+                                "type": "LV_LABEL_STYLE_MAIN"
+                            }
+                        ],
+                        "text": "00:00:00",
+                        "visible": true,
+                        "widget": "Label"
+                    },
+                    {
+                        "accessible": true,
+                        "class": "lv_imgbtn",
+                        "drag": false,
+                        "geometry": {
+                            "height": 48,
+                            "width": 48,
+                            "x": 128,
+                            "y": 3
+                        },
+                        "locked": false,
+                        "name": "next",
+                        "source inactive": "",
+                        "source pressed": "music_next.png",
+                        "source released": "music_next.png",
+                        "source toggled pressed": "",
+                        "source toggled released": "",
+                        "state": "Released",
+                        "toggle": false,
+                        "visible": true,
+                        "widget": "Image button"
+                    },
+                    {
+                        "accessible": true,
+                        "class": "lv_imgbtn",
+                        "drag": false,
+                        "geometry": {
+                            "height": 48,
+                            "width": 48,
+                            "x": 14,
+                            "y": 4
+                        },
+                        "locked": false,
+                        "name": "last",
+                        "source inactive": "",
+                        "source pressed": "music_prev.png",
+                        "source released": "music_prev.png",
+                        "source toggled pressed": "",
+                        "source toggled released": "",
+                        "state": "Released",
+                        "toggle": false,
+                        "visible": true,
+                        "widget": "Image button"
+                    },
+                    {
+                        "accessible": true,
+                        "class": "lv_imgbtn",
+                        "drag": false,
+                        "geometry": {
+                            "height": 32,
+                            "width": 32,
+                            "x": 582,
+                            "y": 11
+                        },
+                        "locked": false,
+                        "name": "play_mode",
+                        "source inactive": "",
+                        "source pressed": "all_cycle.png",
+                        "source released": "all_cycle.png",
+                        "source toggled pressed": "all_cycle.png",
+                        "source toggled released": "all_cycle.png",
+                        "state": "Released",
+                        "toggle": false,
+                        "visible": true,
+                        "widget": "Image button"
+                    },
+                    {
+                        "accessible": true,
+                        "class": "lv_imgbtn",
+                        "drag": false,
+                        "geometry": {
+                            "height": 32,
+                            "width": 32,
+                            "x": 618,
+                            "y": 10
+                        },
+                        "locked": false,
+                        "name": "volume",
+                        "source inactive": "music_vol.png",
+                        "source pressed": "music_vol.png",
+                        "source released": "music_vol.png",
+                        "source toggled pressed": "music_vol.png",
+                        "source toggled released": "music_vol.png",
+                        "state": "Released",
+                        "toggle": true,
+                        "visible": true,
+                        "widget": "Image button"
+                    },
+                    {
+                        "accessible": true,
+                        "children": [
+                            {
+                                "accessible": true,
+                                "align": "Left",
+                                "anim speed": 25,
+                                "body draw": false,
+                                "class": "lv_label",
+                                "drag": false,
+                                "geometry": {
+                                    "height": 22,
+                                    "width": 43,
+                                    "x": 8,
+                                    "y": 3
+                                },
+                                "locked": false,
+                                "long mode": "Corp",
+                                "name": "menu_label",
+                                "recolor": false,
+                                "text": "menu",
+                                "visible": true,
+                                "widget": "Label"
+                            }
+                        ],
+                        "class": "lv_btn",
+                        "drag": false,
+                        "geometry": {
+                            "height": 28,
+                            "width": 59,
+                            "x": 520,
+                            "y": 13
+                        },
+                        "ink in time": 0,
+                        "ink out time": 0,
+                        "ink wait time": 0,
+                        "layout": "Center",
+                        "locked": false,
+                        "name": "button_menu",
+                        "state": "Released",
+                        "toggle": false,
+                        "visible": true,
+                        "widget": "Button"
+                    }
+                ],
+                "class": "lv_cont",
+                "drag": false,
+                "fit": {
+                    "cont_bottom_fit": 0,
+                    "cont_left_fit": 0,
+                    "cont_right_fit": 0,
+                    "cont_top_fit": 0
+                },
+                "geometry": {
+                    "height": 55,
+                    "width": 800,
+                    "x": 0,
+                    "y": 425
+                },
+                "layout": "Off",
+                "locked": false,
+                "name": "container_1",
+                "styles": [
+                    {
+                        "base": "lv_style_pretty",
+                        "body": {
+                            "radius": 0
+                        },
+                        "type": "LV_CONT_STYLE_MAIN"
+                    }
+                ],
+                "visible": true,
+                "widget": "Container"
+            },
+            {
+                "accessible": true,
+                "align": "Center",
+                "anim speed": 25,
+                "body draw": false,
+                "class": "lv_label",
+                "drag": false,
+                "geometry": {
+                    "height": 29,
+                    "width": 234,
+                    "x": 102,
+                    "y": 10
+                },
+                "locked": false,
+                "long mode": "Corp",
+                "name": "file_name",
+                "recolor": false,
+                "styles": [
+                    {
+                        "base": "lv_style_transp",
+                        "text": {
+                            "color": "#ffffff"
+                        },
+                        "type": "LV_LABEL_STYLE_MAIN"
+                    }
+                ],
+                "text": "",
+                "visible": true,
+                "widget": "Label"
+            },
+            {
+                "accessible": true,
+                "class": "lv_ta",
+                "cursor blink time": 144,
+                "cursor position": 0,
+                "cursor type": "None",
+                "drag": false,
+                "edge flash": false,
+                "geometry": {
+                    "height": 40,
+                    "width": 33,
+                    "x": 4,
+                    "y": 377
+                },
+                "locked": false,
+                "max length": 0,
+                "name": "lrc",
+                "one line mode": false,
+                "password mode": false,
+                "placeholder": "",
+                "scroll propagation": false,
+                "scrollbars": "Off",
+                "styles": [
+                    {
+                        "base": "lv_style_pretty",
+                        "body": {
+                            "border": {
+                                "opa": 0
+                            },
+                            "opa": 0
+                        },
+                        "text": {
+                            "color": "#ffff00",
+                            "sel_color": "#000000"
+                        },
+                        "type": "LV_TA_STYLE_BG"
+                    }
+                ],
+                "text": "",
+                "text align": "Center",
+                "visible": true,
+                "widget": "Text area"
+            },
+            {
+                "accessible": true,
+                "align": "Center",
+                "anim speed": 25,
+                "body draw": false,
+                "class": "lv_label",
+                "drag": false,
+                "geometry": {
+                    "height": 44,
+                    "width": 206,
+                    "x": 113,
+                    "y": 365
+                },
+                "locked": false,
+                "long mode": "Corp",
+                "name": "lrc_no",
+                "recolor": false,
+                "styles": [
+                    {
+                        "base": "lv_style_transp",
+                        "body": {
+                            "border": {
+                                "color": "#ffff00"
+                            },
+                            "shadow": {
+                                "color": "#ffff7f"
+                            }
+                        },
+                        "text": {
+                            "color": "#ffff00",
+                            "font": "microsoft_yahei_en_cn_24_4"
+                        },
+                        "type": "LV_LABEL_STYLE_MAIN"
+                    }
+                ],
+                "text": "没有歌词",
+                "visible": false,
+                "widget": "Label"
+            },
+            {
+                "accessible": true,
+                "children": [
+                    {
+                        "accessible": true,
+                        "align": "Center",
+                        "anim speed": 25,
+                        "body draw": false,
+                        "class": "lv_label",
+                        "drag": false,
+                        "geometry": {
+                            "height": 20,
+                            "width": 42,
+                            "x": 3,
+                            "y": 5
+                        },
+                        "locked": false,
+                        "long mode": "Corp",
+                        "name": "label_online",
+                        "recolor": false,
+                        "text": "online",
+                        "visible": true,
+                        "widget": "Label"
+                    }
+                ],
+                "class": "lv_btn",
+                "drag": false,
+                "geometry": {
+                    "height": 30,
+                    "width": 48,
+                    "x": 439,
+                    "y": 3
+                },
+                "ink in time": 0,
+                "ink out time": 0,
+                "ink wait time": 0,
+                "layout": "Center",
+                "locked": false,
+                "name": "online",
+                "state": "Released",
+                "styles": [
+                    {
+                        "base": "lv_style_btn_rel",
+                        "body": {
+                            "grad_color": "#ffffff",
+                            "main_color": "#ffffff",
+                            "opa": 128
+                        },
+                        "type": "LV_BTN_STYLE_REL"
+                    }
+                ],
+                "toggle": false,
+                "visible": true,
+                "widget": "Button"
+            },
+            {
+                "accessible": true,
+                "class": "lv_list",
+                "drag": false,
+                "edge flash": false,
+                "geometry": {
+                    "height": 56,
+                    "width": 424,
+                    "x": 21,
+                    "y": 360
+                },
+                "items": [
+                ],
+                "locked": true,
+                "name": "lrc_list",
+                "scroll propagation": false,
+                "single mode": false,
+                "styles": [
+                    {
+                        "base": "lv_style_btn_pr",
+                        "body": {
+                            "border": {
+                                "opa": 0
+                            },
+                            "opa": 0
+                        },
+                        "type": "LV_LIST_STYLE_BTN_PR"
+                    },
+                    {
+                        "base": "lv_style_btn_rel",
+                        "body": {
+                            "border": {
+                                "opa": 0
+                            },
+                            "opa": 0
+                        },
+                        "type": "LV_LIST_STYLE_BTN_REL"
+                    },
+                    {
+                        "base": "lv_style_btn_tgl_pr",
+                        "body": {
+                            "border": {
+                                "opa": 0
+                            },
+                            "opa": 0
+                        },
+                        "type": "LV_LIST_STYLE_BTN_TGL_PR"
+                    },
+                    {
+                        "base": "lv_style_btn_tgl_rel",
+                        "body": {
+                            "border": {
+                                "opa": 0
+                            },
+                            "opa": 0
+                        },
+                        "type": "LV_LIST_STYLE_BTN_TGL_REL"
+                    },
+                    {
+                        "base": "lv_style_pretty",
+                        "body": {
+                            "border": {
+                                "opa": 0
+                            },
+                            "opa": 0
+                        },
+                        "type": "LV_LIST_STYLE_SCRL"
+                    },
+                    {
+                        "base": "lv_style_transp_fit",
+                        "body": {
+                            "border": {
+                                "color": "#ffffff",
+                                "opa": 0
+                            },
+                            "shadow": {
+                                "color": "#178038"
+                            }
+                        },
+                        "type": "LV_LIST_STYLE_BG"
+                    },
+                    {
+                        "body": {
+                            "border": {
+                                "color": "#000000",
+                                "opa": 0,
+                                "part": 15,
+                                "width": 0
+                            },
+                            "grad_color": "#5596d8",
+                            "main_color": "#5596d8",
+                            "opa": 0,
+                            "padding": {
+                                "bottom": 5,
+                                "inner": 5,
+                                "left": 5,
+                                "right": 5,
+                                "top": 5
+                            },
+                            "radius": 0,
+                            "shadow": {
+                                "color": "#808080",
+                                "type": 1,
+                                "width": 0
+                            }
+                        },
+                        "image": {
+                            "color": "#f0f0f0",
+                            "intense": 0,
+                            "opa": 255
+                        },
+                        "text": {
+                            "color": "#f0f0f0",
+                            "font": "Roboto 16",
+                            "letter_space": 0,
+                            "line_space": 2,
+                            "opa": 255,
+                            "sel_color": "#5596d8"
+                        },
+                        "type": "LV_LIST_STYLE_EDGE_FLASH"
+                    },
+                    {
+                        "base": "lv_style_pretty_color",
+                        "body": {
+                            "border": {
+                                "opa": 0
+                            },
+                            "opa": 0
+                        },
+                        "type": "LV_LIST_STYLE_SB"
+                    }
+                ],
+                "visible": true,
+                "widget": "List"
+            },
+            {
+                "accessible": true,
+                "class": "lv_page",
+                "drag": false,
+                "edge flash": false,
+                "geometry": {
+                    "height": 262,
+                    "width": 497,
+                    "x": 0,
+                    "y": 86
+                },
+                "locked": false,
+                "name": "spectrum",
+                "scroll height": 252,
+                "scroll propagation": false,
+                "scroll width": 487,
+                "scrollbars": "Auto",
+                "styles": [
+                    {
+                        "base": "lv_style_pretty",
+                        "body": {
+                            "border": {
+                                "opa": 0
+                            },
+                            "opa": 64
+                        },
+                        "type": "LV_PAGE_STYLE_SCRL"
+                    },
+                    {
+                        "base": "lv_style_pretty_color",
+                        "body": {
+                            "border": {
+                                "opa": 0
+                            },
+                            "opa": 0
+                        },
+                        "type": "LV_PAGE_STYLE_BG"
+                    },
+                    {
+                        "base": "lv_style_pretty_color",
+                        "body": {
+                            "border": {
+                                "opa": 0
+                            },
+                            "opa": 0
+                        },
+                        "type": "LV_PAGE_STYLE_SB"
+                    }
+                ],
+                "visible": true,
+                "widget": "Page"
+            },
+            {
+                "accessible": true,
+                "align": "Left",
+                "anim speed": 25,
+                "body draw": false,
+                "class": "lv_label",
+                "drag": false,
+                "geometry": {
+                    "height": 38,
+                    "width": 223,
+                    "x": 126,
+                    "y": 190
+                },
+                "locked": false,
+                "long mode": "Corp",
+                "name": "download",
+                "recolor": false,
+                "styles": [
+                    {
+                        "base": "lv_style_transp",
+                        "text": {
+                            "color": "#ffff7f",
+                            "font": "Roboto 28"
+                        },
+                        "type": "LV_LABEL_STYLE_MAIN"
+                    }
+                ],
+                "text": "",
+                "visible": false,
+                "widget": "Label"
+            },
+            {
+                "accessible": true,
+                "children": [
+                    {
+                        "accessible": true,
+                        "align": "Left",
+                        "anim speed": 25,
+                        "body draw": false,
+                        "class": "lv_label",
+                        "drag": false,
+                        "geometry": {
+                            "height": 22,
+                            "width": 22,
+                            "x": 8,
+                            "y": 32
+                        },
+                        "locked": false,
+                        "long mode": "Corp",
+                        "name": "label_1",
+                        "recolor": false,
+                        "text": "A",
+                        "visible": true,
+                        "widget": "Label"
+                    },
+                    {
+                        "accessible": true,
+                        "anim time": 0,
+                        "class": "lv_slider",
+                        "drag": false,
+                        "geometry": {
+                            "height": 25,
+                            "width": 198,
+                            "x": 28,
+                            "y": 31
+                        },
+                        "knob inside": false,
+                        "locked": false,
+                        "name": "slider_a",
+                        "range": {
+                            "max": 1024,
+                            "min": 0
+                        },
+                        "value": 19,
+                        "visible": true,
+                        "widget": "Slider"
+                    },
+                    {
+                        "accessible": true,
+                        "align": "Left",
+                        "anim speed": 25,
+                        "body draw": false,
+                        "class": "lv_label",
+                        "drag": false,
+                        "geometry": {
+                            "height": 19,
+                            "width": 62,
+                            "x": 175,
+                            "y": 17
+                        },
+                        "locked": false,
+                        "long mode": "Expand",
+                        "name": "label_slider_a",
+                        "recolor": false,
+                        "text": "00:00:00",
+                        "visible": true,
+                        "widget": "Label"
+                    },
+                    {
+                        "accessible": true,
+                        "align": "Left",
+                        "anim speed": 25,
+                        "body draw": false,
+                        "class": "lv_label",
+                        "drag": false,
+                        "geometry": {
+                            "height": 22,
+                            "width": 22,
+                            "x": 5,
+                            "y": 97
+                        },
+                        "locked": false,
+                        "long mode": "Corp",
+                        "name": "label_2",
+                        "recolor": false,
+                        "text": "B",
+                        "visible": true,
+                        "widget": "Label"
+                    },
+                    {
+                        "accessible": true,
+                        "anim time": 0,
+                        "class": "lv_slider",
+                        "drag": false,
+                        "geometry": {
+                            "height": 25,
+                            "width": 198,
+                            "x": 28,
+                            "y": 89
+                        },
+                        "knob inside": false,
+                        "locked": false,
+                        "name": "slider_b",
+                        "range": {
+                            "max": 1024,
+                            "min": 0
+                        },
+                        "value": 68,
+                        "visible": true,
+                        "widget": "Slider"
+                    },
+                    {
+                        "accessible": true,
+                        "align": "Left",
+                        "anim speed": 25,
+                        "body draw": false,
+                        "class": "lv_label",
+                        "drag": false,
+                        "geometry": {
+                            "height": 19,
+                            "width": 62,
+                            "x": 174,
+                            "y": 72
+                        },
+                        "locked": false,
+                        "long mode": "Corp",
+                        "name": "label_slider_b",
+                        "recolor": false,
+                        "text": "00:00:00",
+                        "visible": true,
+                        "widget": "Label"
+                    },
+                    {
+                        "accessible": true,
+                        "children": [
+                            {
+                                "accessible": true,
+                                "align": "Center",
+                                "anim speed": 25,
+                                "body draw": false,
+                                "class": "lv_label",
+                                "drag": false,
+                                "geometry": {
+                                    "height": 22,
+                                    "width": 36,
+                                    "x": 14,
+                                    "y": 1
+                                },
+                                "locked": false,
+                                "long mode": "Corp",
+                                "name": "label_AB_OK",
+                                "recolor": false,
+                                "text": "OK",
+                                "visible": true,
+                                "widget": "Label"
+                            }
+                        ],
+                        "class": "lv_btn",
+                        "drag": false,
+                        "geometry": {
+                            "height": 25,
+                            "width": 64,
+                            "x": 49,
+                            "y": 137
+                        },
+                        "ink in time": 0,
+                        "ink out time": 0,
+                        "ink wait time": 0,
+                        "layout": "Center",
+                        "locked": false,
+                        "name": "button_ab_ok",
+                        "state": "Released",
+                        "toggle": false,
+                        "visible": true,
+                        "widget": "Button"
+                    },
+                    {
+                        "accessible": true,
+                        "children": [
+                            {
+                                "accessible": true,
+                                "align": "Center",
+                                "anim speed": 25,
+                                "body draw": false,
+                                "class": "lv_label",
+                                "drag": false,
+                                "geometry": {
+                                    "height": 22,
+                                    "width": 36,
+                                    "x": 14,
+                                    "y": 1
+                                },
+                                "locked": false,
+                                "long mode": "Corp",
+                                "name": "label_AB_ESC",
+                                "recolor": false,
+                                "text": "Esc",
+                                "visible": true,
+                                "widget": "Label"
+                            }
+                        ],
+                        "class": "lv_btn",
+                        "drag": false,
+                        "geometry": {
+                            "height": 25,
+                            "width": 64,
+                            "x": 140,
+                            "y": 137
+                        },
+                        "ink in time": 0,
+                        "ink out time": 0,
+                        "ink wait time": 0,
+                        "layout": "Center",
+                        "locked": false,
+                        "name": "button_ab_esc",
+                        "state": "Released",
+                        "toggle": false,
+                        "visible": true,
+                        "widget": "Button"
+                    }
+                ],
+                "class": "lv_page",
+                "drag": false,
+                "edge flash": false,
+                "geometry": {
+                    "height": 191,
+                    "width": 266,
+                    "x": 283,
+                    "y": 229
+                },
+                "locked": false,
+                "name": "ab_page",
+                "scroll height": 181,
+                "scroll propagation": false,
+                "scroll width": 256,
+                "scrollbars": "Auto",
+                "visible": false,
+                "widget": "Page"
+            },
+            {
+                "accessible": true,
+                "children": [
+                    {
+                        "accessible": true,
+                        "children": [
+                            {
+                                "accessible": true,
+                                "align": "Center",
+                                "anim speed": 25,
+                                "body draw": false,
+                                "class": "lv_label",
+                                "drag": false,
+                                "geometry": {
+                                    "height": 34,
+                                    "width": 52,
+                                    "x": 33,
+                                    "y": 0
+                                },
+                                "locked": false,
+                                "long mode": "Corp",
+                                "name": "label_sound_effect",
+                                "recolor": false,
+                                "styles": [
+                                    {
+                                        "base": "lv_style_transp",
+                                        "text": {
+                                            "font": "microsoft_yahei_en_cn_24_4"
+                                        },
+                                        "type": "LV_LABEL_STYLE_MAIN"
+                                    }
+                                ],
+                                "text": "音效",
+                                "visible": true,
+                                "widget": "Label"
+                            }
+                        ],
+                        "class": "lv_btn",
+                        "drag": false,
+                        "geometry": {
+                            "height": 35,
+                            "width": 118,
+                            "x": 18,
+                            "y": 7
+                        },
+                        "ink in time": 0,
+                        "ink out time": 0,
+                        "ink wait time": 0,
+                        "layout": "Center",
+                        "locked": false,
+                        "name": "button_sound_effect",
+                        "state": "Released",
+                        "toggle": false,
+                        "visible": true,
+                        "widget": "Button"
+                    },
+                    {
+                        "accessible": true,
+                        "children": [
+                            {
+                                "accessible": true,
+                                "align": "Center",
+                                "anim speed": 25,
+                                "body draw": false,
+                                "class": "lv_label",
+                                "drag": false,
+                                "geometry": {
+                                    "height": 34,
+                                    "width": 97,
+                                    "x": 11,
+                                    "y": 0
+                                },
+                                "locked": false,
+                                "long mode": "Corp",
+                                "name": "label_song_information",
+                                "recolor": false,
+                                "styles": [
+                                    {
+                                        "base": "lv_style_transp",
+                                        "text": {
+                                            "font": "microsoft_yahei_en_cn_24_4"
+                                        },
+                                        "type": "LV_LABEL_STYLE_MAIN"
+                                    }
+                                ],
+                                "text": "歌曲信息",
+                                "visible": true,
+                                "widget": "Label"
+                            }
+                        ],
+                        "class": "lv_btn",
+                        "drag": false,
+                        "geometry": {
+                            "height": 35,
+                            "width": 118,
+                            "x": 18,
+                            "y": 46
+                        },
+                        "ink in time": 0,
+                        "ink out time": 0,
+                        "ink wait time": 0,
+                        "layout": "Center",
+                        "locked": false,
+                        "name": "button_song_information",
+                        "state": "Released",
+                        "toggle": false,
+                        "visible": true,
+                        "widget": "Button"
+                    },
+                    {
+                        "accessible": true,
+                        "children": [
+                            {
+                                "accessible": true,
+                                "align": "Center",
+                                "anim speed": 25,
+                                "body draw": false,
+                                "class": "lv_label",
+                                "drag": false,
+                                "geometry": {
+                                    "height": 24,
+                                    "width": 61,
+                                    "x": 29,
+                                    "y": 5
+                                },
+                                "locked": false,
+                                "long mode": "Corp",
+                                "name": "label_AB",
+                                "recolor": false,
+                                "text": "A/B",
+                                "visible": true,
+                                "widget": "Label"
+                            }
+                        ],
+                        "class": "lv_btn",
+                        "drag": false,
+                        "geometry": {
+                            "height": 35,
+                            "width": 118,
+                            "x": 18,
+                            "y": 86
+                        },
+                        "ink in time": 0,
+                        "ink out time": 0,
+                        "ink wait time": 0,
+                        "layout": "Center",
+                        "locked": false,
+                        "name": "button_ab",
+                        "state": "Released",
+                        "toggle": false,
+                        "visible": true,
+                        "widget": "Button"
+                    },
+                    {
+                        "accessible": true,
+                        "children": [
+                            {
+                                "accessible": true,
+                                "align": "Center",
+                                "anim speed": 25,
+                                "body draw": false,
+                                "class": "lv_label",
+                                "drag": false,
+                                "geometry": {
+                                    "height": 34,
+                                    "width": 58,
+                                    "x": 30,
+                                    "y": 0
+                                },
+                                "locked": false,
+                                "long mode": "Corp",
+                                "name": "label_menu_esc",
+                                "recolor": false,
+                                "styles": [
+                                    {
+                                        "base": "lv_style_transp",
+                                        "text": {
+                                            "font": "microsoft_yahei_en_cn_24_4"
+                                        },
+                                        "type": "LV_LABEL_STYLE_MAIN"
+                                    }
+                                ],
+                                "text": "退出",
+                                "visible": true,
+                                "widget": "Label"
+                            }
+                        ],
+                        "class": "lv_btn",
+                        "drag": false,
+                        "geometry": {
+                            "height": 35,
+                            "width": 118,
+                            "x": 18,
+                            "y": 167
+                        },
+                        "ink in time": 0,
+                        "ink out time": 0,
+                        "ink wait time": 0,
+                        "layout": "Center",
+                        "locked": false,
+                        "name": "button_page_menu_exit",
+                        "state": "Released",
+                        "toggle": false,
+                        "visible": true,
+                        "widget": "Button"
+                    },
+                    {
+                        "accessible": true,
+                        "children": [
+                            {
+                                "accessible": true,
+                                "align": "Left",
+                                "anim speed": 25,
+                                "body draw": false,
+                                "class": "lv_label",
+                                "drag": false,
+                                "geometry": {
+                                    "height": 19,
+                                    "width": 62,
+                                    "x": 28,
+                                    "y": 8
+                                },
+                                "locked": false,
+                                "long mode": "Expand",
+                                "name": "label_file_source",
+                                "recolor": false,
+                                "text": "udisk/sd",
+                                "visible": true,
+                                "widget": "Label"
+                            }
+                        ],
+                        "class": "lv_btn",
+                        "drag": false,
+                        "geometry": {
+                            "height": 35,
+                            "width": 118,
+                            "x": 18,
+                            "y": 127
+                        },
+                        "ink in time": 0,
+                        "ink out time": 0,
+                        "ink wait time": 0,
+                        "layout": "Center",
+                        "locked": false,
+                        "name": "button_file_source",
+                        "state": "Released",
+                        "toggle": false,
+                        "visible": true,
+                        "widget": "Button"
+                    }
+                ],
+                "class": "lv_page",
+                "drag": false,
+                "edge flash": false,
+                "geometry": {
+                    "height": 224,
+                    "width": 164,
+                    "x": 554,
+                    "y": 193
+                },
+                "locked": false,
+                "name": "page_menu",
+                "scroll height": 214,
+                "scroll propagation": false,
+                "scroll width": 154,
+                "scrollbars": "Auto",
+                "visible": false,
+                "widget": "Page"
+            },
+            {
+                "accessible": true,
+                "class": "lv_list",
+                "drag": false,
+                "edge flash": true,
+                "geometry": {
+                    "height": 171,
+                    "width": 198,
+                    "x": 349,
+                    "y": 232
+                },
+                "items": [
+                    {
+                        "img": "None",
+                        "name": "1"
+                    },
+                    {
+                        "img": "None",
+                        "name": "2"
+                    },
+                    {
+                        "img": "None",
+                        "name": "3"
+                    },
+                    {
+                        "img": "None",
+                        "name": "4"
+                    },
+                    {
+                        "img": "None",
+                        "name": "5"
+                    },
+                    {
+                        "img": "None",
+                        "name": "6"
+                    }
+                ],
+                "locked": false,
+                "name": "list_sound_effect",
+                "scroll propagation": false,
+                "single mode": true,
+                "styles": [
+                    {
+                        "base": "lv_style_btn_pr",
+                        "body": {
+                            "border": {
+                                "width": 0
+                            },
+                            "grad_color": "#5555ff",
+                            "main_color": "#55aaff",
+                            "radius": 20
+                        },
+                        "type": "LV_LIST_STYLE_BTN_PR"
+                    },
+                    {
+                        "base": "lv_style_btn_rel",
+                        "body": {
+                            "border": {
+                                "color": "#5555ff",
+                                "part": 1,
+                                "width": 0
+                            },
+                            "grad_color": "#e5e5e5",
+                            "main_color": "#ebebeb",
+                            "radius": 20
+                        },
+                        "image": {
+                            "color": "#00aa7f",
+                            "intense": 255
+                        },
+                        "text": {
+                            "color": "#000000"
+                        },
+                        "type": "LV_LIST_STYLE_BTN_REL"
+                    },
+                    {
+                        "base": "lv_style_btn_tgl_pr",
+                        "body": {
+                            "border": {
+                                "color": "#ff0000",
+                                "width": 0
+                            },
+                            "grad_color": "#5555ff",
+                            "main_color": "#55aaff",
+                            "radius": 20
+                        },
+                        "type": "LV_LIST_STYLE_BTN_TGL_PR"
+                    },
+                    {
+                        "base": "lv_style_btn_tgl_rel",
+                        "body": {
+                            "border": {
+                                "color": "#ff0000",
+                                "width": 0
+                            },
+                            "grad_color": "#5555ff",
+                            "main_color": "#55aaff",
+                            "radius": 20
+                        },
+                        "image": {
+                            "color": "#ff0000"
+                        },
+                        "type": "LV_LIST_STYLE_BTN_TGL_REL"
+                    },
+                    {
+                        "base": "lv_style_pretty",
+                        "body": {
+                            "border": {
+                                "width": 0
+                            },
+                            "grad_color": "#9d9d9d",
+                            "main_color": "#9d9d9d",
+                            "opa": 0,
+                            "padding": {
+                                "bottom": 0,
+                                "left": 0,
+                                "right": 0
+                            },
+                            "radius": 10
+                        },
+                        "type": "LV_LIST_STYLE_SCRL"
+                    },
+                    {
+                        "base": "lv_style_transp_fit",
+                        "body": {
+                            "border": {
+                                "color": "#5555ff"
+                            }
+                        },
+                        "type": "LV_LIST_STYLE_BG"
+                    },
+                    {
+                        "body": {
+                            "border": {
+                                "color": "#000000",
+                                "opa": 255,
+                                "part": 15,
+                                "width": 0
+                            },
+                            "grad_color": "#5596d8",
+                            "main_color": "#5596d8",
+                            "opa": 255,
+                            "padding": {
+                                "bottom": 5,
+                                "inner": 5,
+                                "left": 5,
+                                "right": 5,
+                                "top": 5
+                            },
+                            "radius": 0,
+                            "shadow": {
+                                "color": "#808080",
+                                "type": 1,
+                                "width": 0
+                            }
+                        },
+                        "image": {
+                            "color": "#f0f0f0",
+                            "intense": 0,
+                            "opa": 255
+                        },
+                        "text": {
+                            "color": "#f0f0f0",
+                            "font": "Roboto 16",
+                            "letter_space": 0,
+                            "line_space": 2,
+                            "opa": 255,
+                            "sel_color": "#5596d8"
+                        },
+                        "type": "LV_LIST_STYLE_EDGE_FLASH"
+                    }
+                ],
+                "visible": false,
+                "widget": "List"
+            },
+            {
+                "accessible": true,
+                "class": "lv_list",
+                "drag": false,
+                "edge flash": true,
+                "geometry": {
+                    "height": 171,
+                    "width": 198,
+                    "x": 352,
+                    "y": 234
+                },
+                "items": [
+                    {
+                        "img": "None",
+                        "name": "1"
+                    },
+                    {
+                        "img": "None",
+                        "name": "2"
+                    },
+                    {
+                        "img": "None",
+                        "name": "3"
+                    },
+                    {
+                        "img": "None",
+                        "name": "4"
+                    },
+                    {
+                        "img": "None",
+                        "name": "5"
+                    },
+                    {
+                        "img": "None",
+                        "name": "6"
+                    }
+                ],
+                "locked": false,
+                "name": "list_song_information",
+                "scroll propagation": false,
+                "single mode": true,
+                "styles": [
+                    {
+                        "base": "lv_style_btn_pr",
+                        "body": {
+                            "border": {
+                                "width": 0
+                            },
+                            "grad_color": "#5555ff",
+                            "main_color": "#55aaff",
+                            "radius": 20
+                        },
+                        "type": "LV_LIST_STYLE_BTN_PR"
+                    },
+                    {
+                        "base": "lv_style_btn_rel",
+                        "body": {
+                            "border": {
+                                "color": "#5555ff",
+                                "part": 1,
+                                "width": 0
+                            },
+                            "grad_color": "#e5e5e5",
+                            "main_color": "#ebebeb",
+                            "radius": 20
+                        },
+                        "image": {
+                            "color": "#00aa7f",
+                            "intense": 255
+                        },
+                        "text": {
+                            "color": "#000000"
+                        },
+                        "type": "LV_LIST_STYLE_BTN_REL"
+                    },
+                    {
+                        "base": "lv_style_btn_tgl_pr",
+                        "body": {
+                            "border": {
+                                "color": "#ff0000",
+                                "width": 0
+                            },
+                            "grad_color": "#5555ff",
+                            "main_color": "#55aaff",
+                            "radius": 20
+                        },
+                        "type": "LV_LIST_STYLE_BTN_TGL_PR"
+                    },
+                    {
+                        "base": "lv_style_btn_tgl_rel",
+                        "body": {
+                            "border": {
+                                "color": "#ff0000",
+                                "width": 0
+                            },
+                            "grad_color": "#5555ff",
+                            "main_color": "#55aaff",
+                            "radius": 20
+                        },
+                        "image": {
+                            "color": "#ff0000"
+                        },
+                        "type": "LV_LIST_STYLE_BTN_TGL_REL"
+                    },
+                    {
+                        "base": "lv_style_pretty",
+                        "body": {
+                            "border": {
+                                "width": 0
+                            },
+                            "grad_color": "#9d9d9d",
+                            "main_color": "#9d9d9d",
+                            "opa": 0,
+                            "padding": {
+                                "bottom": 0,
+                                "left": 0,
+                                "right": 0
+                            },
+                            "radius": 10
+                        },
+                        "type": "LV_LIST_STYLE_SCRL"
+                    },
+                    {
+                        "base": "lv_style_transp_fit",
+                        "body": {
+                            "border": {
+                                "color": "#5555ff"
+                            }
+                        },
+                        "type": "LV_LIST_STYLE_BG"
+                    },
+                    {
+                        "body": {
+                            "border": {
+                                "color": "#000000",
+                                "opa": 255,
+                                "part": 15,
+                                "width": 0
+                            },
+                            "grad_color": "#5596d8",
+                            "main_color": "#5596d8",
+                            "opa": 255,
+                            "padding": {
+                                "bottom": 5,
+                                "inner": 5,
+                                "left": 5,
+                                "right": 5,
+                                "top": 5
+                            },
+                            "radius": 0,
+                            "shadow": {
+                                "color": "#808080",
+                                "type": 1,
+                                "width": 0
+                            }
+                        },
+                        "image": {
+                            "color": "#f0f0f0",
+                            "intense": 0,
+                            "opa": 255
+                        },
+                        "text": {
+                            "color": "#f0f0f0",
+                            "font": "Roboto 16",
+                            "letter_space": 0,
+                            "line_space": 2,
+                            "opa": 255,
+                            "sel_color": "#5596d8"
+                        },
+                        "type": "LV_LIST_STYLE_EDGE_FLASH"
+                    }
+                ],
+                "visible": false,
+                "widget": "List"
+            }
+        ]
+    }
+}

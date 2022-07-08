@@ -1,0 +1,72 @@
+<html>
+<%+header%>
+<script type="text/javascript" src="<%=resource%>/cbi.js"></script>
+<body>
+<div id="content_syslog">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="initial-scale=1, maximum-scale=3, minimum-scale=1, user-scalable=no">
+	<title>item</title>
+	<style type="text/css">
+	body,ul,ol,li,p,h1,h2,h3,h4,h5,h6,form,fieldset,table,td,img,div,dl,dt,dd,input{margin:0;padding:0;}
+	body{font-size:12px;}
+	img{border:none;}
+	ul,ol{list-style:none;}
+	input,select,textarea{outline:none; border:none; background:#FFF;}
+	textarea{resize:none;}
+	a{text-decoration:none;}
+	.item{
+		width: 100%;
+		height: 100%;
+	}
+	.item-head{
+		height: 70px;
+		background-color: #9e9e9e17;
+		position: relative;
+	}
+	.item-head a{
+		display: inline-block;
+		padding: 15px;
+	}
+	.item-head a img{
+		width: 50px;
+		height: 50px;
+	}
+	.item-tie{
+		display: inline-block;
+	    font-size: x-large;
+	    margin-left: 10%;
+	    position: absolute;
+    	top: 30px;
+    	color: #004fff85;
+	}
+	.item-con{
+		height: 50px;
+    	line-height: 50px;
+   		border-bottom: 1px solid #999;
+    	border-top: 1px solid #999;
+	}
+	.item-con a{
+		display: block;
+		font-size: x-large;
+    	color: #333;
+    	font-weight: 900;
+    	margin-left: 150px;
+	}
+	</style>
+</head>
+<body>
+<div class="item">
+	<div class="item-head">
+		<a href="<%=url("networkd/wifi_station/welcome")%>">
+			<img src="<%=resource%>/icons/networkd_back.png" alt="back">
+		</a>
+		<div class="item-tie">Access Points</div>
+	</div>
+	<div class="item-con">
+		<a href="<%=url("networkd/wifi_station/wifi_list")%>">Wifi Scan</a>
+	</div>
+</div>
+</body>
+<%+footer%>
+</html>

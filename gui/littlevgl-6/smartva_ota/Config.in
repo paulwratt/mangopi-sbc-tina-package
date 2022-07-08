@@ -1,0 +1,34 @@
+if PACKAGE_smartva_ota
+
+config lvgl
+    bool "Enabel lvgl core"
+    default y
+        help
+	lvgl core
+
+config lv_drivers
+    bool "Enabel lvgl drivers"
+    default y
+        help
+	lvgl drivers
+
+config story_ota
+    bool "Enabel story ota"
+    default y
+        help
+	story-machine: 800X480 screen
+
+choice TP_USE
+	default CTP_USE
+    bool "Choose the tp type"
+
+    config CTP_USE
+	bool "use ctp"
+
+	config RTP_USE
+	bool "use rtp"
+	select PACKAGE_tslib
+	select TSLIB_ENABLE_input
+	select TSLIB_ENABLE_dejitter
+endchoice
+endif

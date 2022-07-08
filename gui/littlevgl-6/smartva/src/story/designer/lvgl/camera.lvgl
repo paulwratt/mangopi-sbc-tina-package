@@ -1,0 +1,227 @@
+{
+    "lvgl": {
+        "name": "camera.lvgl",
+        "resolution": {
+            "height": 480,
+            "width": 800
+        },
+        "screen color": "#55ffff",
+        "widgets": [
+            {
+                "accessible": true,
+                "class": "lv_imgbtn",
+                "drag": false,
+                "geometry": {
+                    "height": 32,
+                    "width": 32,
+                    "x": 18,
+                    "y": 14
+                },
+                "locked": false,
+                "name": "back",
+                "source inactive": "home_return.png",
+                "source pressed": "home_return.png",
+                "source released": "home_return.png",
+                "source toggled pressed": "home_return.png",
+                "source toggled released": "home_return.png",
+                "state": "Released",
+                "toggle": false,
+                "visible": true,
+                "widget": "Image button"
+            },
+            {
+                "accessible": true,
+                "children": [
+                    {
+                        "accessible": true,
+                        "class": "lv_imgbtn",
+                        "drag": false,
+                        "geometry": {
+                            "height": 48,
+                            "width": 48,
+                            "x": 86,
+                            "y": 7
+                        },
+                        "locked": false,
+                        "name": "take",
+                        "source inactive": "",
+                        "source pressed": "",
+                        "source released": "music_play.png",
+                        "source toggled pressed": "",
+                        "source toggled released": "music_pause.png",
+                        "state": "Released",
+                        "toggle": false,
+                        "visible": true,
+                        "widget": "Image button"
+                    },
+                    {
+                        "accessible": true,
+                        "class": "lv_imgbtn",
+                        "drag": false,
+                        "geometry": {
+                            "height": 32,
+                            "width": 32,
+                            "x": 243,
+                            "y": 16
+                        },
+                        "locked": false,
+                        "name": "menu",
+                        "source inactive": "",
+                        "source pressed": "",
+                        "source released": "menu.png",
+                        "source toggled pressed": "",
+                        "source toggled released": "",
+                        "state": "Released",
+                        "toggle": false,
+                        "visible": true,
+                        "widget": "Image button"
+                    },
+                    {
+                        "accessible": true,
+                        "align": "Left",
+                        "anim speed": 25,
+                        "body draw": false,
+                        "class": "lv_label",
+                        "drag": false,
+                        "geometry": {
+                            "height": 20,
+                            "width": 72,
+                            "x": 154,
+                            "y": 22
+                        },
+                        "locked": false,
+                        "long mode": "Corp",
+                        "name": "label_time",
+                        "recolor": false,
+                        "text": "00:00:00",
+                        "visible": true,
+                        "widget": "Label"
+                    },
+                    {
+                        "accessible": true,
+                        "class": "lv_imgbtn",
+                        "drag": false,
+                        "geometry": {
+                            "height": 32,
+                            "width": 32,
+                            "x": 30,
+                            "y": 17
+                        },
+                        "locked": false,
+                        "name": "mode",
+                        "source inactive": "",
+                        "source pressed": "",
+                        "source released": "setting_password.png",
+                        "source toggled pressed": "",
+                        "source toggled released": "",
+                        "state": "Released",
+                        "toggle": true,
+                        "visible": true,
+                        "widget": "Image button"
+                    }
+                ],
+                "class": "lv_page",
+                "drag": false,
+                "edge flash": false,
+                "geometry": {
+                    "height": 67,
+                    "width": 310,
+                    "x": 253,
+                    "y": 412
+                },
+                "locked": false,
+                "name": "page_1",
+                "scroll height": 60,
+                "scroll propagation": false,
+                "scroll width": 300,
+                "scrollbars": "Off",
+                "styles": [
+                    {
+                        "base": "lv_style_pretty",
+                        "body": {
+                            "border": {
+                                "opa": 0
+                            },
+                            "opa": 0
+                        },
+                        "type": "LV_PAGE_STYLE_SCRL"
+                    },
+                    {
+                        "base": "lv_style_pretty_color",
+                        "body": {
+                            "border": {
+                                "opa": 0
+                            },
+                            "opa": 0
+                        },
+                        "type": "LV_PAGE_STYLE_BG"
+                    }
+                ],
+                "visible": true,
+                "widget": "Page"
+            },
+            {
+                "accessible": true,
+                "align": "Center",
+                "anim speed": 25,
+                "body draw": false,
+                "class": "lv_label",
+                "drag": false,
+                "geometry": {
+                    "height": 38,
+                    "width": 175,
+                    "x": 282,
+                    "y": 34
+                },
+                "locked": false,
+                "long mode": "Corp",
+                "name": "label_mode",
+                "recolor": false,
+                "styles": [
+                    {
+                        "base": "lv_style_transp",
+                        "text": {
+                            "color": "#ff0000",
+                            "font": "Roboto 28"
+                        },
+                        "type": "LV_LABEL_STYLE_MAIN"
+                    }
+                ],
+                "text": "recording...",
+                "visible": false,
+                "widget": "Label"
+            },
+            {
+                "accessible": true,
+                "align": "Center",
+                "anim speed": 25,
+                "body draw": false,
+                "class": "lv_label",
+                "drag": false,
+                "geometry": {
+                    "height": 44,
+                    "width": 278,
+                    "x": 244,
+                    "y": 208
+                },
+                "locked": false,
+                "long mode": "Corp",
+                "name": "disk_info",
+                "recolor": false,
+                "styles": [
+                    {
+                        "base": "lv_style_transp",
+                        "text": {
+                            "color": "#ffff00",
+                            "font": "microsoft_yahei_en_cn_24_4"
+                        },
+                        "type": "LV_LABEL_STYLE_MAIN"
+                    }
+                ],
+                "text": "提示：请插入磁盘!!!",
+                "visible": false,
+                "widget": "Label"
+            }
+        ]
+    }
+}

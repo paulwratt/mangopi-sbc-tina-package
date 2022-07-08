@@ -1,0 +1,218 @@
+From 35a119a04699bd92f56e02afe8cef0737cd1045f Mon Sep 17 00:00:00 2001
+From: anruliu <anruliu@allwinnertech.com>
+Date: Wed, 16 Jun 2021 19:32:45 +0800
+Subject: [PATCH] fix bmXo memory out of bounds
+
+Signed-off-by: anruliu <anruliu@allwinnertech.com>
+---
+ include/gdi.h        | 27 +++++++++++++++++++--------
+ src/newgal/surface.c | 39 +++++++++++++++++++++++++++++----------
+ src/newgdi/bitmap.c  | 26 ++++++++++++++++----------
+ src/newgdi/readbmp.c |  8 ++++----
+ 4 files changed, 68 insertions(+), 32 deletions(-)
+
+diff --git a/include/gdi.h b/include/gdi.h
+index b74f97f..08b0a86 100644
+--- a/include/gdi.h
++++ b/include/gdi.h
+@@ -7405,6 +7405,24 @@ struct _MYBITMAP
+   #define BMP_TYPE_MONOKEY      0x40
+ #endif
+ 
++#if defined(_MGIMAGE_G2D) || defined(_MGIMAGE_GPU)
++struct _BITMAPHW
++{
++#if _MGIMAGE_GPU
++    /** The fd of the bitmap */
++    int  bmFd;
++#endif
++    /** The phy addr of the bitmap */
++    unsigned long  bmBitsPhy;
++    /** The off x of the bitmap */
++    Uint32  bmXo;
++    /** The off y of the bitmap */
++    Uint32  bmYo;
++};
++
++typedef struct _BITMAPHW BITMAPHW;
++#endif
++
+ /** Expanded device-dependent bitmap structure. */
+ struct _BITMAP
+ {
+@@ -7459,14 +7477,7 @@ struct _BITMAP
+     /** The bits of the bitmap */
+     Uint8*  bmBits;
+ #if defined(_MGIMAGE_G2D) || defined(_MGIMAGE_GPU)
+-    /** The fd of the bitmap */
+-    int  bmFd;
+-    /** The phy addr of the bitmap */
+-    unsigned long  bmBitsPhy;
+-    /** The off x of the bitmap */
+-    Uint32  bmXo;
+-    /** The off y of the bitmap */
+-    Uint32  bmYo;
++    BITMAPHW bmHwInfo;
+ #endif
+ 
+     /** The private pixel format */
+diff --git a/src/newgal/surface.c b/src/newgal/surface.c
+index 58dbaf2..c824c66 100644
+--- a/src/newgal/surface.c
++++ b/src/newgal/surface.c
+@@ -537,8 +537,8 @@ int GAL_LowerBlit (GAL_Surface *src, GAL_Rect *srcrect,
+ #if defined(_MGIMAGE_G2D) || defined(_MGIMAGE_GPU)
+             && dstrect->w != 1 && dstrect->h != 1
+ #ifdef _MGIMAGE_GPU
+-            /* High GPU efficiency when greater than 480*650=312000 */
+-             && src->w * src->h >= 312000
++            /* High GPU efficiency when greater than 480*280=134400 2114us~2531us */
++             && dstrect->w * dstrect->h >= 134400
+ #endif
+ #endif
+              ) {
+@@ -1584,12 +1584,12 @@ int GAL_PutBox (GAL_Surface *dst, const GAL_Rect *dstrect, BITMAP* box)
+             if (my_dstrect.w != 1 && my_dstrect.h != 1
+                     && current_video->HWPutBoxAlpha
+ #ifdef _MGIMAGE_GPU
+-                /* High GPU efficiency when greater than 480*650=312000 */
+-                && box->bmWidth * box->bmHeight >= 312000
++                /* High GPU efficiency when greater than 480*280=134400 2114us~2531us */
++                && dstrect->w * dstrect->h >= 134400
+ #endif
+                 ) {
+-                GAL_Rect srcrect =
+-                        { off_x + box->bmXo, off_y + box->bmYo, w, h };
++                GAL_Rect srcrect = { off_x + box->bmHwInfo.bmXo, off_y
++                        + box->bmHwInfo.bmYo, w, h };
+                 return current_video->HWPutBoxAlpha(current_video, box,
+                         &srcrect, dst, &my_dstrect);
+             } else {
+@@ -1656,10 +1656,29 @@ int GAL_PutBox (GAL_Surface *dst, const GAL_Rect *dstrect, BITMAP* box)
+             goto slow_copy;
+ 
+         case 4:
+-            for (y = h; y; --y) {
+-                GAL_memcpy4 (dstrow, srcrow, w);
+-                srcrow += box->bmPitch;
+-                dstrow += dst->pitch;
++#if defined(_MGIMAGE_G2D) || defined(_MGIMAGE_GPU)
++        /* g2d hardware does not support output width of 1 */
++            if (my_dstrect.w != 1 && my_dstrect.h != 1
++                    && current_video->HWPutBoxAlpha
++#ifdef _MGIMAGE_GPU
++                /* High GPU efficiency when greater than 480*280=134400 2114us~2531us */
++                /* GPU copy efficiency is not as high as CPU */
++                && dstrect->w * dstrect->h >= 134400
++                && (box->bmType & BMP_TYPE_ALPHA)
++#endif
++            ) {
++                GAL_Rect srcrect = { off_x + box->bmHwInfo.bmXo, off_y
++                        + box->bmHwInfo.bmYo, w, h };
++                current_video->HWPutBoxAlpha(current_video, box, &srcrect,
++                        dst, &my_dstrect);
++            } else
++#endif
++            {
++                for (y = h; y; --y) {
++                    GAL_memcpy4(dstrow, srcrow, w);
++                    srcrow += box->bmPitch;
++                    dstrow += dst->pitch;
++                }
+             }
+             break;
+     }
+diff --git a/src/newgdi/bitmap.c b/src/newgdi/bitmap.c
+index e9d25cb..1adf093 100644
+--- a/src/newgdi/bitmap.c
++++ b/src/newgdi/bitmap.c
+@@ -444,8 +444,7 @@ PDC _begin_fill_bitmap (HDC hdc, int x, int y, int w, int h,
+                         rect.x + rect.w, rect.y + rect.h);
+ #if defined(_MGIMAGE_G2D) || defined(_MGIMAGE_GPU)
+         /* g2d hardware does not support output width of 1 */
+-        if (w != 1 && h != 1 && sw != 1 && sh != 1
+-                && (bmp->bmType & BMP_TYPE_ALPHA)) {
++        if (w != 1 && h != 1 && sw != 1 && sh != 1) {
+             info->line_buff = NULL;
+             info->line_alpha_buff = NULL;
+         } else
+@@ -1003,8 +1002,7 @@ BOOL GUIAPI FillBoxWithBitmapPart (HDC hdc, int x, int y, int w, int h,
+         info.bmp = bmp;
+ #if defined(_MGIMAGE_G2D) || defined(_MGIMAGE_GPU)
+         /* g2d hardware does not support output width of 1 */
+-        if (w != 1 && h != 1 && bw != 1 && bh != 1
+-                && (bmp->bmType & BMP_TYPE_ALPHA)) {
++        if (w != 1 && h != 1 && bw != 1 && bh != 1) {
+             info.line_buff = NULL;
+             info.line_alpha_buff = NULL;
+         } else
+@@ -1052,9 +1050,16 @@ BOOL GUIAPI FillBoxWithBitmapPart (HDC hdc, int x, int y, int w, int h,
+         if (xo != 0 || yo != 0) {
+ #if defined(_MGIMAGE_G2D) || defined(_MGIMAGE_GPU)
+             /* g2d hardware does not support output width of 1 */
+-            if (w != 1 && h != 1 && (part.bmType & BMP_TYPE_ALPHA)) {
+-                part.bmXo = xo;
+-                part.bmYo = yo;
++            if (w != 1 && h != 1
++#ifdef _MGIMAGE_GPU
++                    /* High GPU efficiency when greater than 480*280=134400 2114us~2531us */
++                    /* GPU copy efficiency is not as high as CPU */
++                    && rect.w * rect.h >= 134400
++                    && (part.bmType & BMP_TYPE_ALPHA)
++#endif
++            ) {
++                part.bmHwInfo.bmXo = xo;
++                part.bmHwInfo.bmYo = yo;
+             } else
+ #endif
+             {
+@@ -1456,8 +1461,8 @@ void GUIAPI StretchBlt (HDC hsdc, int sx, int sy, int sw, int sh,
+     if (dw != 1 && dh != 1) {
+         info.sw = sw;
+         info.sh = sh;
+-        bmp.bmXo = sx;
+-        bmp.bmYo = sy;
++        bmp.bmHwInfo.bmXo = sx;
++        bmp.bmHwInfo.bmYo = sy;
+         bmp.bmWidth = psdc->surface->w;
+         bmp.bmHeight = psdc->surface->h;
+         bmp.bmPitch = psdc->surface->pitch;
+@@ -1956,7 +1961,8 @@ BOOL BitmapDDAScalerEx (void* context, const BITMAP* src_bmp,
+     } else if (cb_line_scaled == _line_scaled_stretchblt) {
+         struct _SCALER_INFO_STRETCHBLT *info =
+                 (struct _SCALER_INFO_STRETCHBLT*) context;
+-        GAL_Rect srcrect = { src_bmp->bmXo, src_bmp->bmYo, info->sw, info->sh };
++        GAL_Rect srcrect = { src_bmp->bmHwInfo.bmXo, src_bmp->bmHwInfo.bmYo,
++                info->sw, info->sh };
+         GAL_Rect dstrect =
+                 { info->dst_x, info->dst_y, info->dst_w, info->dst_h };
+         GAL_Rect devrect = { info->pdc->DevRC.left, info->pdc->DevRC.top,
+diff --git a/src/newgdi/readbmp.c b/src/newgdi/readbmp.c
+index 1d08f6f..6d93106 100644
+--- a/src/newgdi/readbmp.c
++++ b/src/newgdi/readbmp.c
+@@ -80,8 +80,8 @@ BOOL GUIAPI InitBitmap (HDC hdc, Uint32 w, Uint32 h, Uint32 pitch, BYTE* bits,
+ 
+         size_t size = GAL_GetBoxSize (pdc->surface, w, h, &bmp->bmPitch);
+ #if defined(_MGIMAGE_G2D) || defined(_MGIMAGE_GPU)
+-        bmp->bmXo = 0;
+-        bmp->bmYo = 0;
++        bmp->bmHwInfo.bmXo = 0;
++        bmp->bmHwInfo.bmYo = 0;
+         if (current_video->AllocHWBuffer(current_video, bmp, size))
+             return FALSE;
+ #else
+@@ -217,8 +217,8 @@ static int init_bitmap_from_mybmp (HDC hdc, PBITMAP bmp,
+     size = GAL_GetBoxSize (pdc->surface, my_bmp->w, my_bmp->h, &bmp->bmPitch);
+ 
+ #if defined(_MGIMAGE_G2D) || defined(_MGIMAGE_GPU)
+-    bmp->bmXo = 0;
+-    bmp->bmYo = 0;
++    bmp->bmHwInfo.bmXo = 0;
++    bmp->bmHwInfo.bmYo = 0;
+     if (current_video->AllocHWBuffer(current_video, bmp,
+             alloc_all ? size : bmp->bmPitch)) {
+         ret = ERR_BMP_MEM;
+-- 
+2.29.0
+

@@ -1,0 +1,2027 @@
+{
+    "lvgl": {
+        "name": "setting.lvgl",
+        "resolution": {
+            "height": 480,
+            "width": 800
+        },
+        "screen color": "#f2f2f2",
+        "widgets": [
+            {
+                "accessible": true,
+                "auto size": true,
+                "class": "lv_line",
+                "drag": false,
+                "geometry": {
+                    "height": 482,
+                    "width": 2,
+                    "x": 200,
+                    "y": 0
+                },
+                "inverty": false,
+                "locked": true,
+                "name": "line_1",
+                "points": [
+                    {
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "x": 0,
+                        "y": 480
+                    }
+                ],
+                "styles": [
+                    {
+                        "base": "lv_style_pretty",
+                        "line": {
+                            "color": "#b9b8bd",
+                            "width": 1
+                        },
+                        "type": "LV_LINE_STYLE_MAIN"
+                    }
+                ],
+                "visible": true,
+                "widget": "Line"
+            },
+            {
+                "accessible": true,
+                "auto size": true,
+                "class": "lv_line",
+                "drag": false,
+                "geometry": {
+                    "height": 17,
+                    "width": 202,
+                    "x": 0,
+                    "y": 54
+                },
+                "inverty": false,
+                "locked": false,
+                "name": "line_2",
+                "points": [
+                    {
+                        "x": 0,
+                        "y": 15
+                    },
+                    {
+                        "x": 200,
+                        "y": 15
+                    }
+                ],
+                "styles": [
+                    {
+                        "base": "lv_style_pretty",
+                        "line": {
+                            "color": "#b9b8bd",
+                            "width": 1
+                        },
+                        "type": "LV_LINE_STYLE_MAIN"
+                    }
+                ],
+                "visible": true,
+                "widget": "Line"
+            },
+            {
+                "accessible": true,
+                "align": "Left",
+                "anim speed": 25,
+                "body draw": false,
+                "class": "lv_label",
+                "drag": false,
+                "geometry": {
+                    "height": 32,
+                    "width": 82,
+                    "x": 86,
+                    "y": 16
+                },
+                "locked": false,
+                "long mode": "Expand",
+                "name": "label_setting",
+                "recolor": false,
+                "styles": [
+                    {
+                        "base": "lv_style_transp",
+                        "text": {
+                            "color": "#3d3d3d",
+                            "font": "microsoft_yahei_en_cn_24_4"
+                        },
+                        "type": "LV_LABEL_STYLE_MAIN"
+                    }
+                ],
+                "text": "Setting",
+                "visible": true,
+                "widget": "Label"
+            },
+            {
+                "accessible": true,
+                "class": "lv_list",
+                "drag": false,
+                "edge flash": true,
+                "geometry": {
+                    "height": 410,
+                    "width": 197,
+                    "x": 0,
+                    "y": 70
+                },
+                "items": [
+                    {
+                        "img": "setting_general.png",
+                        "name": "General"
+                    },
+                    {
+                        "img": "setting_display.png",
+                        "name": "Display"
+                    },
+                    {
+                        "img": "setting_language.png",
+                        "name": "Language"
+                    },
+                    {
+                        "img": "setting_information.png",
+                        "name": "Information"
+                    },
+                    {
+                        "img": "setting_wallpaper.png",
+                        "name": "Wallpaper"
+                    },
+                    {
+                        "img": "setting_password.png",
+                        "name": "Password"
+                    },
+                    {
+                        "img": "setting_date_and_time.png",
+                        "name": "Time"
+                    },
+                    {
+                        "img": "setting_date_and_time.png",
+                        "name": "Default setting"
+                    }
+                ],
+                "locked": false,
+                "name": "list_1",
+                "scroll propagation": false,
+                "single mode": true,
+                "styles": [
+                    {
+                        "base": "lv_style_btn_tgl_pr",
+                        "body": {
+                            "border": {
+                                "part": 1,
+                                "width": 0
+                            },
+                            "grad_color": "#c0c0c0",
+                            "main_color": "#c0c0c0",
+                            "padding": {
+                                "inner": 20
+                            },
+                            "radius": 0
+                        },
+                        "text": {
+                            "color": "#2d2d2d"
+                        },
+                        "type": "LV_LIST_STYLE_BTN_TGL_PR"
+                    },
+                    {
+                        "base": "lv_style_btn_tgl_rel",
+                        "body": {
+                            "border": {
+                                "width": 0
+                            },
+                            "grad_color": "#c0c0c0",
+                            "main_color": "#c0c0c0",
+                            "padding": {
+                                "inner": 20
+                            },
+                            "radius": 0
+                        },
+                        "text": {
+                            "color": "#2d2d2d"
+                        },
+                        "type": "LV_LIST_STYLE_BTN_TGL_REL"
+                    },
+                    {
+                        "base": "lv_style_btn_pr",
+                        "body": {
+                            "border": {
+                                "width": 0
+                            },
+                            "grad_color": "#c0c0c0",
+                            "main_color": "#c0c0c0",
+                            "padding": {
+                                "inner": 20
+                            },
+                            "radius": 0
+                        },
+                        "text": {
+                            "color": "#2d2d2d"
+                        },
+                        "type": "LV_LIST_STYLE_BTN_PR"
+                    },
+                    {
+                        "base": "lv_style_btn_rel",
+                        "body": {
+                            "border": {
+                                "color": "#e3e3e3",
+                                "part": 1
+                            },
+                            "grad_color": "#ffffff",
+                            "main_color": "#ffffff",
+                            "radius": 0
+                        },
+                        "text": {
+                            "color": "#2d2d2d"
+                        },
+                        "type": "LV_LIST_STYLE_BTN_REL"
+                    },
+                    {
+                        "body": {
+                            "border": {
+                                "color": "#000000",
+                                "opa": 255,
+                                "part": 15,
+                                "width": 0
+                            },
+                            "grad_color": "#5596d8",
+                            "main_color": "#5596d8",
+                            "opa": 255,
+                            "padding": {
+                                "bottom": 5,
+                                "inner": 5,
+                                "left": 5,
+                                "right": 5,
+                                "top": 5
+                            },
+                            "radius": 0,
+                            "shadow": {
+                                "color": "#808080",
+                                "type": 1,
+                                "width": 0
+                            }
+                        },
+                        "image": {
+                            "color": "#f0f0f0",
+                            "intense": 0,
+                            "opa": 255
+                        },
+                        "text": {
+                            "color": "#000000",
+                            "font": "Roboto 16",
+                            "letter_space": 0,
+                            "line_space": 2,
+                            "opa": 255,
+                            "sel_color": "#5596d8"
+                        },
+                        "type": "LV_LIST_STYLE_EDGE_FLASH"
+                    },
+                    {
+                        "base": "lv_style_pretty",
+                        "body": {
+                            "padding": {
+                                "bottom": 0,
+                                "inner": 0,
+                                "left": 0,
+                                "right": 0,
+                                "top": 0
+                            }
+                        },
+                        "type": "LV_LIST_STYLE_SCRL"
+                    }
+                ],
+                "visible": true,
+                "widget": "List"
+            },
+            {
+                "accessible": true,
+                "align": "Left",
+                "anim speed": 25,
+                "body draw": false,
+                "class": "lv_label",
+                "drag": false,
+                "geometry": {
+                    "height": 32,
+                    "width": 95,
+                    "x": 448,
+                    "y": 24
+                },
+                "locked": false,
+                "long mode": "Expand",
+                "name": "label_10",
+                "recolor": false,
+                "styles": [
+                    {
+                        "base": "lv_style_transp",
+                        "text": {
+                            "font": "Roboto 28"
+                        },
+                        "type": "LV_LABEL_STYLE_MAIN"
+                    }
+                ],
+                "text": "General",
+                "visible": true,
+                "widget": "Label"
+            },
+            {
+                "accessible": true,
+                "auto size": true,
+                "class": "lv_line",
+                "drag": false,
+                "geometry": {
+                    "height": 17,
+                    "width": 602,
+                    "x": 200,
+                    "y": 54
+                },
+                "inverty": false,
+                "locked": false,
+                "name": "line_5",
+                "points": [
+                    {
+                        "x": 0,
+                        "y": 15
+                    },
+                    {
+                        "x": 600,
+                        "y": 15
+                    }
+                ],
+                "styles": [
+                    {
+                        "base": "lv_style_pretty",
+                        "line": {
+                            "color": "#b1b1b1",
+                            "width": 1
+                        },
+                        "type": "LV_LINE_STYLE_MAIN"
+                    }
+                ],
+                "visible": true,
+                "widget": "Line"
+            },
+            {
+                "accessible": true,
+                "children": [
+                    {
+                        "accessible": true,
+                        "children": [
+                            {
+                                "accessible": true,
+                                "align": "Left",
+                                "anim speed": 25,
+                                "body draw": false,
+                                "class": "lv_label",
+                                "drag": false,
+                                "geometry": {
+                                    "height": 19,
+                                    "width": 87,
+                                    "x": 26,
+                                    "y": 17
+                                },
+                                "locked": false,
+                                "long mode": "Expand",
+                                "name": "label_sdk_version",
+                                "recolor": false,
+                                "text": "SDK version",
+                                "visible": true,
+                                "widget": "Label"
+                            },
+                            {
+                                "accessible": true,
+                                "align": "Left",
+                                "anim speed": 25,
+                                "body draw": false,
+                                "class": "lv_label",
+                                "drag": false,
+                                "geometry": {
+                                    "height": 19,
+                                    "width": 32,
+                                    "x": 480,
+                                    "y": 17
+                                },
+                                "locked": false,
+                                "long mode": "Expand",
+                                "name": "label_sdk_val",
+                                "recolor": false,
+                                "text": "V0.6",
+                                "visible": true,
+                                "widget": "Label"
+                            },
+                            {
+                                "accessible": true,
+                                "align": "Left",
+                                "anim speed": 25,
+                                "body draw": false,
+                                "class": "lv_label",
+                                "drag": false,
+                                "geometry": {
+                                    "height": 19,
+                                    "width": 77,
+                                    "x": 27,
+                                    "y": 65
+                                },
+                                "locked": false,
+                                "long mode": "Expand",
+                                "name": "label_os_version",
+                                "recolor": false,
+                                "text": "OS version",
+                                "visible": true,
+                                "widget": "Label"
+                            },
+                            {
+                                "accessible": true,
+                                "align": "Left",
+                                "anim speed": 25,
+                                "body draw": false,
+                                "class": "lv_label",
+                                "drag": false,
+                                "geometry": {
+                                    "height": 19,
+                                    "width": 147,
+                                    "x": 365,
+                                    "y": 67
+                                },
+                                "locked": false,
+                                "long mode": "Expand",
+                                "name": "label_os_val",
+                                "recolor": false,
+                                "text": "tina 3.5@2022-01-17",
+                                "visible": true,
+                                "widget": "Label"
+                            },
+                            {
+                                "accessible": true,
+                                "align": "Left",
+                                "anim speed": 25,
+                                "body draw": false,
+                                "class": "lv_label",
+                                "drag": false,
+                                "geometry": {
+                                    "height": 19,
+                                    "width": 70,
+                                    "x": 28,
+                                    "y": 114
+                                },
+                                "locked": false,
+                                "long mode": "Expand",
+                                "name": "label_ui_version",
+                                "recolor": false,
+                                "text": "UI version",
+                                "visible": true,
+                                "widget": "Label"
+                            },
+                            {
+                                "accessible": true,
+                                "align": "Left",
+                                "anim speed": 25,
+                                "body draw": false,
+                                "class": "lv_label",
+                                "drag": false,
+                                "geometry": {
+                                    "height": 19,
+                                    "width": 32,
+                                    "x": 480,
+                                    "y": 115
+                                },
+                                "locked": false,
+                                "long mode": "Expand",
+                                "name": "label_ui_val",
+                                "recolor": false,
+                                "text": "V0.6",
+                                "visible": true,
+                                "widget": "Label"
+                            },
+                            {
+                                "accessible": true,
+                                "auto size": true,
+                                "class": "lv_line",
+                                "drag": false,
+                                "geometry": {
+                                    "height": 17,
+                                    "width": 522,
+                                    "x": 28,
+                                    "y": 34
+                                },
+                                "inverty": false,
+                                "locked": true,
+                                "name": "line_19",
+                                "points": [
+                                    {
+                                        "x": 0,
+                                        "y": 15
+                                    },
+                                    {
+                                        "x": 520,
+                                        "y": 15
+                                    }
+                                ],
+                                "styles": [
+                                    {
+                                        "base": "lv_style_pretty",
+                                        "line": {
+                                            "color": "#b1b1b1",
+                                            "width": 1
+                                        },
+                                        "type": "LV_LINE_STYLE_MAIN"
+                                    }
+                                ],
+                                "visible": true,
+                                "widget": "Line"
+                            },
+                            {
+                                "accessible": true,
+                                "auto size": true,
+                                "class": "lv_line",
+                                "drag": false,
+                                "geometry": {
+                                    "height": 17,
+                                    "width": 522,
+                                    "x": 29,
+                                    "y": 84
+                                },
+                                "inverty": false,
+                                "locked": false,
+                                "name": "line_20",
+                                "points": [
+                                    {
+                                        "x": 0,
+                                        "y": 15
+                                    },
+                                    {
+                                        "x": 520,
+                                        "y": 15
+                                    }
+                                ],
+                                "styles": [
+                                    {
+                                        "base": "lv_style_pretty",
+                                        "line": {
+                                            "color": "#b1b1b1",
+                                            "width": 1
+                                        },
+                                        "type": "LV_LINE_STYLE_MAIN"
+                                    }
+                                ],
+                                "visible": true,
+                                "widget": "Line"
+                            }
+                        ],
+                        "class": "lv_cont",
+                        "drag": false,
+                        "fit": {
+                            "cont_bottom_fit": 0,
+                            "cont_left_fit": 0,
+                            "cont_right_fit": 0,
+                            "cont_top_fit": 0
+                        },
+                        "geometry": {
+                            "height": 147,
+                            "width": 550,
+                            "x": 0,
+                            "y": 0
+                        },
+                        "layout": "Off",
+                        "locked": true,
+                        "name": "container_1",
+                        "styles": [
+                            {
+                                "base": "lv_style_pretty",
+                                "body": {
+                                    "border": {
+                                        "width": 1
+                                    },
+                                    "grad_color": "#ffffff",
+                                    "radius": 10
+                                },
+                                "type": "LV_CONT_STYLE_MAIN"
+                            }
+                        ],
+                        "visible": true,
+                        "widget": "Container"
+                    },
+                    {
+                        "accessible": true,
+                        "children": [
+                            {
+                                "accessible": true,
+                                "align": "Left",
+                                "anim speed": 25,
+                                "body draw": false,
+                                "class": "lv_label",
+                                "drag": false,
+                                "geometry": {
+                                    "height": 19,
+                                    "width": 82,
+                                    "x": 26,
+                                    "y": 18
+                                },
+                                "locked": false,
+                                "long mode": "Expand",
+                                "name": "label_screen_info",
+                                "recolor": false,
+                                "text": "Screen info",
+                                "visible": true,
+                                "widget": "Label"
+                            },
+                            {
+                                "accessible": true,
+                                "align": "Left",
+                                "anim speed": 25,
+                                "body draw": false,
+                                "class": "lv_label",
+                                "drag": false,
+                                "geometry": {
+                                    "height": 19,
+                                    "width": 120,
+                                    "x": 416,
+                                    "y": 19
+                                },
+                                "locked": false,
+                                "long mode": "Expand",
+                                "name": "label_screen_val",
+                                "recolor": false,
+                                "text": "800*480 @60fps",
+                                "visible": true,
+                                "widget": "Label"
+                            }
+                        ],
+                        "class": "lv_cont",
+                        "drag": false,
+                        "fit": {
+                            "cont_bottom_fit": 0,
+                            "cont_left_fit": 0,
+                            "cont_right_fit": 0,
+                            "cont_top_fit": 0
+                        },
+                        "geometry": {
+                            "height": 50,
+                            "width": 550,
+                            "x": 0,
+                            "y": 173
+                        },
+                        "layout": "Off",
+                        "locked": true,
+                        "name": "container_3",
+                        "styles": [
+                            {
+                                "base": "lv_style_pretty",
+                                "body": {
+                                    "border": {
+                                        "width": 1
+                                    },
+                                    "grad_color": "#ffffff"
+                                },
+                                "type": "LV_CONT_STYLE_MAIN"
+                            }
+                        ],
+                        "visible": true,
+                        "widget": "Container"
+                    }
+                ],
+                "class": "lv_cont",
+                "drag": false,
+                "fit": {
+                    "cont_bottom_fit": 0,
+                    "cont_left_fit": 0,
+                    "cont_right_fit": 0,
+                    "cont_top_fit": 0
+                },
+                "geometry": {
+                    "height": 389,
+                    "width": 580,
+                    "x": 207,
+                    "y": 79
+                },
+                "layout": "Off",
+                "locked": false,
+                "name": "infomation_cont",
+                "styles": [
+                    {
+                        "base": "lv_style_pretty",
+                        "body": {
+                            "border": {
+                                "width": 0
+                            },
+                            "grad_color": "#f2f2f2",
+                            "main_color": "#f2f2f2",
+                            "radius": 10
+                        },
+                        "type": "LV_CONT_STYLE_MAIN"
+                    }
+                ],
+                "visible": false,
+                "widget": "Container"
+            },
+            {
+                "accessible": true,
+                "children": [
+                    {
+                        "accessible": true,
+                        "align": "Center",
+                        "anim speed": 25,
+                        "body draw": false,
+                        "class": "lv_label",
+                        "drag": false,
+                        "geometry": {
+                            "height": 19,
+                            "width": 106,
+                            "x": 42,
+                            "y": 31
+                        },
+                        "locked": false,
+                        "long mode": "Expand",
+                        "name": "label_btn_def_setting",
+                        "recolor": false,
+                        "text": "Default setting",
+                        "visible": true,
+                        "widget": "Label"
+                    }
+                ],
+                "class": "lv_btn",
+                "drag": false,
+                "geometry": {
+                    "height": 81,
+                    "width": 190,
+                    "x": 367,
+                    "y": 229
+                },
+                "ink in time": 0,
+                "ink out time": 0,
+                "ink wait time": 0,
+                "layout": "Center",
+                "locked": false,
+                "name": "button_def_setting",
+                "state": "Released",
+                "toggle": false,
+                "visible": false,
+                "widget": "Button"
+            },
+            {
+                "accessible": true,
+                "children": [
+                    {
+                        "accessible": true,
+                        "align": "Center",
+                        "anim speed": 25,
+                        "body draw": false,
+                        "class": "lv_label",
+                        "drag": false,
+                        "geometry": {
+                            "height": 19,
+                            "width": 74,
+                            "x": 91,
+                            "y": 50
+                        },
+                        "locked": false,
+                        "long mode": "Expand",
+                        "name": "label_dialog",
+                        "recolor": false,
+                        "styles": [
+                            {
+                                "base": "lv_style_transp",
+                                "text": {
+                                    "color": "#000000"
+                                },
+                                "type": "LV_LABEL_STYLE_MAIN"
+                            }
+                        ],
+                        "text": "reseting ...",
+                        "visible": true,
+                        "widget": "Label"
+                    }
+                ],
+                "class": "lv_cont",
+                "drag": false,
+                "fit": {
+                    "cont_bottom_fit": 0,
+                    "cont_left_fit": 0,
+                    "cont_right_fit": 0,
+                    "cont_top_fit": 0
+                },
+                "geometry": {
+                    "height": 103,
+                    "width": 249,
+                    "x": 368,
+                    "y": 212
+                },
+                "layout": "Off",
+                "locked": false,
+                "name": "cont_dialog",
+                "visible": false,
+                "widget": "Container"
+            },
+            {
+                "accessible": true,
+                "children": [
+                    {
+                        "accessible": true,
+                        "auto size": true,
+                        "class": "lv_img",
+                        "drag": false,
+                        "geometry": {
+                            "height": 19,
+                            "width": 10,
+                            "x": 23,
+                            "y": 8
+                        },
+                        "locked": false,
+                        "name": "img_sett_return",
+                        "offset": {
+                            "X": 0,
+                            "Y": 0
+                        },
+                        "source": "LV_SYMBOL_LEFT",
+                        "styles": [
+                            {
+                                "base": "lv_style_plain",
+                                "image": {
+                                    "color": "#000000"
+                                },
+                                "type": "LV_IMG_STYLE_MAIN"
+                            }
+                        ],
+                        "visible": true,
+                        "widget": "Image"
+                    }
+                ],
+                "class": "lv_btn",
+                "drag": false,
+                "geometry": {
+                    "height": 35,
+                    "width": 57,
+                    "x": 24,
+                    "y": 14
+                },
+                "ink in time": 0,
+                "ink out time": 0,
+                "ink wait time": 0,
+                "layout": "Center",
+                "locked": false,
+                "name": "image_btn_return",
+                "state": "Released",
+                "styles": [
+                    {
+                        "base": "lv_style_btn_pr",
+                        "body": {
+                            "border": {
+                                "width": 1
+                            },
+                            "grad_color": "#e5d6dc",
+                            "main_color": "#e5d6dc",
+                            "radius": 12
+                        },
+                        "type": "LV_BTN_STYLE_PR"
+                    },
+                    {
+                        "base": "lv_style_btn_rel",
+                        "body": {
+                            "border": {
+                                "width": 1
+                            },
+                            "grad_color": "#f9eef1",
+                            "main_color": "#f9eef1",
+                            "opa": 0,
+                            "padding": {
+                                "bottom": 0,
+                                "left": 0,
+                                "top": 0
+                            },
+                            "radius": 12,
+                            "shadow": {
+                                "width": 1
+                            }
+                        },
+                        "type": "LV_BTN_STYLE_REL"
+                    }
+                ],
+                "toggle": false,
+                "visible": true,
+                "widget": "Button"
+            },
+            {
+                "accessible": true,
+                "children": [
+                    {
+                        "accessible": true,
+                        "children": [
+                            {
+                                "accessible": true,
+                                "anim time": 0,
+                                "class": "lv_slider",
+                                "drag": false,
+                                "geometry": {
+                                    "height": 25,
+                                    "width": 350,
+                                    "x": 130,
+                                    "y": 13
+                                },
+                                "knob inside": true,
+                                "locked": false,
+                                "name": "slider_backlight",
+                                "range": {
+                                    "max": 100,
+                                    "min": 0
+                                },
+                                "styles": [
+                                    {
+                                        "base": "lv_style_pretty",
+                                        "body": {
+                                            "radius": 20
+                                        },
+                                        "type": "LV_SLIDER_STYLE_KNOB"
+                                    },
+                                    {
+                                        "base": "lv_style_pretty_color",
+                                        "body": {
+                                            "padding": {
+                                                "bottom": 0,
+                                                "inner": 0,
+                                                "left": 0,
+                                                "right": 0,
+                                                "top": 0
+                                            }
+                                        },
+                                        "type": "LV_SLIDER_STYLE_INDIC"
+                                    }
+                                ],
+                                "value": 0,
+                                "visible": true,
+                                "widget": "Slider"
+                            },
+                            {
+                                "accessible": true,
+                                "align": "Left",
+                                "anim speed": 25,
+                                "body draw": false,
+                                "class": "lv_label",
+                                "drag": false,
+                                "geometry": {
+                                    "height": 19,
+                                    "width": 65,
+                                    "x": 15,
+                                    "y": 16
+                                },
+                                "locked": false,
+                                "long mode": "Expand",
+                                "name": "label_backlight",
+                                "recolor": false,
+                                "text": "backlight",
+                                "visible": true,
+                                "widget": "Label"
+                            },
+                            {
+                                "accessible": true,
+                                "align": "Left",
+                                "anim speed": 25,
+                                "body draw": false,
+                                "class": "lv_label",
+                                "drag": false,
+                                "geometry": {
+                                    "height": 19,
+                                    "width": 30,
+                                    "x": 500,
+                                    "y": 16
+                                },
+                                "locked": false,
+                                "long mode": "Expand",
+                                "name": "label_num_backlight",
+                                "recolor": false,
+                                "text": "50%",
+                                "visible": true,
+                                "widget": "Label"
+                            }
+                        ],
+                        "class": "lv_cont",
+                        "drag": false,
+                        "fit": {
+                            "cont_bottom_fit": 0,
+                            "cont_left_fit": 0,
+                            "cont_right_fit": 0,
+                            "cont_top_fit": 0
+                        },
+                        "geometry": {
+                            "height": 50,
+                            "width": 550,
+                            "x": 6,
+                            "y": 21
+                        },
+                        "layout": "Off",
+                        "locked": false,
+                        "name": "cont_backlight",
+                        "styles": [
+                            {
+                                "base": "lv_style_pretty",
+                                "body": {
+                                    "border": {
+                                        "width": 1
+                                    },
+                                    "grad_color": "#ffffff",
+                                    "radius": 10
+                                },
+                                "type": "LV_CONT_STYLE_MAIN"
+                            }
+                        ],
+                        "visible": true,
+                        "widget": "Container"
+                    },
+                    {
+                        "accessible": true,
+                        "children": [
+                            {
+                                "accessible": true,
+                                "align": "Left",
+                                "anim speed": 25,
+                                "body draw": false,
+                                "class": "lv_label",
+                                "drag": false,
+                                "geometry": {
+                                    "height": 19,
+                                    "width": 62,
+                                    "x": 17,
+                                    "y": 17
+                                },
+                                "locked": false,
+                                "long mode": "Expand",
+                                "name": "label_enhance",
+                                "recolor": false,
+                                "text": "enhance",
+                                "visible": true,
+                                "widget": "Label"
+                            },
+                            {
+                                "accessible": true,
+                                "auto size": true,
+                                "class": "lv_line",
+                                "drag": false,
+                                "geometry": {
+                                    "height": 17,
+                                    "width": 532,
+                                    "x": 16,
+                                    "y": 28
+                                },
+                                "inverty": false,
+                                "locked": false,
+                                "name": "line_7",
+                                "points": [
+                                    {
+                                        "x": 0,
+                                        "y": 15
+                                    },
+                                    {
+                                        "x": 530,
+                                        "y": 15
+                                    }
+                                ],
+                                "styles": [
+                                    {
+                                        "base": "lv_style_pretty",
+                                        "line": {
+                                            "color": "#b1b1b1",
+                                            "width": 1
+                                        },
+                                        "type": "LV_LINE_STYLE_MAIN"
+                                    }
+                                ],
+                                "visible": true,
+                                "widget": "Line"
+                            },
+                            {
+                                "accessible": true,
+                                "anim time": 200,
+                                "class": "lv_sw",
+                                "drag": false,
+                                "geometry": {
+                                    "height": 25,
+                                    "width": 50,
+                                    "x": 487,
+                                    "y": 13
+                                },
+                                "locked": false,
+                                "name": "switch_enhance",
+                                "state": true,
+                                "styles": [
+                                    {
+                                        "base": "lv_style_pretty",
+                                        "body": {
+                                            "border": {
+                                                "width": 0
+                                            },
+                                            "grad_color": "#e8e8e8",
+                                            "main_color": "#e8e8e8",
+                                            "radius": 40
+                                        },
+                                        "type": "LV_SW_STYLE_KNOB_ON"
+                                    },
+                                    {
+                                        "base": "lv_style_pretty",
+                                        "body": {
+                                            "border": {
+                                                "width": 0
+                                            },
+                                            "grad_color": "#e8e8e8",
+                                            "main_color": "#e8e8e8",
+                                            "radius": 40
+                                        },
+                                        "type": "LV_SW_STYLE_KNOB_OFF"
+                                    },
+                                    {
+                                        "base": "lv_style_pretty_color",
+                                        "body": {
+                                            "border": {
+                                                "width": 0
+                                            },
+                                            "opa": 0
+                                        },
+                                        "type": "LV_SW_STYLE_INDIC"
+                                    },
+                                    {
+                                        "base": "lv_style_pretty",
+                                        "body": {
+                                            "border": {
+                                                "width": 0
+                                            },
+                                            "grad_color": "#55aaff",
+                                            "main_color": "#55aaff",
+                                            "padding": {
+                                                "bottom": 0,
+                                                "inner": 0,
+                                                "left": 3,
+                                                "right": 1,
+                                                "top": 0
+                                            },
+                                            "radius": 40
+                                        },
+                                        "type": "LV_SW_STYLE_BG"
+                                    }
+                                ],
+                                "visible": true,
+                                "widget": "Switch"
+                            },
+                            {
+                                "accessible": true,
+                                "align": "Left",
+                                "anim speed": 25,
+                                "body draw": false,
+                                "class": "lv_label",
+                                "drag": false,
+                                "geometry": {
+                                    "height": 19,
+                                    "width": 72,
+                                    "x": 16,
+                                    "y": 65
+                                },
+                                "locked": false,
+                                "long mode": "Expand",
+                                "name": "label_saturation",
+                                "recolor": false,
+                                "text": "saturation",
+                                "visible": true,
+                                "widget": "Label"
+                            },
+                            {
+                                "accessible": true,
+                                "align": "Left",
+                                "anim speed": 25,
+                                "body draw": false,
+                                "class": "lv_label",
+                                "drag": false,
+                                "geometry": {
+                                    "height": 19,
+                                    "width": 58,
+                                    "x": 19,
+                                    "y": 113
+                                },
+                                "locked": false,
+                                "long mode": "Expand",
+                                "name": "label_contrast",
+                                "recolor": false,
+                                "text": "contrast",
+                                "visible": true,
+                                "widget": "Label"
+                            },
+                            {
+                                "accessible": true,
+                                "align": "Left",
+                                "anim speed": 25,
+                                "body draw": false,
+                                "class": "lv_label",
+                                "drag": false,
+                                "geometry": {
+                                    "height": 19,
+                                    "width": 41,
+                                    "x": 18,
+                                    "y": 166
+                                },
+                                "locked": false,
+                                "long mode": "Expand",
+                                "name": "label_bright",
+                                "recolor": false,
+                                "text": "bright",
+                                "visible": true,
+                                "widget": "Label"
+                            },
+                            {
+                                "accessible": true,
+                                "anim time": 0,
+                                "class": "lv_slider",
+                                "drag": false,
+                                "geometry": {
+                                    "height": 25,
+                                    "width": 350,
+                                    "x": 131,
+                                    "y": 63
+                                },
+                                "knob inside": true,
+                                "locked": false,
+                                "name": "slider_saturation",
+                                "range": {
+                                    "max": 100,
+                                    "min": 0
+                                },
+                                "styles": [
+                                    {
+                                        "base": "lv_style_pretty",
+                                        "body": {
+                                            "radius": 10
+                                        },
+                                        "type": "LV_SLIDER_STYLE_KNOB"
+                                    },
+                                    {
+                                        "base": "lv_style_pretty_color",
+                                        "body": {
+                                            "padding": {
+                                                "bottom": 0,
+                                                "inner": 0,
+                                                "left": 0,
+                                                "right": 0,
+                                                "top": 0
+                                            }
+                                        },
+                                        "type": "LV_SLIDER_STYLE_INDIC"
+                                    }
+                                ],
+                                "value": 0,
+                                "visible": true,
+                                "widget": "Slider"
+                            },
+                            {
+                                "accessible": true,
+                                "anim time": 0,
+                                "class": "lv_slider",
+                                "drag": false,
+                                "geometry": {
+                                    "height": 25,
+                                    "width": 350,
+                                    "x": 130,
+                                    "y": 112
+                                },
+                                "knob inside": true,
+                                "locked": false,
+                                "name": "slider_contrast",
+                                "range": {
+                                    "max": 100,
+                                    "min": 0
+                                },
+                                "styles": [
+                                    {
+                                        "base": "lv_style_pretty",
+                                        "body": {
+                                            "radius": 10
+                                        },
+                                        "type": "LV_SLIDER_STYLE_KNOB"
+                                    },
+                                    {
+                                        "base": "lv_style_pretty_color",
+                                        "body": {
+                                            "padding": {
+                                                "bottom": 0,
+                                                "inner": 0,
+                                                "left": 0,
+                                                "right": 0,
+                                                "top": 0
+                                            }
+                                        },
+                                        "type": "LV_SLIDER_STYLE_INDIC"
+                                    }
+                                ],
+                                "value": 0,
+                                "visible": true,
+                                "widget": "Slider"
+                            },
+                            {
+                                "accessible": true,
+                                "anim time": 0,
+                                "class": "lv_slider",
+                                "drag": false,
+                                "geometry": {
+                                    "height": 25,
+                                    "width": 350,
+                                    "x": 134,
+                                    "y": 165
+                                },
+                                "knob inside": true,
+                                "locked": false,
+                                "name": "slider_bright",
+                                "range": {
+                                    "max": 100,
+                                    "min": 0
+                                },
+                                "styles": [
+                                    {
+                                        "base": "lv_style_pretty",
+                                        "body": {
+                                            "radius": 10
+                                        },
+                                        "type": "LV_SLIDER_STYLE_KNOB"
+                                    },
+                                    {
+                                        "base": "lv_style_pretty_color",
+                                        "body": {
+                                            "padding": {
+                                                "bottom": 0,
+                                                "inner": 0,
+                                                "left": 0,
+                                                "right": 0,
+                                                "top": 0
+                                            }
+                                        },
+                                        "type": "LV_SLIDER_STYLE_INDIC"
+                                    }
+                                ],
+                                "value": 28,
+                                "visible": true,
+                                "widget": "Slider"
+                            },
+                            {
+                                "accessible": true,
+                                "auto size": true,
+                                "class": "lv_line",
+                                "drag": false,
+                                "geometry": {
+                                    "height": 17,
+                                    "width": 532,
+                                    "x": 18,
+                                    "y": 84
+                                },
+                                "inverty": false,
+                                "locked": true,
+                                "name": "line_17",
+                                "points": [
+                                    {
+                                        "x": 0,
+                                        "y": 15
+                                    },
+                                    {
+                                        "x": 530,
+                                        "y": 15
+                                    }
+                                ],
+                                "styles": [
+                                    {
+                                        "base": "lv_style_pretty",
+                                        "line": {
+                                            "color": "#b1b1b1",
+                                            "width": 1
+                                        },
+                                        "type": "LV_LINE_STYLE_MAIN"
+                                    }
+                                ],
+                                "visible": true,
+                                "widget": "Line"
+                            },
+                            {
+                                "accessible": true,
+                                "auto size": true,
+                                "class": "lv_line",
+                                "drag": false,
+                                "geometry": {
+                                    "height": 17,
+                                    "width": 532,
+                                    "x": 18,
+                                    "y": 134
+                                },
+                                "inverty": false,
+                                "locked": true,
+                                "name": "line_18",
+                                "points": [
+                                    {
+                                        "x": 0,
+                                        "y": 15
+                                    },
+                                    {
+                                        "x": 530,
+                                        "y": 15
+                                    }
+                                ],
+                                "styles": [
+                                    {
+                                        "base": "lv_style_pretty",
+                                        "line": {
+                                            "color": "#b1b1b1",
+                                            "width": 1
+                                        },
+                                        "type": "LV_LINE_STYLE_MAIN"
+                                    }
+                                ],
+                                "visible": true,
+                                "widget": "Line"
+                            },
+                            {
+                                "accessible": true,
+                                "align": "Left",
+                                "anim speed": 25,
+                                "body draw": false,
+                                "class": "lv_label",
+                                "drag": false,
+                                "geometry": {
+                                    "height": 19,
+                                    "width": 30,
+                                    "x": 499,
+                                    "y": 65
+                                },
+                                "locked": false,
+                                "long mode": "Expand",
+                                "name": "label_num_saturation",
+                                "recolor": false,
+                                "text": "20%",
+                                "visible": true,
+                                "widget": "Label"
+                            },
+                            {
+                                "accessible": true,
+                                "align": "Left",
+                                "anim speed": 25,
+                                "body draw": false,
+                                "class": "lv_label",
+                                "drag": false,
+                                "geometry": {
+                                    "height": 19,
+                                    "width": 30,
+                                    "x": 499,
+                                    "y": 115
+                                },
+                                "locked": false,
+                                "long mode": "Expand",
+                                "name": "label_num_contrast",
+                                "recolor": false,
+                                "text": "20%",
+                                "visible": true,
+                                "widget": "Label"
+                            },
+                            {
+                                "accessible": true,
+                                "align": "Left",
+                                "anim speed": 25,
+                                "body draw": false,
+                                "class": "lv_label",
+                                "drag": false,
+                                "geometry": {
+                                    "height": 19,
+                                    "width": 30,
+                                    "x": 499,
+                                    "y": 167
+                                },
+                                "locked": false,
+                                "long mode": "Expand",
+                                "name": "label_num_bright",
+                                "recolor": false,
+                                "text": "20%",
+                                "visible": true,
+                                "widget": "Label"
+                            }
+                        ],
+                        "class": "lv_cont",
+                        "drag": false,
+                        "fit": {
+                            "cont_bottom_fit": 0,
+                            "cont_left_fit": 0,
+                            "cont_right_fit": 0,
+                            "cont_top_fit": 0
+                        },
+                        "geometry": {
+                            "height": 200,
+                            "width": 550,
+                            "x": 7,
+                            "y": 77
+                        },
+                        "layout": "Off",
+                        "locked": false,
+                        "name": "cont_enhance",
+                        "styles": [
+                            {
+                                "base": "lv_style_pretty",
+                                "body": {
+                                    "border": {
+                                        "width": 1
+                                    },
+                                    "grad_color": "#ffffff"
+                                },
+                                "type": "LV_CONT_STYLE_MAIN"
+                            }
+                        ],
+                        "visible": true,
+                        "widget": "Container"
+                    }
+                ],
+                "class": "lv_cont",
+                "drag": false,
+                "fit": {
+                    "cont_bottom_fit": 0,
+                    "cont_left_fit": 0,
+                    "cont_right_fit": 0,
+                    "cont_top_fit": 0
+                },
+                "geometry": {
+                    "height": 374,
+                    "width": 565,
+                    "x": 207,
+                    "y": 76
+                },
+                "layout": "Off",
+                "locked": false,
+                "name": "display_cont",
+                "styles": [
+                    {
+                        "base": "lv_style_pretty",
+                        "body": {
+                            "border": {
+                                "width": 0
+                            },
+                            "grad_color": "#f2f2f2",
+                            "main_color": "#f2f2f2",
+                            "radius": 10
+                        },
+                        "type": "LV_CONT_STYLE_MAIN"
+                    }
+                ],
+                "visible": false,
+                "widget": "Container"
+            },
+            {
+                "accessible": true,
+                "children": [
+                    {
+                        "accessible": true,
+                        "align": "Left",
+                        "anim speed": 25,
+                        "body draw": false,
+                        "class": "lv_label",
+                        "drag": false,
+                        "geometry": {
+                            "height": 23,
+                            "width": 68,
+                            "x": 25,
+                            "y": 282
+                        },
+                        "locked": false,
+                        "long mode": "Corp",
+                        "name": "label_volume",
+                        "recolor": false,
+                        "text": "volume",
+                        "visible": true,
+                        "widget": "Label"
+                    },
+                    {
+                        "accessible": true,
+                        "anim time": 0,
+                        "class": "lv_slider",
+                        "drag": false,
+                        "geometry": {
+                            "height": 26,
+                            "width": 434,
+                            "x": 33,
+                            "y": 309
+                        },
+                        "knob inside": false,
+                        "locked": false,
+                        "name": "slider_volume",
+                        "range": {
+                            "max": 100,
+                            "min": 0
+                        },
+                        "value": 0,
+                        "visible": true,
+                        "widget": "Slider"
+                    },
+                    {
+                        "accessible": true,
+                        "children": [
+                            {
+                                "accessible": true,
+                                "align": "Left",
+                                "anim speed": 25,
+                                "body draw": false,
+                                "class": "lv_label",
+                                "drag": false,
+                                "geometry": {
+                                    "height": 19,
+                                    "width": 66,
+                                    "x": 25,
+                                    "y": 20
+                                },
+                                "locked": false,
+                                "long mode": "Expand",
+                                "name": "label_btn_backlight",
+                                "recolor": false,
+                                "text": "Backlight",
+                                "visible": true,
+                                "widget": "Label"
+                            }
+                        ],
+                        "class": "lv_btn",
+                        "drag": false,
+                        "geometry": {
+                            "height": 59,
+                            "width": 117,
+                            "x": 398,
+                            "y": 67
+                        },
+                        "ink in time": 0,
+                        "ink out time": 0,
+                        "ink wait time": 0,
+                        "layout": "Center",
+                        "locked": false,
+                        "name": "button_backlight",
+                        "state": "Released",
+                        "toggle": false,
+                        "visible": true,
+                        "widget": "Button"
+                    },
+                    {
+                        "accessible": true,
+                        "align": "Left",
+                        "anim speed": 25,
+                        "body draw": false,
+                        "class": "lv_label",
+                        "drag": false,
+                        "geometry": {
+                            "height": 19,
+                            "width": 31,
+                            "x": 472,
+                            "y": 309
+                        },
+                        "locked": false,
+                        "long mode": "Expand",
+                        "name": "label_volume_num",
+                        "recolor": false,
+                        "text": "Text",
+                        "visible": true,
+                        "widget": "Label"
+                    }
+                ],
+                "class": "lv_cont",
+                "drag": false,
+                "fit": {
+                    "cont_bottom_fit": 0,
+                    "cont_left_fit": 0,
+                    "cont_right_fit": 0,
+                    "cont_top_fit": 0
+                },
+                "geometry": {
+                    "height": 405,
+                    "width": 577,
+                    "x": 209,
+                    "y": 69
+                },
+                "layout": "Off",
+                "locked": false,
+                "name": "general_cont",
+                "styles": [
+                    {
+                        "base": "lv_style_pretty",
+                        "body": {
+                            "border": {
+                                "width": 0
+                            },
+                            "grad_color": "#f2f2f2",
+                            "main_color": "#f2f2f2",
+                            "radius": 10
+                        },
+                        "type": "LV_CONT_STYLE_MAIN"
+                    }
+                ],
+                "visible": true,
+                "widget": "Container"
+            },
+            {
+                "accessible": true,
+                "children": [
+                    {
+                        "accessible": true,
+                        "auto size": true,
+                        "class": "lv_img",
+                        "drag": false,
+                        "geometry": {
+                            "height": 98,
+                            "width": 43,
+                            "x": 5,
+                            "y": 75
+                        },
+                        "locked": false,
+                        "name": "image_hour1",
+                        "offset": {
+                            "X": 0,
+                            "Y": 0
+                        },
+                        "source": "1.png",
+                        "visible": true,
+                        "widget": "Image"
+                    },
+                    {
+                        "accessible": true,
+                        "auto size": true,
+                        "class": "lv_img",
+                        "drag": false,
+                        "geometry": {
+                            "height": 100,
+                            "width": 70,
+                            "x": 71,
+                            "y": 70
+                        },
+                        "locked": false,
+                        "name": "image_hour2",
+                        "offset": {
+                            "X": 0,
+                            "Y": 0
+                        },
+                        "source": "2.png",
+                        "visible": true,
+                        "widget": "Image"
+                    },
+                    {
+                        "accessible": true,
+                        "auto size": true,
+                        "class": "lv_img",
+                        "drag": false,
+                        "geometry": {
+                            "height": 102,
+                            "width": 72,
+                            "x": 208,
+                            "y": 70
+                        },
+                        "locked": false,
+                        "name": "image_min1",
+                        "offset": {
+                            "X": 0,
+                            "Y": 0
+                        },
+                        "source": "3.png",
+                        "visible": true,
+                        "widget": "Image"
+                    },
+                    {
+                        "accessible": true,
+                        "auto size": true,
+                        "class": "lv_img",
+                        "drag": false,
+                        "geometry": {
+                            "height": 100,
+                            "width": 70,
+                            "x": 291,
+                            "y": 69
+                        },
+                        "locked": false,
+                        "name": "image_min2",
+                        "offset": {
+                            "X": 0,
+                            "Y": 0
+                        },
+                        "source": "2.png",
+                        "visible": true,
+                        "widget": "Image"
+                    },
+                    {
+                        "accessible": true,
+                        "children": [
+                            {
+                                "accessible": true,
+                                "align": "Left",
+                                "anim speed": 25,
+                                "body draw": false,
+                                "class": "lv_label",
+                                "drag": false,
+                                "geometry": {
+                                    "height": 19,
+                                    "width": 9,
+                                    "x": 41,
+                                    "y": 8
+                                },
+                                "locked": false,
+                                "long mode": "Expand",
+                                "name": "label_hour_up",
+                                "recolor": false,
+                                "text": "+",
+                                "visible": true,
+                                "widget": "Label"
+                            }
+                        ],
+                        "class": "lv_btn",
+                        "drag": false,
+                        "geometry": {
+                            "height": 35,
+                            "width": 90,
+                            "x": 29,
+                            "y": 7
+                        },
+                        "ink in time": 0,
+                        "ink out time": 0,
+                        "ink wait time": 0,
+                        "layout": "Center",
+                        "locked": false,
+                        "name": "button_hour_up",
+                        "state": "Released",
+                        "toggle": false,
+                        "visible": true,
+                        "widget": "Button"
+                    },
+                    {
+                        "accessible": true,
+                        "children": [
+                            {
+                                "accessible": true,
+                                "align": "Left",
+                                "anim speed": 25,
+                                "body draw": false,
+                                "class": "lv_label",
+                                "drag": false,
+                                "geometry": {
+                                    "height": 19,
+                                    "width": 4,
+                                    "x": 43,
+                                    "y": 8
+                                },
+                                "locked": false,
+                                "long mode": "Expand",
+                                "name": "label_hour_down",
+                                "recolor": false,
+                                "text": "-",
+                                "visible": true,
+                                "widget": "Label"
+                            }
+                        ],
+                        "class": "lv_btn",
+                        "drag": false,
+                        "geometry": {
+                            "height": 35,
+                            "width": 90,
+                            "x": 28,
+                            "y": 209
+                        },
+                        "ink in time": 0,
+                        "ink out time": 0,
+                        "ink wait time": 0,
+                        "layout": "Center",
+                        "locked": false,
+                        "name": "button_hour_down",
+                        "state": "Released",
+                        "toggle": false,
+                        "visible": true,
+                        "widget": "Button"
+                    },
+                    {
+                        "accessible": true,
+                        "children": [
+                            {
+                                "accessible": true,
+                                "align": "Left",
+                                "anim speed": 25,
+                                "body draw": false,
+                                "class": "lv_label",
+                                "drag": false,
+                                "geometry": {
+                                    "height": 19,
+                                    "width": 9,
+                                    "x": 41,
+                                    "y": 8
+                                },
+                                "locked": false,
+                                "long mode": "Expand",
+                                "name": "label_min_up",
+                                "recolor": false,
+                                "text": "+",
+                                "visible": true,
+                                "widget": "Label"
+                            }
+                        ],
+                        "class": "lv_btn",
+                        "drag": false,
+                        "geometry": {
+                            "height": 35,
+                            "width": 90,
+                            "x": 257,
+                            "y": 5
+                        },
+                        "ink in time": 0,
+                        "ink out time": 0,
+                        "ink wait time": 0,
+                        "layout": "Center",
+                        "locked": false,
+                        "name": "button_min_up",
+                        "state": "Released",
+                        "toggle": false,
+                        "visible": true,
+                        "widget": "Button"
+                    },
+                    {
+                        "accessible": true,
+                        "children": [
+                            {
+                                "accessible": true,
+                                "align": "Left",
+                                "anim speed": 25,
+                                "body draw": false,
+                                "class": "lv_label",
+                                "drag": false,
+                                "geometry": {
+                                    "height": 19,
+                                    "width": 4,
+                                    "x": 43,
+                                    "y": 8
+                                },
+                                "locked": false,
+                                "long mode": "Expand",
+                                "name": "label_min_down",
+                                "recolor": false,
+                                "text": "-",
+                                "visible": true,
+                                "widget": "Label"
+                            }
+                        ],
+                        "class": "lv_btn",
+                        "drag": false,
+                        "geometry": {
+                            "height": 35,
+                            "width": 90,
+                            "x": 257,
+                            "y": 209
+                        },
+                        "ink in time": 0,
+                        "ink out time": 0,
+                        "ink wait time": 0,
+                        "layout": "Center",
+                        "locked": false,
+                        "name": "button_min_down",
+                        "state": "Released",
+                        "toggle": false,
+                        "visible": true,
+                        "widget": "Button"
+                    },
+                    {
+                        "accessible": true,
+                        "auto size": true,
+                        "class": "lv_img",
+                        "drag": false,
+                        "geometry": {
+                            "height": 102,
+                            "width": 72,
+                            "x": 143,
+                            "y": 76
+                        },
+                        "locked": false,
+                        "name": "image_time_dot",
+                        "offset": {
+                            "X": 0,
+                            "Y": 0
+                        },
+                        "source": "time_dot.png",
+                        "visible": true,
+                        "widget": "Image"
+                    }
+                ],
+                "class": "lv_cont",
+                "drag": true,
+                "fit": {
+                    "cont_bottom_fit": 0,
+                    "cont_left_fit": 0,
+                    "cont_right_fit": 0,
+                    "cont_top_fit": 0
+                },
+                "geometry": {
+                    "height": 249,
+                    "width": 366,
+                    "x": 310,
+                    "y": 153
+                },
+                "layout": "Off",
+                "locked": false,
+                "name": "cont_time_set",
+                "styles": [
+                    {
+                        "base": "lv_style_pretty",
+                        "body": {
+                            "border": {
+                                "opa": 0,
+                                "width": 0
+                            },
+                            "grad_color": "#f2f2f2",
+                            "main_color": "#f2f2f2",
+                            "opa": 0,
+                            "radius": 10
+                        },
+                        "type": "LV_CONT_STYLE_MAIN"
+                    }
+                ],
+                "visible": false,
+                "widget": "Container"
+            }
+        ]
+    }
+}

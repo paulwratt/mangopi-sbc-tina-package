@@ -1,0 +1,13 @@
+diff -Naur fstools-2016-01-10/block.c fstools-2016-01-10-new/block.c
+--- fstools-2016-01-10/block.c	2020-11-11 09:55:53.038343000 +0800
++++ fstools-2016-01-10-new/block.c	2020-11-11 09:57:01.158343000 +0800
+@@ -522,6 +522,9 @@
+	_cache_load("/dev/mapper/*");
+	_cache_load("/dev/nand*");
+	_cache_load("/dev/by-name/*");
++#if DM_VERITY_ENABLED
++	_cache_load("/dev/dm-*");
++#endif
+ }
+
+ static int print_block_info(struct blkid_struct_probe *pr)

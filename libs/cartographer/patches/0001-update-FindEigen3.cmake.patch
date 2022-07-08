@@ -1,0 +1,54 @@
+From a373cf43ee0e4db1bac99850312d3e974ce9dbd6 Mon Sep 17 00:00:00 2001
+From: chengweipeng <chengweipeng@allwinnertech.com>
+Date: Fri, 22 Oct 2021 11:54:50 +0800
+Subject: [PATCH] update FindEigen3.cmake
+
+Signed-off-by: chengweipeng <chengweipeng@allwinnertech.com>
+---
+ cmake/modules/FindGMock.cmake | 22 ++++++++++++++++++++--
+ 1 file changed, 20 insertions(+), 2 deletions(-)
+
+diff --git a/cmake/modules/FindGMock.cmake b/cmake/modules/FindGMock.cmake
+index c663e98..b29c0fe 100644
+--- a/cmake/modules/FindGMock.cmake
++++ b/cmake/modules/FindGMock.cmake
+@@ -30,6 +30,25 @@ if(NOT GMock_FOUND)
+     PATHS
+       /usr
+   )
++  if(GMOCK_LIBRARIES)
++    find_library(GMOCK_LIBRARY
++      NAMES gmock
++      HINTS
++        ENV GMOCK_DIR
++      PATH_SUFFIXES lib
++      PATHS
++        /usr
++    )
++    find_library(GTEST_LIBRARY
++      NAMES gtest
++      HINTS
++        ENV GMOCK_DIR
++      PATH_SUFFIXES lib
++      PATHS
++        /usr
++    )
++    list(APPEND GMOCK_LIBRARIES ${GMOCK_LIBRARY} ${GTEST_LIBRARY})
++  endif()
+ 
+   # Find system-wide gtest header.
+   find_path(GTEST_INCLUDE_DIRS gtest/gtest.h
+@@ -57,9 +76,8 @@ if(NOT GMock_FOUND)
+         add_subdirectory(${GMOCK_SRC_DIR} "${CMAKE_CURRENT_BINARY_DIR}/gmock"
+           EXCLUDE_FROM_ALL)
+       endif()
+-      # The next line is needed for Ubuntu Trusty.
+-      set(GMOCK_INCLUDE_DIRS "${GMOCK_SRC_DIR}/gtest/include")
+       set(GMOCK_LIBRARIES gmock_main)
++      set(GMOCK_INCLUDE_DIRS ${GMOCK_SRC_DIR}/include)
+     endif()
+   endif()
+ 
+-- 
+2.29.0
+

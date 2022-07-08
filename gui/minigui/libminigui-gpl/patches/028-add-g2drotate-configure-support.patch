@@ -1,0 +1,63 @@
+From e28bae57df965bbdbc847038c81f1cb6eb124d07 Mon Sep 17 00:00:00 2001
+From: anruliu <anruliu@allwinnertech.com>
+Date: Mon, 8 Mar 2021 19:53:58 +0800
+Subject: [PATCH] add g2drotate configure support
+
+Signed-off-by: anruliu <anruliu@allwinnertech.com>
+---
+ cmake_mgconfig.h.in |  3 +++
+ configure.ac        | 10 ++++++++++
+ 2 files changed, 13 insertions(+)
+
+diff --git a/cmake_mgconfig.h.in b/cmake_mgconfig.h.in
+index 421de07..8deedea 100644
+--- a/cmake_mgconfig.h.in
++++ b/cmake_mgconfig.h.in
+@@ -559,6 +559,9 @@
+ /* Define if support G2D */
+ #cmakedefine _MGRM_G2D          1
+ 
++/* Define if support G2D Rotate */
++#cmakedefine _MGIMAGE_G2D_ROTATE    1
++
+ /* ******* */
+ /* USE_OWN */
+ /* ******* */
+diff --git a/configure.ac b/configure.ac
+index a684581..6d08c3b 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -211,6 +211,7 @@ build_gif_support="yes"
+ build_jpg_support="yes"
+ build_png_support="yes"
+ build_g2d_support="no"
++build_g2drotate_support="no"
+ build_pcx_support="no"
+ build_lbm_support="no"
+ build_tga_support="no"
+@@ -701,6 +702,10 @@ AC_ARG_ENABLE(g2dsupport,
+ [  --enable-g2dsupport      include G2D support <default=no>],
+ build_g2d_support=$enableval)
+ 
++AC_ARG_ENABLE(g2drotatesupport,
++[  --enable-g2drotatesupport      include G2D Rotate support <default=no>],
++build_g2drotate_support=$enableval)
++
+ AC_ARG_ENABLE(menu,
+ [  --enable-menu            include menu support <default=yes>],
+ build_menu=$enableval)
+@@ -2307,6 +2312,11 @@ if test "x$build_g2d_support" = "xyes"; then
+             [Define if support G2D])
+ fi
+ 
++if test "x$build_g2drotate_support" = "xyes"; then
++    AC_DEFINE(_MGIMAGE_G2D_ROTATE, 1,
++            [Define if support G2D Rotate])
++fi
++
+ if test "x$build_menu" = "xyes"; then
+     AC_DEFINE(_MGHAVE_MENU, 1,
+             [Define if support menu])
+-- 
+2.29.0
+

@@ -1,0 +1,52 @@
+<html>
+<%+header%>
+<script type="text/javascript" src="<%=resource%>/cbi.js"></script>
+<body>
+<div id="content_syslog">
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=3, minimum-scale=1, user-scalable=no">
+    <title>Connect AP</title>
+    <style>
+    body,ul,ol,li,p,h1,h2,h3,h4,h5,h6,form,fieldset,table,td,img,div,dl,dt,dd,input{margin:0;padding:0;}
+    body{font-size:12px;}
+    img{border:none;}
+    ul,ol{list-style:none;}
+    input,select,textarea{outline:none; border:none; background:#FFF;}
+    textarea{resize:none;}
+    a{text-decoration:none;}
+    .wifi{
+        width: 100%;
+        height: 100%;
+        margin: 150px 0 0 0;
+        text-align: center;
+    }
+    .wifi a{
+        display: block;
+    }
+    .index-item img{
+        width: 150px;
+        height: 150px;
+        margin-top: 50px;
+    }
+    .index-tit{
+        margin: 0 auto;
+        color: #004fff85;
+        margin-top: 30px;
+        font-size: 30px;
+    }
+    </style>
+</head>
+<body>
+<div class="wifi">
+    <a href="<%=url("networkd/wifi_station/select")%>">
+        <div class="index-item">
+            <img src="<%=resource%>/icons/networkd_wifi.png" alt="wifi">
+        </div>
+    </a>
+    <div class="index-tit">WiFi AP</div>
+</div>
+</body>
+<%+footer%>
+</html>

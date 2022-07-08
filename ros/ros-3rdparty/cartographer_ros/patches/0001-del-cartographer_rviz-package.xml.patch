@@ -1,0 +1,18 @@
+From 4f2a0c69284d2fcb25bf0aa41e00f793b970e54f Mon Sep 17 00:00:00 2001
+From: chengweipeng <chengweipeng@allwinnertech.com>
+Date: Fri, 22 Oct 2021 19:37:13 +0800
+Subject: [PATCH] del cartographer_rviz package.xml
+
+Signed-off-by: chengweipeng <chengweipeng@allwinnertech.com>
+---
+ cartographer_rviz/{package.xml => rviz_package.xml} | 0
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ rename cartographer_rviz/{package.xml => rviz_package.xml} (100%)
+
+diff --git a/cartographer_rviz/package.xml b/cartographer_rviz/rviz_package.xml
+similarity index 100%
+rename from cartographer_rviz/package.xml
+rename to cartographer_rviz/rviz_package.xml
+-- 
+2.29.0
+

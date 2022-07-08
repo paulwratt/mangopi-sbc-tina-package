@@ -1,0 +1,591 @@
+From 72ef612d5cf7634572b5c349b91b173440b03407 Mon Sep 17 00:00:00 2001
+From: anruliu <anruliu@allwinnertech.com>
+Date: Thu, 10 Jun 2021 14:02:37 +0800
+Subject: [PATCH] add textrotate support
+
+Signed-off-by: anruliu <anruliu@allwinnertech.com>
+---
+ include/gdi.h              |  25 +++++++
+ src/newgdi/bidi.c          |  16 ++++-
+ src/newgdi/drawtext.c      |  94 +++++++++++++++++++++++++-
+ src/newgdi/tabbedtextout.c | 133 +++++++++++++++++++++++++++++++++++--
+ src/newgdi/textout.c       |  50 +++++++++++++-
+ 5 files changed, 308 insertions(+), 10 deletions(-)
+
+diff --git a/include/gdi.h b/include/gdi.h
+index f6b13a4..b74f97f 100644
+--- a/include/gdi.h
++++ b/include/gdi.h
+@@ -6900,6 +6900,14 @@ MG_EXPORT int GUIAPI GetTabbedTextExtent (HDC hdc,
+ #define TA_UPDATECP     0x0100
+ #define TA_CP_MASK      0x0F00
+ 
++#ifdef _MGHAVE_TEXT_ROTATE
++#define TA_HORIZONTAL	0x0000
++#define TA_VERTICAL_CW	0x1000
++#define TA_VERTICAL_CCW	0x2000
++#define TA_HORIZONTAL_UT	0x4000
++#define TA_ORDER_MASK	0xF000
++#endif
++
+ /**
+  * \def GetTextAlign(hdc)
+  * \brief Retrieves the current text-alignment flags of a DC.
+@@ -6930,6 +6938,12 @@ MG_EXPORT int GUIAPI GetTabbedTextExtent (HDC hdc,
+  *      Specifies that the current position is not updated.
+  *  - TA_UPDATECP\n
+  *      Specifies that the current position is updated.
++ *  - TA_VERTICAL_CW\n
++ *    Text vertical output, font file rotates clockwise
++ *  - TA_VERTICAL_CCW\n
++ *    Text vertical output, font file rotates counterclockwise
++ *  - TA_HORIZONTAL_UT\n
++ *    Text horizontal output, font file rotates 180 degree
+  *
+  * \note The text-alignment flags determine how the TextOut, TabbedTextOut,
+  * and TabbedTextOutEx functions align a string of text in relation to 
+@@ -7159,6 +7173,11 @@ MG_EXPORT void GUIAPI GetLastTextOutPos (HDC hdc, POINT* pt);
+ #define DT_NOPREFIX         0x00000800
+ #define DT_INTERNAL         0x00001000
+ #define DT_CHARBREAK        0x00002000
++#ifdef _MGHAVE_TEXT_ROTATE
++#define DT_VERTICAL_CW      0x00004000
++#define DT_VERTICAL_CCW     0x00008000
++#define DT_HORIZONTAL_UT     0x00010000
++#endif
+ 
+ /**
+  * First line information of DrawTextEx2
+@@ -7239,6 +7258,12 @@ typedef struct _DTFIRSTLINE
+  *    text, \a DrawText modifies the right side of the rectangle so that it 
+  *    bounds the last character in the line. In either case, \a DrawText 
+  *    returns the height of the formatted text but does not draw the text.
++ *  - DT_VERTICAL_CW\n
++ *    Text vertical output, font file rotates clockwise
++ *  - DT_VERTICAL_CCW\n
++ *    Text vertical output, font file rotates counterclockwise
++ *  - DT_HORIZONTAL_UT\n
++ *    Text horizontal output, font file rotates 180 degree
+  *
+  * \param firstline If not null, DrawTextEx2 will only calculate the first 
+  *        line will be output in the rectangle, and return the number of 
+diff --git a/src/newgdi/bidi.c b/src/newgdi/bidi.c
+index bbd2309..6db1be9 100644
+--- a/src/newgdi/bidi.c
++++ b/src/newgdi/bidi.c
+@@ -641,6 +641,9 @@ static int _gdi_get_nextword_width (PDC pdc, const unsigned char* pText,
+     SIZE size;
+     DEVFONT* sbc_devfont = pdc->pLogFont->sbc_devfont;
+     DEVFONT* mbc_devfont = pdc->pLogFont->mbc_devfont;
++#ifdef _MGHAVE_TEXT_ROTATE
++    DRAWTEXTEX2_CTXT* ctxt = (DRAWTEXTEX2_CTXT*)context;
++#endif
+     WORDINFO word_info = {0}; 
+ 
+     *nChars = 0;
+@@ -675,8 +678,19 @@ static int _gdi_get_nextword_width (PDC pdc, const unsigned char* pText,
+ 
+     *nChars = word_info.len;
+ 
+-	/* Fixed bug of italic font */
++#ifdef _MGHAVE_TEXT_ROTATE
++    if (!(ctxt->nFormat & DT_VERTICAL_CW)
++            && !(ctxt->nFormat & DT_VERTICAL_CCW)) {
++            /* Fixed bug of italic font */
++            return size.cx - _gdi_get_italic_added_width (pdc->pLogFont);
++    } else {
++            /* Fixed bug of italic font */
++            return size.cy - _gdi_get_italic_added_width (pdc->pLogFont) - pdc->pLogFont->size;
++    }
++#else
++    /* Fixed bug of italic font */
+     return size.cx - _gdi_get_italic_added_width (pdc->pLogFont);
++#endif
+ }
+ 
+ static void  
+diff --git a/src/newgdi/drawtext.c b/src/newgdi/drawtext.c
+index 6f003b8..6288d35 100644
+--- a/src/newgdi/drawtext.c
++++ b/src/newgdi/drawtext.c
+@@ -370,8 +370,19 @@ static BOOL cb_drawtextex2 (void* context, Glyph32 glyph_value,
+             break;
+     }
+ 
++#ifdef _MGHAVE_TEXT_ROTATE
++    if (!(ctxt->nFormat & DT_VERTICAL_CW)
++            && !(ctxt->nFormat & DT_VERTICAL_CCW)) {
++        ctxt->x += adv_x;
++        ctxt->y += adv_y;
++    } else {
++        ctxt->x += adv_y;
++        ctxt->y += adv_x;
++    }
++#else
+     ctxt->x += adv_x;
+     ctxt->y += adv_y;
++#endif
+ 
+     return TRUE;
+ }
+@@ -415,6 +426,9 @@ int DrawTextEx2 (HDC hdc, const char* pText, int nCount,
+     int nr_delim_newline = 0;
+     const unsigned char* pline = NULL;
+     int old_ta = TA_LEFT;
++#ifdef _MGHAVE_TEXT_ROTATE
++    BOOL direction;
++#endif
+ 
+     if (pText == NULL || nCount == 0 || pRect == NULL) return -1;
+     if (RECTWP(pRect) == 0 || RECTHP(pRect) == 0) return -1;
+@@ -479,11 +493,39 @@ int DrawTextEx2 (HDC hdc, const char* pText, int nCount,
+     if (nFormat & DT_RIGHT){
+         x = rcDraw.right;
+         old_ta = SetTextAlign(hdc, TA_RIGHT);
++#ifdef _MGHAVE_TEXT_ROTATE
++        if (nFormat & DT_VERTICAL_CW) {
++            x = rcDraw.right - (pdc->pLogFont->size >> 4);
++            y = rcDraw.bottom - (pdc->pLogFont->size);
++        } else if (nFormat & DT_VERTICAL_CCW) {
++            x = rcDraw.left + (pdc->pLogFont->size << 1) - (pdc->pLogFont->size >> 2);
++            y = rcDraw.bottom - pdc->pLogFont->size;
++        } else if (nFormat & DT_HORIZONTAL_UT) {
++            x = rcDraw.right;
++            y = rcDraw.bottom - pdc->pLogFont->size;
++        }
++#endif
+     }
+     else {
+         old_ta = SetTextAlign(hdc, TA_LEFT);
+         x = rcDraw.left;
++#ifdef _MGHAVE_TEXT_ROTATE
++        if (nFormat & DT_VERTICAL_CW) {
++            x = rcDraw.right - (pdc->pLogFont->size);
++        } else if (nFormat & DT_VERTICAL_CCW) {
++            x = rcDraw.left + pdc->pLogFont->size - (pdc->pLogFont->size >> 2);
++        } else if (nFormat & DT_HORIZONTAL_UT) {
++            y = rcDraw.bottom - pdc->pLogFont->size;
++        }
++#endif
++    }
++
++#ifdef _MGHAVE_TEXT_ROTATE
++    if ((nFormat & DT_VERTICAL_CW) || (nFormat & DT_VERTICAL_CCW)) {
++        rcDraw.right = rcDraw.bottom;
++        rcDraw.left = rcDraw.top;
+     }
++#endif
+ 
+     if(nFormat & DT_CALCRECT){
+         *pRect = rcDraw;
+@@ -503,6 +545,13 @@ int DrawTextEx2 (HDC hdc, const char* pText, int nCount,
+     ctxt.x   = x;
+     ctxt.y   = y;
+ 
++#ifdef _MGHAVE_TEXT_ROTATE
++    if ((nFormat & DT_VERTICAL_CCW) || (nFormat & DT_HORIZONTAL_UT))
++        direction = (pdc->ta_flags & TA_X_MASK) == TA_RIGHT;
++    else
++        direction = (pdc->ta_flags & TA_X_MASK) != TA_RIGHT;
++#endif
++
+     while (nCount > 0) {
+         int line_x, maxwidth;
+ 
+@@ -555,9 +604,14 @@ int DrawTextEx2 (HDC hdc, const char* pText, int nCount,
+             if(nFormat & DT_CENTER){
+                 /* only get text extent.*/
+                 ctxt.only_extent = TRUE;
+-                _gdi_reorder_text_break (pdc, pline, line_len, 
++#ifdef _MGHAVE_TEXT_ROTATE
++                _gdi_reorder_text_break(pdc, pline, line_len, direction,
++                        cb_drawtextex2, &ctxt);
++#else
++                _gdi_reorder_text_break (pdc, pline, line_len,
+                         (pdc->ta_flags & TA_X_MASK) != TA_RIGHT,
+                         cb_drawtextex2, &ctxt);
++#endif
+ 
+                 /* calc text start pos under DT_CENTER.*/
+                 ctxt.nCount = 0;
+@@ -567,14 +621,24 @@ int DrawTextEx2 (HDC hdc, const char* pText, int nCount,
+                 ctxt.only_extent = FALSE;
+                 if((nFormat & DT_CALCRECT) && (pRect->left > ctxt.x))
+                     pRect->left = ctxt.x;
+-                _gdi_reorder_text_break (pdc, pline, line_len, 
++#ifdef _MGHAVE_TEXT_ROTATE
++                _gdi_reorder_text_break(pdc, pline, line_len, direction,
++                        cb_drawtextex2, &ctxt);
++#else
++                _gdi_reorder_text_break (pdc, pline, line_len,
+                         (pdc->ta_flags & TA_X_MASK) != TA_RIGHT,
+                         cb_drawtextex2, &ctxt);
++#endif
+             }
+             else {
+-                _gdi_reorder_text_break (pdc, pline, line_len, 
++#ifdef _MGHAVE_TEXT_ROTATE
++                _gdi_reorder_text_break(pdc, pline, line_len, direction,
++                        cb_drawtextex2, &ctxt);
++#else
++                _gdi_reorder_text_break (pdc, pline, line_len,
+                         (pdc->ta_flags & TA_X_MASK) != TA_RIGHT,
+                         cb_drawtextex2, &ctxt);
++#endif
+                 if ((nFormat & DT_CALCRECT) && (nFormat & DT_RIGHT)){
+                     if(pRect->left > (pRect->right - ctxt.advance))
+                         pRect->left = pRect->right - ctxt.advance;
+@@ -597,13 +661,37 @@ int DrawTextEx2 (HDC hdc, const char* pText, int nCount,
+ 
+             line_len -= ctxt.nCount;
+             pline  +=  ctxt.nCount;
++#ifdef _MGHAVE_TEXT_ROTATE
++            if (nFormat & DT_VERTICAL_CW) {
++                ctxt.start_x -= ctxt.line_height;
++            } else if (nFormat & DT_VERTICAL_CCW) {
++                ctxt.start_x += ctxt.line_height;
++            } else if (nFormat & DT_HORIZONTAL_UT) {
++                y -= ctxt.line_height;
++            } else {
++                y += ctxt.line_height;
++            }
++#else
+             y += ctxt.line_height;
++#endif
+             nLines ++;
+         }
+ 
+         /* continuous multiline '\n'.*/
+         if ((nr_delim_newline-1) > 0){
++#ifdef _MGHAVE_TEXT_ROTATE
++            if (nFormat & DT_VERTICAL_CW) {
++                ctxt.start_x -= ctxt.line_height * (nr_delim_newline - 1);
++            } else if (nFormat & DT_VERTICAL_CCW) {
++                ctxt.start_x += ctxt.line_height * (nr_delim_newline - 1);
++            } else if (nFormat & DT_HORIZONTAL_UT) {
++                y -= ctxt.line_height * (nr_delim_newline - 1);
++            } else {
++                y += ctxt.line_height * (nr_delim_newline - 1);
++            }
++#else
+             y += ctxt.line_height * (nr_delim_newline-1);
++#endif
+             nLines += (nr_delim_newline-1);
+         }
+ 
+diff --git a/src/newgdi/tabbedtextout.c b/src/newgdi/tabbedtextout.c
+index 245a947..82beb58 100644
+--- a/src/newgdi/tabbedtextout.c
++++ b/src/newgdi/tabbedtextout.c
+@@ -168,8 +168,19 @@ static BOOL cb_tabbedtextout (void* context, Glyph32 glyph_value,
+             break;
+     }
+ 
++#ifdef _MGHAVE_TEXT_ROTATE
++    if ((ctxt->pdc->ta_flags & TA_ORDER_MASK) == TA_HORIZONTAL
++            || (ctxt->pdc->ta_flags & TA_ORDER_MASK) == TA_HORIZONTAL_UT) {
++        ctxt->x += adv_x;
++        ctxt->y += adv_y;
++    } else {
++        ctxt->x += adv_y;
++        ctxt->y += adv_x;
++    }
++#else
+     ctxt->x += adv_x;
+     ctxt->y += adv_y;
++#endif
+ 
+     return TRUE;
+ }
+@@ -235,8 +246,19 @@ static BOOL cb_tabbedtextoutex (void* context, Glyph32 glyph_value,
+             break;
+     }
+ 
++#ifdef _MGHAVE_TEXT_ROTATE
++    if ((ctxt->pdc->ta_flags & TA_ORDER_MASK) == TA_HORIZONTAL
++            || (ctxt->pdc->ta_flags & TA_ORDER_MASK) == TA_HORIZONTAL_UT) {
++        ctxt->x += adv_x;
++        ctxt->y += adv_y;
++    } else {
++        ctxt->x += adv_y;
++        ctxt->y += adv_x;
++    }
++#else
+     ctxt->x += adv_x;
+     ctxt->y += adv_y;
++#endif
+ 
+     return TRUE;
+ }
+@@ -247,6 +269,9 @@ int _gdi_tabbed_text_out (PDC pdc, int x, int y,
+ {
+     TABBEDTEXTOUT_CTXT ctxt;
+     int nr_delim_newline = 0, line_len = 0;
++#ifdef _MGHAVE_TEXT_ROTATE
++    BOOL direction;
++#endif
+     
+     ctxt.pdc = pdc;
+     ctxt.start_x = x;
+@@ -265,39 +290,102 @@ int _gdi_tabbed_text_out (PDC pdc, int x, int y,
+     if (!only_extent)
+         pdc->rc_output = pdc->DevRC;
+ 
++#ifdef _MGHAVE_TEXT_ROTATE
++    if ((ctxt.pdc->ta_flags & TA_ORDER_MASK) == TA_VERTICAL_CCW
++            || (ctxt.pdc->ta_flags & TA_ORDER_MASK) == TA_HORIZONTAL_UT)
++        direction = (pdc->ta_flags & TA_X_MASK) == TA_RIGHT;
++    else
++        direction = (pdc->ta_flags & TA_X_MASK) != TA_RIGHT;
++#endif
++
+     while (len > 0) {
+         line_len = __mg_substrlen (pdc->pLogFont, 
+                 (const char*)text, len, '\n', &nr_delim_newline);
+ 
+         ctxt.x = ctxt.start_x;
++#ifdef _MGHAVE_TEXT_ROTATE
++        if ((ctxt.pdc->ta_flags & TA_ORDER_MASK) == TA_VERTICAL_CW
++                || (ctxt.pdc->ta_flags & TA_ORDER_MASK) == TA_VERTICAL_CCW) {
++            /*If there is no ctxt.y = y, the y-axis distance is different when the line is changed.*/
++            ctxt.y = y;
++        }
++#endif
+         ctxt.advance = 0;
+ 
+         if(nr_delim_newline){
+             _gdi_start_new_line (pdc);
+-            _gdi_reorder_text (pdc, text, line_len, 
+-                    (pdc->ta_flags & TA_X_MASK) != TA_RIGHT, 
++#ifdef _MGHAVE_TEXT_ROTATE
++            _gdi_reorder_text(pdc, text, line_len, direction, cb_tabbedtextout,
++                    &ctxt);
++#else
++            _gdi_reorder_text (pdc, text, line_len,
++                    (pdc->ta_flags & TA_X_MASK) != TA_RIGHT,
+                     cb_tabbedtextout, &ctxt);
++#endif
+             if (ctxt.max_advance < ctxt.advance) {
+                 ctxt.max_advance = ctxt.advance;
+                 ctxt.max_x = ctxt.x;
+             }
+             len -= line_len + nr_delim_newline;
+             text = text + line_len + nr_delim_newline;
++#ifdef _MGHAVE_TEXT_ROTATE
++            switch (ctxt.pdc->ta_flags & TA_ORDER_MASK) {
++            case TA_HORIZONTAL:
++                ctxt.y += ctxt.line_height * nr_delim_newline;
++                break;
++            case TA_HORIZONTAL_UT:
++                ctxt.y -= ctxt.line_height * nr_delim_newline;
++                break;
++            case TA_VERTICAL_CW:
++                ctxt.start_x -= ctxt.line_height * nr_delim_newline;
++                break;
++            case TA_VERTICAL_CCW:
++                ctxt.start_x += ctxt.line_height * nr_delim_newline;
++                break;
++            default:
++                ctxt.y += ctxt.line_height * nr_delim_newline;
++            }
++#else
+             ctxt.y += ctxt.line_height * nr_delim_newline;
++#endif
+             ctxt.max_y = ctxt.y;
+         }
+         else{
+             /* output the final line. */
+             _gdi_start_new_line (pdc);
+-            _gdi_reorder_text (pdc, text, len, 
+-                    (pdc->ta_flags & TA_X_MASK) != TA_RIGHT, 
++#ifdef _MGHAVE_TEXT_ROTATE
++            _gdi_reorder_text(pdc, text, len, direction, cb_tabbedtextout,
++                    &ctxt);
++#else
++            _gdi_reorder_text (pdc, text, len,
++                    (pdc->ta_flags & TA_X_MASK) != TA_RIGHT,
+                     cb_tabbedtextout, &ctxt);
++#endif
+ 
+             if (ctxt.max_advance < ctxt.advance) {
+                 ctxt.max_advance = ctxt.advance;
+                 ctxt.max_x = ctxt.x;
+             }
++#ifdef _MGHAVE_TEXT_ROTATE
++            switch (ctxt.pdc->ta_flags & TA_ORDER_MASK) {
++            case TA_HORIZONTAL:
++                ctxt.y += ctxt.line_height;
++                break;
++            case TA_HORIZONTAL_UT:
++                ctxt.y -= ctxt.line_height;
++                break;
++            case TA_VERTICAL_CW:
++                ctxt.start_x -= ctxt.line_height;
++                break;
++            case TA_VERTICAL_CCW:
++                ctxt.start_x += ctxt.line_height;
++                break;
++            default:
++                ctxt.y += ctxt.line_height;
++            }
++#else
+             ctxt.y += ctxt.line_height;
++#endif
+             ctxt.max_y = ctxt.y;
+             break;
+         }
+@@ -393,6 +481,9 @@ int _gdi_tabbedex_text_out (PDC pdc, int x, int y,
+ {
+     TABBEDTEXTOUTEX_CTXT ctxt;
+     int nr_delim_newline = 0, line_len = 0;
++#ifdef _MGHAVE_TEXT_ROTATE
++    BOOL direction;
++#endif
+ 
+ #if 0
+     DEVFONT* sbc_devfont;
+@@ -420,11 +511,26 @@ int _gdi_tabbedex_text_out (PDC pdc, int x, int y,
+     
+     pdc->rc_output = pdc->DevRC;
+ 
++#ifdef _MGHAVE_TEXT_ROTATE
++    if ((ctxt.pdc->ta_flags & TA_ORDER_MASK) == TA_VERTICAL_CCW
++            || (ctxt.pdc->ta_flags & TA_ORDER_MASK) == TA_HORIZONTAL_UT)
++        direction = (pdc->ta_flags & TA_X_MASK) == TA_RIGHT;
++    else
++        direction = (pdc->ta_flags & TA_X_MASK) != TA_RIGHT;
++#endif
++
+     while (len > 0) {
+         line_len = __mg_substrlen (pdc->pLogFont, 
+                 (const char*)text, len, '\n', &nr_delim_newline);
+ 
+         ctxt.x = ctxt.start_x;
++#ifdef _MGHAVE_TEXT_ROTATE
++        if ((ctxt.pdc->ta_flags & TA_ORDER_MASK) == TA_VERTICAL_CW
++                || (ctxt.pdc->ta_flags & TA_ORDER_MASK) == TA_VERTICAL_CCW) {
++            /*If there is no ctxt.y = y, the y-axis distance is different when the line is changed.*/
++            ctxt.y = y;
++        }
++#endif
+         ctxt.advance = 0;
+         /* reset the tab relative info for new line. */
+         ctxt.nTabOrig = nTabOrig;
+@@ -440,7 +546,26 @@ int _gdi_tabbedex_text_out (PDC pdc, int x, int y,
+             }
+             len -= line_len + nr_delim_newline;
+             text = text + line_len + nr_delim_newline;
++#ifdef _MGHAVE_TEXT_ROTATE
++            switch (ctxt.pdc->ta_flags & TA_ORDER_MASK) {
++            case TA_HORIZONTAL:
++                ctxt.y += ctxt.line_height * nr_delim_newline;
++                break;
++            case TA_HORIZONTAL_UT:
++                ctxt.y -= ctxt.line_height * nr_delim_newline;
++                break;
++            case TA_VERTICAL_CW:
++                ctxt.start_x -= ctxt.line_height * nr_delim_newline;
++                break;
++            case TA_VERTICAL_CCW:
++                ctxt.start_x += ctxt.line_height * nr_delim_newline;
++                break;
++            default:
++                ctxt.y += ctxt.line_height * nr_delim_newline;
++            }
++#else
+             ctxt.y += ctxt.line_height * nr_delim_newline;
++#endif
+         }
+         else{
+             /* output the final line. */
+diff --git a/src/newgdi/textout.c b/src/newgdi/textout.c
+index 2d5852c..cb06606 100644
+--- a/src/newgdi/textout.c
++++ b/src/newgdi/textout.c
+@@ -196,8 +196,19 @@ static BOOL cb_textout (void* context, Glyph32 glyph_value, int glyph_type)
+                 ctxt->x, ctxt->y, &adv_x, &adv_y);
+     }
+ 
++#ifdef _MGHAVE_TEXT_ROTATE
++    if ((ctxt->pdc->ta_flags & TA_ORDER_MASK) == TA_HORIZONTAL
++            || (ctxt->pdc->ta_flags & TA_ORDER_MASK) == TA_HORIZONTAL_UT) {
++        ctxt->x += adv_x;
++        ctxt->y += adv_y;
++    } else {
++        ctxt->x += adv_y;
++        ctxt->y += adv_x;
++    }
++#else
+     ctxt->x += adv_x;
+     ctxt->y += adv_y;
++#endif
+ 
+     return TRUE;
+ }
+@@ -217,8 +228,19 @@ int _gdi_text_out (PDC pdc, int x, int y,
+     ctxt.only_extent = FALSE;
+ 
+     _gdi_start_new_line (pdc);
+-    _gdi_reorder_text (pdc, text, len, 
++#ifdef _MGHAVE_TEXT_ROTATE
++    if ((ctxt.pdc->ta_flags & TA_ORDER_MASK) == TA_VERTICAL_CCW
++            || (ctxt.pdc->ta_flags & TA_ORDER_MASK) == TA_HORIZONTAL_UT) {
++        _gdi_reorder_text(pdc, text, len,
++                (pdc->ta_flags & TA_X_MASK) == TA_RIGHT, cb_textout, &ctxt);
++    } else {
++        _gdi_reorder_text(pdc, text, len,
++                (pdc->ta_flags & TA_X_MASK) != TA_RIGHT, cb_textout, &ctxt);
++    }
++#else
++    _gdi_reorder_text (pdc, text, len,
+         (pdc->ta_flags & TA_X_MASK) != TA_RIGHT, cb_textout, &ctxt);
++#endif
+ 
+     if (cur_pos) {
+         cur_pos->x = ctxt.x;
+@@ -359,8 +381,19 @@ static BOOL cb_textout_omitted (void* context, Glyph32 glyph_value, int glyph_ty
+                 ctxt->x, ctxt->y, &adv_x, &adv_y);
+     }
+ 
++#ifdef _MGHAVE_TEXT_ROTATE
++    if ((ctxt->pdc->ta_flags & TA_ORDER_MASK) == TA_HORIZONTAL
++            || (ctxt->pdc->ta_flags & TA_ORDER_MASK) == TA_HORIZONTAL_UT) {
++        ctxt->x += adv_x;
++        ctxt->y += adv_y;
++    } else {
++        ctxt->x += adv_y;
++        ctxt->y += adv_x;
++    }
++#else
+     ctxt->x += adv_x;
+     ctxt->y += adv_y;
++#endif
+ 
+     return TRUE;
+ }
+@@ -380,8 +413,21 @@ int _gdi_textout_omitted (PDC pdc, int x, int y,
+     ctxt.max_extent = max_extent;
+ 
+     _gdi_start_new_line (pdc);
+-    _gdi_reorder_text (pdc, text, len, 
++#ifdef _MGHAVE_TEXT_ROTATE
++    if ((ctxt.pdc->ta_flags & TA_ORDER_MASK) == TA_VERTICAL_CCW
++            || (ctxt.pdc->ta_flags & TA_ORDER_MASK) == TA_HORIZONTAL_UT) {
++        _gdi_reorder_text(pdc, text, len,
++                (pdc->ta_flags & TA_X_MASK) == TA_RIGHT, cb_textout_omitted,
++                &ctxt);
++    } else {
++        _gdi_reorder_text(pdc, text, len,
++                (pdc->ta_flags & TA_X_MASK) != TA_RIGHT, cb_textout_omitted,
++                &ctxt);
++    }
++#else
++    _gdi_reorder_text (pdc, text, len,
+         (pdc->ta_flags & TA_X_MASK) != TA_RIGHT, cb_textout_omitted, &ctxt);
++#endif
+ 
+     if (cur_pos) {
+         cur_pos->x = ctxt.x;
+-- 
+2.29.0
+

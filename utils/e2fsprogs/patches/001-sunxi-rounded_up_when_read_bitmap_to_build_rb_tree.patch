@@ -1,0 +1,22 @@
+diff --git a/lib/ext2fs/rw_bitmaps.c b/lib/ext2fs/rw_bitmaps.c
+index 1f38010..b2886f5 100644
+--- a/lib/ext2fs/rw_bitmaps.c
++++ b/lib/ext2fs/rw_bitmaps.c
+@@ -231,7 +231,7 @@ static errcode_t read_bitmaps_range_prepare(ext2_filsys fs, int flags)
+ {
+ 	errcode_t retval;
+ 	int block_nbytes = EXT2_CLUSTERS_PER_GROUP(fs->super) / 8;
+-	int inode_nbytes = EXT2_INODES_PER_GROUP(fs->super) / 8;
++	int inode_nbytes = (EXT2_INODES_PER_GROUP(fs->super) + 7) / 8;
+ 	char *buf;
+ 
+ 	EXT2_CHECK_MAGIC(fs, EXT2_ET_MAGIC_EXT2FS_FILSYS);
+@@ -290,7 +290,7 @@ static errcode_t read_bitmaps_range_start(ext2_filsys fs, int flags,
+ 	char *block_bitmap = 0, *inode_bitmap = 0;
+ 	errcode_t retval = 0;
+ 	int block_nbytes = EXT2_CLUSTERS_PER_GROUP(fs->super) / 8;
+-	int inode_nbytes = EXT2_INODES_PER_GROUP(fs->super) / 8;
++	int inode_nbytes = (EXT2_INODES_PER_GROUP(fs->super) + 7) / 8;
+ 	int csum_flag;
+ 	unsigned int	cnt;
+ 	blk64_t	blk;

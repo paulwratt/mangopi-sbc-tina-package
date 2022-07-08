@@ -1,0 +1,26 @@
+From e896b9991766de5464618eede0aff5f4c02ce5ce Mon Sep 17 00:00:00 2001
+From: flyranchao <flyranchao@allwinnertech.com>
+Date: Tue, 30 Mar 2021 11:09:20 +0800
+Subject: [PATCH] dnsmasq: fix the complie err for riscv.
+
+Signed-off-by: flyranchao <flyranchao@allwinnertech.com>
+---
+ src/dhcp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/dhcp.c b/src/dhcp.c
+index 4a2983e..cc01651 100644
+--- a/src/dhcp.c
++++ b/src/dhcp.c
+@@ -15,7 +15,7 @@
+ */
+ 
+ #include "dnsmasq.h"
+-
++#include <linux/sockios.h>
+ #ifdef HAVE_DHCP
+ 
+ struct iface_param {
+-- 
+2.29.0
+

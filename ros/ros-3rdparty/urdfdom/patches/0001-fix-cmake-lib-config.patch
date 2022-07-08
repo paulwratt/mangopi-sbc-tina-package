@@ -1,0 +1,34 @@
+From 3a945482db4fb5f08d493b58f38ea14beca8f065 Mon Sep 17 00:00:00 2001
+From: chengweipeng <chengweipeng@allwinnertech.com>
+Date: Thu, 21 Oct 2021 20:02:28 +0800
+Subject: [PATCH] fix cmake lib config
+
+Signed-off-by: chengweipeng <chengweipeng@allwinnertech.com>
+---
+ cmake/urdfdom-config.cmake.in | 5 -----
+ 1 file changed, 5 deletions(-)
+
+diff --git a/cmake/urdfdom-config.cmake.in b/cmake/urdfdom-config.cmake.in
+index 3a0916d..7f0225e 100644
+--- a/cmake/urdfdom-config.cmake.in
++++ b/cmake/urdfdom-config.cmake.in
+@@ -17,16 +17,11 @@ foreach(lib @PKG_LIBRARIES@)
+   if(onelib-NOTFOUND AND onelibd-NOTFOUND)
+     message(FATAL_ERROR "Library '${lib}' in package @PKG_NAME@ is not installed properly")
+   endif()
+-  if(onelib AND onelibd)
+-    list(APPEND @PKG_NAME@_LIBRARIES $<$<NOT:$<CONFIG:Debug>>:${onelib}>)
+-    list(APPEND @PKG_NAME@_LIBRARIES $<$<CONFIG:Debug>:${onelibd}>)
+-  else()
+     if(onelib)
+       list(APPEND @PKG_NAME@_LIBRARIES ${onelib})
+     else()
+       list(APPEND @PKG_NAME@_LIBRARIES ${onelibd})
+     endif()
+-  endif()
+   list(APPEND @PKG_NAME@_TARGETS @PROJECT_NAME@::${lib})
+ endforeach()
+ 
+-- 
+2.29.0
+

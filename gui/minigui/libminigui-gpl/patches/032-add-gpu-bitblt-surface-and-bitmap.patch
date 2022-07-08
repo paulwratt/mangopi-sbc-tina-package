@@ -1,0 +1,420 @@
+From 85a774f07619dd1c56c4541fd00f8b0a90266da9 Mon Sep 17 00:00:00 2001
+From: anruliu <anruliu@allwinnertech.com>
+Date: Wed, 9 Jun 2021 15:18:15 +0800
+Subject: [PATCH] add gpu bitblt surface and bitmap
+
+Signed-off-by: anruliu <anruliu@allwinnertech.com>
+---
+ include/gdi.h              |  5 ++++-
+ include/window.h           |  1 +
+ src/gui/window.c           |  9 ++++++---
+ src/newgal/blit.c          |  4 ++--
+ src/newgal/fbcon/fbvideo.c | 39 +++++++++++++++++++++++++++++++++-----
+ src/newgal/pixels.c        |  5 +++++
+ src/newgal/surface.c       | 26 +++++++++++++++++++++----
+ src/newgal/sysvideo.h      |  2 +-
+ src/newgdi/bitmap.c        | 24 ++++++++++++-----------
+ src/newgdi/readbmp.c       | 20 +++++++++++--------
+ 10 files changed, 100 insertions(+), 35 deletions(-)
+
+diff --git a/include/gdi.h b/include/gdi.h
+index 1248573..5968117 100644
+--- a/include/gdi.h
++++ b/include/gdi.h
+@@ -7454,7 +7454,10 @@ struct _BITMAP
+     Uint32  bmPitch;
+     /** The bits of the bitmap */
+     Uint8*  bmBits;
+-#ifdef _MGIMAGE_G2D
++#if defined(_MGIMAGE_G2D) || defined(_MGIMAGE_GPU)
++    /** The fd of the bitmap */
++    int  bmFd;
++    /** The phy addr of the bitmap */
+     unsigned long  bmBitsPhy;
+     /** The off x of the bitmap */
+     Uint32  bmXo;
+diff --git a/include/window.h b/include/window.h
+index bca4e49..01f15c1 100644
+--- a/include/window.h
++++ b/include/window.h
+@@ -62,6 +62,7 @@ MG_EXPORT void GUIAPI YOffsetBufferEnable(BOOL enable);
+ MG_EXPORT void GUIAPI SetSlideBufferEnable (BOOL enable);
+ MG_EXPORT BOOL GUIAPI GetSlideBufferEnable (void);
+ MG_EXPORT void GUIAPI VideoSyncDoubleBuffer (RECT *rc);
++MG_EXPORT void GUIAPI SlideBuffer (void);
+ 
+     /**
+      * \defgroup msgs Messages
+diff --git a/src/gui/window.c b/src/gui/window.c
+index 6bcc6b4..1a72c6c 100644
+--- a/src/gui/window.c
++++ b/src/gui/window.c
+@@ -3961,6 +3961,12 @@ void GUIAPI VideoSyncDoubleBuffer(RECT *rc)
+     GAL_VideoSyncDoubleBuffer(&rects);
+ }
+ 
++void GUIAPI SlideBuffer(void)
++{
++    if (GAL_GetSlideBufferEnable())
++        GAL_VideoSlide();
++}
++
+ void GUIAPI UpdateWindow (HWND hWnd, BOOL fErase)
+ {
+     MG_CHECK (MG_IS_NORMAL_WINDOW(hWnd));
+@@ -5174,9 +5180,6 @@ void GUIAPI EndPaint (HWND hWnd, HDC hdc)
+         pWin->pCaretInfo->fBlink = FALSE;
+         ShowCaretEx (hWnd, FALSE);
+     }
+-
+-    if (GAL_GetSlideBufferEnable())
+-        GAL_VideoSlide();
+ #endif
+ }
+ 
+diff --git a/src/newgal/blit.c b/src/newgal/blit.c
+index cc2c522..82190f6 100644
+--- a/src/newgal/blit.c
++++ b/src/newgal/blit.c
+@@ -96,7 +96,7 @@ static int GAL_SoftBlit(GAL_Surface *src, GAL_Rect *srcrect,
+     /* Blit is done! */
+     return(okay ? 0 : -1);
+ }
+-#ifdef _MGIMAGE_G2D
++#if defined(_MGIMAGE_G2D) || defined(_MGIMAGE_GPU)
+ static int GAL_HWBlit(GAL_Surface *src, GAL_Rect *srcrect,
+ 		            GAL_Surface *dst, GAL_Rect *dstrect)
+ {
+@@ -299,7 +299,7 @@ int GAL_CalculateBlit(GAL_Surface *surface)
+     }
+     
+     if ( surface->map->sw_blit == NULL ) {
+-#ifdef _MGIMAGE_G2D
++#if defined(_MGIMAGE_G2D) || defined(_MGIMAGE_GPU)
+         GAL_VideoDevice *video = current_video;
+         GAL_VideoDevice *this = current_video;
+         if (video && video->HWAccelBlit) {
+diff --git a/src/newgal/fbcon/fbvideo.c b/src/newgal/fbcon/fbvideo.c
+index a302272..3e9b5bd 100644
+--- a/src/newgal/fbcon/fbvideo.c
++++ b/src/newgal/fbcon/fbvideo.c
+@@ -96,6 +96,7 @@ static int FB_YOffsetHWSurface(_THIS, GAL_Surface *surface, int yoffset);
+ static int FB_FlipHWSurface(_THIS, GAL_Surface *surface, GAL_Rect *rects,
+ 		BOOL enable);
+ static int FB_DoubleBufferEnable(_THIS, GAL_Surface *current, BOOL enable);
++static int FB_SlideHWSurface(_THIS, GAL_Surface *surface);
+ static void FB_SyncDoubleBuffer(_THIS, GAL_Surface *surface, GAL_Rect *rects);
+ #endif
+ 
+@@ -131,7 +132,7 @@ static void FB_DeleteDevice(GAL_VideoDevice *device)
+ static void FB_VideoSync(_THIS)
+ {
+ 	if (need_sync) {
+-		unsigned int args[2];
++		unsigned long args[2];
+ 		args[0] = mapped_mem + mapped_offset;
+ 		args[1] = mapped_memlen;
+ 		if (ioctl(console_fd, FBIO_CACHE_SYNC, args) < 0) {
+@@ -182,6 +183,7 @@ static GAL_VideoDevice *FB_CreateDevice(int devindex)
+     this->FlipHWSurface = FB_FlipHWSurface;
+     this->YOffsetHWSurface = FB_YOffsetHWSurface;
+     this->DoubleBufferEnable = FB_DoubleBufferEnable;
++    this->SlideHWSurface = FB_SlideHWSurface;
+     this->SyncDoubleBuffer = FB_SyncDoubleBuffer;
+ #endif
+     this->FreeHWSurface = FB_FreeHWSurface;
+@@ -396,7 +398,7 @@ static int FB_VideoInit(_THIS, GAL_PixelFormat *vformat)
+     const char *GAL_doublebuffer;
+ 	GAL_doublebuffer = getenv("MG_DOUBLEBUFFER");
+ 	if (GAL_doublebuffer != NULL && strcmp(GAL_doublebuffer, "1") == 0) {
+-		unsigned int args[2];
++		unsigned long args[2];
+ 		args[0] = 1;
+ 		if (ioctl(console_fd, FBIO_ENABLE_CACHE, args) < 0) {
+ 			GAL_SetError("FBIO_ENABLE_CACHE failed\n");
+@@ -1182,7 +1184,7 @@ static int FB_YOffsetHWSurface(_THIS, GAL_Surface *surface, int yoffset)
+ 
+ static int FB_DoubleBufferEnable(_THIS, GAL_Surface *current, BOOL enable)
+ {
+-	unsigned int args[2];
++	unsigned long args[2];
+ 	args[0] = enable;
+ 	FB_LockHWSurface(this, current);
+ 	if (ioctl(console_fd, FBIO_ENABLE_CACHE, args) < 0) {
+@@ -1222,6 +1224,33 @@ static int FB_DoubleBufferEnable(_THIS, GAL_Surface *current, BOOL enable)
+ 	return 0;
+ }
+ 
++/*
++ * Do not copy the buffer, directly change the yoffset
++ */
++static int FB_SlideHWSurface(_THIS, GAL_Surface *surface)
++{
++    FB_LockHWSurface(this, surface);
++
++    /* Wait for vertical retrace and then flip display */
++    cache_vinfo.yoffset = flip_page * surface->h;
++    if (FB_IsSurfaceBusy(this->screen)) {
++        FB_WaitBusySurfaces(this);
++    }
++    wait_vbl(this);
++    if (ioctl(console_fd, FBIOPAN_DISPLAY, &cache_vinfo) < 0) {
++        GAL_SetError("ioctl(FBIOPAN_DISPLAY) failed\n");
++        FB_UnlockHWSurface(this, surface);
++        return (-1);
++    }
++
++    flip_page = !flip_page;
++
++    this->screen->pixels = flip_address[flip_page];
++
++    FB_UnlockHWSurface(this, surface);
++    return (0);
++}
++
+ static int FB_FlipHWSurface(_THIS, GAL_Surface *surface, GAL_Rect *rects,
+ 		BOOL enable)
+ {
+@@ -1282,7 +1311,7 @@ static int FB_FlipHWSurface(_THIS, GAL_Surface *surface, GAL_Rect *rects,
+ 
+ 	FB_LockHWSurface(this, surface);
+ 
+-	unsigned int args[2];
++	unsigned long args[2];
+ 	args[0] = flip_address[flip_page];
+ 	args[1] = mapped_memlen / 2;
+ 	if (ioctl(console_fd, FBIO_CACHE_SYNC, args) < 0) {
+@@ -1557,7 +1586,7 @@ static void FB_VideoQuit(_THIS)
+     	const char *GAL_doublebuffer;
+     	GAL_doublebuffer = getenv("MG_DOUBLEBUFFER");
+     	if (GAL_doublebuffer != NULL && strcmp(GAL_doublebuffer, "1") == 0) {
+-    		unsigned int args[2];
++    		unsigned long args[2];
+     		args[0] = 0;
+     		if (ioctl(console_fd, FBIO_ENABLE_CACHE, args) < 0) {
+     			GAL_SetError("FBIO_ENABLE_CACHE disable failed\n");
+diff --git a/src/newgal/pixels.c b/src/newgal/pixels.c
+index d66af92..2503d5b 100644
+--- a/src/newgal/pixels.c
++++ b/src/newgal/pixels.c
+@@ -333,8 +333,13 @@ Uint32 GAL_CalculatePitch(GAL_Surface *surface)
+ {
+     Uint32 pitch;
+ 
++#ifdef _MGIMAGE_GPU
++    /* Box should be 16-byte aligned for gpu */
++    pitch = ((surface->w + 15) & ~15) * surface->format->BytesPerPixel;
++#else
+     /* Box should be 4-byte aligned for speed */
+     pitch = surface->w * surface->format->BytesPerPixel;
++#endif
+     switch (surface->format->BitsPerPixel) {
+         case 1:
+             pitch = (pitch+7)/8;
+diff --git a/src/newgal/surface.c b/src/newgal/surface.c
+index 959cdeb..58dbaf2 100644
+--- a/src/newgal/surface.c
++++ b/src/newgal/surface.c
+@@ -533,7 +533,15 @@ int GAL_LowerBlit (GAL_Surface *src, GAL_Rect *srcrect,
+     /* Figure out which blitter to use
+      * g2d hardware does not support output width of 1
+      */
+-    if ( (src->flags & GAL_HWACCEL) == GAL_HWACCEL && dstrect->w != 1) {
++    if ( (src->flags & GAL_HWACCEL) == GAL_HWACCEL
++#if defined(_MGIMAGE_G2D) || defined(_MGIMAGE_GPU)
++            && dstrect->w != 1 && dstrect->h != 1
++#ifdef _MGIMAGE_GPU
++            /* High GPU efficiency when greater than 480*650=312000 */
++             && src->w * src->h >= 312000
++#endif
++#endif
++             ) {
+         do_blit = src->map->hw_blit;
+     } else {
+         do_blit = src->map->sw_blit;
+@@ -842,8 +850,13 @@ Uint32 GAL_GetBoxSize (GAL_Surface *surface, Uint32 w, Uint32 h, Uint32* pitch_p
+ {
+     Uint32 pitch;
+ 
++#ifdef _MGIMAGE_GPU
++    /* Box should be 16-byte aligned for gpu */
++    pitch = ((w + 15) & ~15) * surface->format->BytesPerPixel;
++#else
+     /* Box should be 4-byte aligned for speed */
+     pitch = w * surface->format->BytesPerPixel;
++#endif
+     switch (surface->format->BitsPerPixel) {
+         case 1:
+             pitch = (pitch+7)/8;
+@@ -1565,11 +1578,16 @@ int GAL_PutBox (GAL_Surface *dst, const GAL_Rect *dstrect, BITMAP* box)
+             return _PutBoxKeyAlpha (dst, dstrow, srcrow, w, h, box);
+         }
+         else if (box->bmType & BMP_TYPE_ALPHA) {
+-#ifdef _MGIMAGE_G2D
++#if defined(_MGIMAGE_G2D) || defined(_MGIMAGE_GPU)
+             /* g2d hardware does not support output width of 1 */
+             /* software scaler when possible when the height is 1 */
+             if (my_dstrect.w != 1 && my_dstrect.h != 1
+-                    && current_video->HWPutBoxAlpha) {
++                    && current_video->HWPutBoxAlpha
++#ifdef _MGIMAGE_GPU
++                /* High GPU efficiency when greater than 480*650=312000 */
++                && box->bmWidth * box->bmHeight >= 312000
++#endif
++                ) {
+                 GAL_Rect srcrect =
+                         { off_x + box->bmXo, off_y + box->bmYo, w, h };
+                 return current_video->HWPutBoxAlpha(current_video, box,
+@@ -1661,7 +1679,7 @@ slow_copy:
+ int GAL_PutBoxAlphaScaler(GAL_Surface *dst, const GAL_Rect *srcrect,
+         const GAL_Rect *dstrect, BITMAP *box, const GAL_Rect *devrect,
+         const GAL_Rect *scalrect) {
+-#ifdef _MGIMAGE_G2D
++#if defined(_MGIMAGE_G2D) || defined(_MGIMAGE_GPU)
+     /* g2d hardware does not support output width of 1 */
+     if (dstrect->w != 1 && scalrect->w != 1
+             && current_video->HWPutBoxAlphaScaler) {
+diff --git a/src/newgal/sysvideo.h b/src/newgal/sysvideo.h
+index a67dac6..6ed7246 100644
+--- a/src/newgal/sysvideo.h
++++ b/src/newgal/sysvideo.h
+@@ -145,7 +145,7 @@ struct GAL_VideoDevice {
+ 	   on the current flags of the surface (colorkey, alpha, etc.)
+ 	 */
+ 	int (*CheckHWBlit)(_THIS, GAL_Surface *src, GAL_Surface *dst);
+-#ifdef _MGIMAGE_G2D
++#if defined(_MGIMAGE_G2D) || defined(_MGIMAGE_GPU)
+ 	int (*HWAccelBlit)(_THIS, GAL_Surface *src, GAL_Rect *srcrect, GAL_Surface *dst, GAL_Rect *dstrect);
+ 	int (*AllocHWBuffer)(_THIS, PBITMAP bmp, int nSize);
+ 	void (*FreeHWBuffer)(_THIS, PBITMAP bmp);
+diff --git a/src/newgdi/bitmap.c b/src/newgdi/bitmap.c
+index 6f3ba04..e9d25cb 100644
+--- a/src/newgdi/bitmap.c
++++ b/src/newgdi/bitmap.c
+@@ -442,9 +442,10 @@ PDC _begin_fill_bitmap (HDC hdc, int x, int y, int w, int h,
+         info->bmp = bmp;
+         SetRect (&info->dst_rc, rect.x, rect.y, 
+                         rect.x + rect.w, rect.y + rect.h);
+-#ifdef _MGIMAGE_G2D
++#if defined(_MGIMAGE_G2D) || defined(_MGIMAGE_GPU)
+         /* g2d hardware does not support output width of 1 */
+-        if (w != 1) {
++        if (w != 1 && h != 1 && sw != 1 && sh != 1
++                && (bmp->bmType & BMP_TYPE_ALPHA)) {
+             info->line_buff = NULL;
+             info->line_alpha_buff = NULL;
+         } else
+@@ -1000,9 +1001,10 @@ BOOL GUIAPI FillBoxWithBitmapPart (HDC hdc, int x, int y, int w, int h,
+         info.dst_w = w; info.dst_h = h;
+         info.off_x = xo; info.off_y = yo;
+         info.bmp = bmp;
+-#ifdef _MGIMAGE_G2D
++#if defined(_MGIMAGE_G2D) || defined(_MGIMAGE_GPU)
+         /* g2d hardware does not support output width of 1 */
+-        if (w != 1) {
++        if (w != 1 && h != 1 && bw != 1 && bh != 1
++                && (bmp->bmType & BMP_TYPE_ALPHA)) {
+             info.line_buff = NULL;
+             info.line_alpha_buff = NULL;
+         } else
+@@ -1048,9 +1050,9 @@ BOOL GUIAPI FillBoxWithBitmapPart (HDC hdc, int x, int y, int w, int h,
+     else {
+         BITMAP part = *bmp;
+         if (xo != 0 || yo != 0) {
+-#ifdef _MGIMAGE_G2D
++#if defined(_MGIMAGE_G2D) || defined(_MGIMAGE_GPU)
+             /* g2d hardware does not support output width of 1 */
+-            if (w != 1) {
++            if (w != 1 && h != 1 && (part.bmType & BMP_TYPE_ALPHA)) {
+                 part.bmXo = xo;
+                 part.bmYo = yo;
+             } else
+@@ -1431,9 +1433,9 @@ void GUIAPI StretchBlt (HDC hsdc, int sx, int sy, int sw, int sh,
+     info.pdc = pddc;
+     info.dst_x = dx; info.dst_y = dy;
+     info.dst_w = dw; info.dst_h = dh;
+-#ifdef _MGIMAGE_G2D
++#if defined(_MGIMAGE_G2D) || defined(_MGIMAGE_GPU)
+     /* g2d hardware does not support output width of 1 */
+-    if (dw != 1) {
++    if (dw != 1 && dh != 1) {
+         info.line_buff = NULL;
+     } else
+ #endif
+@@ -1449,9 +1451,9 @@ void GUIAPI StretchBlt (HDC hsdc, int sx, int sy, int sw, int sh,
+     bmp.bmType = BMP_TYPE_NORMAL;
+     bmp.bmBitsPerPixel = GAL_BitsPerPixel (psdc->surface);
+     bmp.bmBytesPerPixel = GAL_BytesPerPixel (psdc->surface);
+-#ifdef _MGIMAGE_G2D
++#if defined(_MGIMAGE_G2D) || defined(_MGIMAGE_GPU)
+     /* g2d hardware does not support output width of 1 */
+-    if (dw != 1) {
++    if (dw != 1 && dh != 1) {
+         info.sw = sw;
+         info.sh = sh;
+         bmp.bmXo = sx;
+@@ -1923,7 +1925,7 @@ BOOL BitmapDDAScalerEx (void* context, const BITMAP* src_bmp,
+     if (dst_w <= 0 || dst_h <= 0)
+         return FALSE;
+ 
+-#ifdef _MGIMAGE_G2D
++#if defined(_MGIMAGE_G2D) || defined(_MGIMAGE_GPU)
+     if (cb_line_scaled == _line_scaled_fillbox) {
+         struct _SCALER_INFO_FILLBMP *info =
+                 (struct _SCALER_INFO_FILLBMP*) context;
+diff --git a/src/newgdi/readbmp.c b/src/newgdi/readbmp.c
+index d7082bd..1d08f6f 100644
+--- a/src/newgdi/readbmp.c
++++ b/src/newgdi/readbmp.c
+@@ -79,12 +79,14 @@ BOOL GUIAPI InitBitmap (HDC hdc, Uint32 w, Uint32 h, Uint32 pitch, BYTE* bits,
+     else if (!bits) {
+ 
+         size_t size = GAL_GetBoxSize (pdc->surface, w, h, &bmp->bmPitch);
+-#ifdef _MGIMAGE_G2D
+-    if (current_video->AllocHWBuffer(current_video, bmp, size))
+-        return FALSE;
++#if defined(_MGIMAGE_G2D) || defined(_MGIMAGE_GPU)
++        bmp->bmXo = 0;
++        bmp->bmYo = 0;
++        if (current_video->AllocHWBuffer(current_video, bmp, size))
++            return FALSE;
+ #else
+-    if (!(bmp->bmBits = malloc (size)))
+-        return FALSE;
++        if (!(bmp->bmBits = malloc (size)))
++            return FALSE;
+ #endif
+     }
+     else /* bits is not zero, but pitch is zero */
+@@ -214,7 +216,9 @@ static int init_bitmap_from_mybmp (HDC hdc, PBITMAP bmp,
+ 
+     size = GAL_GetBoxSize (pdc->surface, my_bmp->w, my_bmp->h, &bmp->bmPitch);
+ 
+-#ifdef _MGIMAGE_G2D
++#if defined(_MGIMAGE_G2D) || defined(_MGIMAGE_GPU)
++    bmp->bmXo = 0;
++    bmp->bmYo = 0;
+     if (current_video->AllocHWBuffer(current_video, bmp,
+             alloc_all ? size : bmp->bmPitch)) {
+         ret = ERR_BMP_MEM;
+@@ -293,7 +297,7 @@ cleanup_and_ret:
+     if (ret != ERR_BMP_OK) {
+         DeleteBitmapAlphaPixel (bmp);
+         if (bmp->bmBits) {
+-#ifdef _MGIMAGE_G2D
++#if defined(_MGIMAGE_G2D) || defined(_MGIMAGE_GPU)
+             current_video->FreeHWBuffer(current_video, bmp);
+ #else
+             free (bmp->bmBits);
+@@ -585,7 +589,7 @@ void GUIAPI UnloadBitmap (PBITMAP bmp)
+ {
+     DeleteBitmapAlphaPixel (bmp);
+ 
+-#ifdef _MGIMAGE_G2D
++#if defined(_MGIMAGE_G2D) || defined(_MGIMAGE_GPU)
+     current_video->FreeHWBuffer(current_video, bmp);
+ #else
+     free (bmp->bmBits);
+-- 
+2.29.0
+

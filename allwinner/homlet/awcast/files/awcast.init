@@ -1,0 +1,128 @@
+#!/bin/sh /etc/rc.common
+# Copyright (C) 2006-2011 OpenWrt.org
+
+START=10
+STOP=10
+
+USE_PROCD=1
+NANE=awcast
+PROG=/usr/bin/awcast
+OOM_ADJ=-17
+
+awcast_config="/usr/local/etc/awcast.cfg"
+p2p_wlan=""
+
+function write_value_to_file()
+{
+	local cfgkey=$1
+	local cfgval=$2
+	local cfgfile=$3
+
+	echo "write $cfgkey=$cfgval to $cfgfile"
+
+	cfgval=$(echo -e "$cfgval" | sed -e 's/^\s\+//g' -e 's/\s\+$//g')
+	if [ -f $cfgfile ] && [ -n "$(sed -n "/^$cfgkey\s*=/p" $cfgfile)" ]; then
+		sed -i "s|^$cfgkey\s*=\s*.*$|$cfgkey=$cfgval|g" $cfgfile
+	else
+		echo "$cfgkey=$cfgval" >> $cfgfile
+	fi
+}
+
+function get_p2p_wlan()
+{
+    local str=""
+
+    str=`sed -n '/^p2p_wlan/p' ${awcast_config}`
+    p2p_wlan=${str##*=}
+
+    if [ -z ${p2p_wlan} ]; then
+        p2p_wlan=wlan1
+    fi
+
+    echo "p2p_wlan=${p2p_wlan}"
+}
+
+function set_share_interface()
+{
+    local share_interface=""
+	local net_key=""
+    local str=""
+
+    str=`sed -n '/^share_interface/p' ${awcast_config}`
+    share_interface=${str##*=}
+
+    if [ "x${share_interface}" != "x" ]; then
+        echo "share_interface=${share_interface}"
+        return
+    fi
+
+	str=`sed -n '/^net_key/p' ${awcast_config}`
+    net_key=${str##*=}
+
+    get_p2p_wlan
+    if [ ${p2p_wlan} == "wlan0" ] && [ ${net_key} -eq 0 ]; then
+        write_value_to_file "share_interface" "1" ${awcast_config}
+    fi
+}
+
+function wait_wifi_driver() {
+    MAC_ADDR=
+    i=0
+    while [ -z $MAC_ADDR ]
+    do
+        MAC_ADDR=`ifconfig wlan0 |grep HWaddr |head -n 1 | grep -o  "[a-f0-9A-F]\\([a-f0-9A-F]\\:[a-f0-9A-F]\\)\\{5\\}[a-f0-9A-F]"`
+        [ ! -z $MAC_ADDR ] && break;
+        i=`expr $i + 1`
+        usleep 500
+        if [ $i -eq 100 ]; then
+                break
+        fi
+    done
+}
+
+function kill_p2p_process()
+{
+    local pid=99999
+
+    get_p2p_wlan
+
+    #kill udhcpc
+    killall -9 udhcpc
+
+    #kill p2p wpa_supplicant
+    pid=`ps | grep "wpa_supplicant -Dnl80211 -i${p2p_wlan}" | grep -v "grep" | awk 'NR==1{print $1}'`
+    if [ ${pid} ]; then
+        kill -9 ${pid}
+    fi
+}
+
+
+start_service() {
+    procd_open_instance
+    #wait_wifi_driver
+    set_share_interface
+    procd_set_param oom_adj $OOM_ADJ
+    procd_set_param command $PROG
+    #procd_set_param respawn
+    procd_close_instance
+}
+
+stop_service() {
+    procd_open_instance
+    awcast=`ps | grep awcast | grep -v grep`
+    [ -n "$awcast" ] && {
+		kill_p2p_process
+		killall -9 awcast
+		#sleep 1
+    }
+    procd_close_instance
+}
+
+restart() {
+    stop $@
+    start $@
+}
+
+shutdown() {
+        echo shutdown
+}

@@ -1,0 +1,11 @@
+diff -Naur refpolicy-2.20200229-old/policy/flask/access_vectors refpolicy-2.20200229/policy/flask/access_vectors
+--- refpolicy-2.20200229-old/policy/flask/access_vectors	2021-02-22 14:59:05.158148768 +0800
++++ refpolicy-2.20200229/policy/flask/access_vectors	2021-02-22 15:05:42.730148768 +0800
+@@ -597,6 +597,7 @@
+ {
+ 	nlmsg_read
+ 	nlmsg_write
++	nlmsg_readpriv
+ }
+ 
+ class obsolete_netlink_firewall_socket

@@ -1,0 +1,36 @@
+Index: procd-2016-02-08/initd/early.c
+===================================================================
+--- procd-2016-02-08.orig/initd/early.c
++++ procd-2016-02-08/initd/early.c
+@@ -14,6 +14,7 @@
+ 
+ #include <sys/mount.h>
+ #include <sys/types.h>
++#include <sys/sysmacros.h>
+ #include <sys/stat.h>
+ 
+ #include <stdio.h>
+Index: procd-2016-02-08/initd/mkdev.c
+===================================================================
+--- procd-2016-02-08.orig/initd/mkdev.c
++++ procd-2016-02-08/initd/mkdev.c
+@@ -18,6 +18,7 @@
+ 
+ #include <sys/stat.h>
+ #include <sys/types.h>
++#include <sys/sysmacros.h>
+ 
+ #include <stdio.h>
+ #include <string.h>
+Index: procd-2016-02-08/plug/hotplug.c
+===================================================================
+--- procd-2016-02-08.orig/plug/hotplug.c
++++ procd-2016-02-08/plug/hotplug.c
+@@ -17,6 +17,7 @@
+ #include <sys/types.h>
+ 
+ #include <linux/types.h>
++#include <sys/sysmacros.h>
+ #include <linux/netlink.h>
+ 
+ #include <libubox/blobmsg_json.h>

@@ -1,0 +1,518 @@
+From f851342e72f380b6c039f86c242e6c48068466cc Mon Sep 17 00:00:00 2001
+From: anruliu <anruliu@allwinnertech.com>
+Date: Wed, 19 May 2021 13:58:29 +0800
+Subject: [PATCH] add g2d stretchblt surface and bitmap
+
+Signed-off-by: anruliu <anruliu@allwinnertech.com>
+---
+ include/gdi.h              |   4 +
+ include/window.h           |   1 +
+ src/gui/window.c           |  26 +++++--
+ src/include/newgal.h       |  12 +++
+ src/newgal/fbcon/fbvideo.c |  33 ++++++++
+ src/newgal/surface.c       |  31 ++++++--
+ src/newgal/sysvideo.h      |  12 +--
+ src/newgal/video.c         |   7 ++
+ src/newgdi/bitmap.c        | 156 ++++++++++++++++++++++++++++++-------
+ 9 files changed, 234 insertions(+), 48 deletions(-)
+
+diff --git a/include/gdi.h b/include/gdi.h
+index 8461fab..4bfa300 100644
+--- a/include/gdi.h
++++ b/include/gdi.h
+@@ -7435,6 +7435,10 @@ struct _BITMAP
+     Uint8*  bmBits;
+ #ifdef _MGIMAGE_G2D
+     unsigned long  bmBitsPhy;
++    /** The off x of the bitmap */
++    Uint32  bmXo;
++    /** The off y of the bitmap */
++    Uint32  bmYo;
+ #endif
+ 
+     /** The private pixel format */
+diff --git a/include/window.h b/include/window.h
+index 4d10b7c..bca4e49 100644
+--- a/include/window.h
++++ b/include/window.h
+@@ -61,6 +61,7 @@ MG_EXPORT int GUIAPI DoubleBufferEnable(BOOL enable);
+ MG_EXPORT void GUIAPI YOffsetBufferEnable(BOOL enable);
+ MG_EXPORT void GUIAPI SetSlideBufferEnable (BOOL enable);
+ MG_EXPORT BOOL GUIAPI GetSlideBufferEnable (void);
++MG_EXPORT void GUIAPI VideoSyncDoubleBuffer (RECT *rc);
+ 
+     /**
+      * \defgroup msgs Messages
+diff --git a/src/gui/window.c b/src/gui/window.c
+index 1bec2a3..6bcc6b4 100644
+--- a/src/gui/window.c
++++ b/src/gui/window.c
+@@ -3915,40 +3915,50 @@ BOOL GUIAPI DestroyMainWindow (HWND hWnd)
+ /*************************** Main window creation ****************************/
+ int GUIAPI DoubleBufferEnable(BOOL enable)
+ {
+-	return GAL_DoubleBufferEnable(enable);
++    return GAL_DoubleBufferEnable(enable);
+ }
+ 
+ void GUIAPI YOffsetBufferEnable(BOOL enable)
+ {
+-	GAL_YOffsetBufferEnable(enable);
++    GAL_YOffsetBufferEnable(enable);
+ }
+ 
+ void GUIAPI YOffsetSwitch(int yoffset)
+ {
+-	GAL_YOffset(yoffset);
++    GAL_YOffset(yoffset);
+ }
+ 
+ unsigned int fbGlobalYOffset = 0;
+ 
+ int GUIAPI GetGlobaYOffset()
+ {
+-	return fbGlobalYOffset;
++    return fbGlobalYOffset;
+ }
+ 
+ void GUIAPI SetGlobaYOffset(int yoffset)
+ {
+-	if (GAL_YOffgetBufferEnable())
+-		fbGlobalYOffset = yoffset;
++    if (GAL_YOffgetBufferEnable())
++        fbGlobalYOffset = yoffset;
+ }
+ 
+ void GUIAPI SetSlideBufferEnable(BOOL enable)
+ {
+-	GAL_SetSlideBufferEnable(enable);
++    GAL_SetSlideBufferEnable(enable);
+ }
+ 
+ BOOL GUIAPI GetSlideBufferEnable(void)
+ {
+-	return GAL_GetSlideBufferEnable();
++    return GAL_GetSlideBufferEnable();
++}
++
++void GUIAPI VideoSyncDoubleBuffer(RECT *rc)
++{
++    GAL_Rect rects;
++    rects.x = rc->left;
++    rects.y = rc->top;
++    rects.w = rc->right - rc->left;
++    rects.h = rc->bottom - rc->top;
++    GAL_VideoSyncDoubleBuffer(&rects);
+ }
+ 
+ void GUIAPI UpdateWindow (HWND hWnd, BOOL fErase)
+diff --git a/src/include/newgal.h b/src/include/newgal.h
+index e9654d0..e8869f9 100644
+--- a/src/include/newgal.h
++++ b/src/include/newgal.h
+@@ -689,6 +689,18 @@ extern int GAL_GetBox (GAL_Surface *src, const GAL_Rect* srcrect, BITMAP* box);
+  */
+ extern int GAL_PutBox (GAL_Surface *dst, const GAL_Rect* dstrect, BITMAP* box);
+ 
++/*
++ * This function put pixels scaler in a box to the rect on the surface.
++ *
++ * Note that the size of box should be equal to:
++ *
++ *  size = GAL_GetBoxSize (src, &rect, NULL);
++ *
++ */
++extern int GAL_PutBoxAlphaScaler(GAL_Surface *dst, const GAL_Rect *srcrect,
++        const GAL_Rect *dstrect, BITMAP *box, const GAL_Rect *devrect,
++        const GAL_Rect *scalrect);
++
+ /* 
+  * This function takes a surface and copies it to a new surface of the
+  * pixel format and colors of the video framebuffer, suitable for fast
+diff --git a/src/newgal/fbcon/fbvideo.c b/src/newgal/fbcon/fbvideo.c
+index cfc26e8..a302272 100644
+--- a/src/newgal/fbcon/fbvideo.c
++++ b/src/newgal/fbcon/fbvideo.c
+@@ -96,6 +96,7 @@ static int FB_YOffsetHWSurface(_THIS, GAL_Surface *surface, int yoffset);
+ static int FB_FlipHWSurface(_THIS, GAL_Surface *surface, GAL_Rect *rects,
+ 		BOOL enable);
+ static int FB_DoubleBufferEnable(_THIS, GAL_Surface *current, BOOL enable);
++static void FB_SyncDoubleBuffer(_THIS, GAL_Surface *surface, GAL_Rect *rects);
+ #endif
+ 
+ /* Internal palette functions */
+@@ -181,6 +182,7 @@ static GAL_VideoDevice *FB_CreateDevice(int devindex)
+     this->FlipHWSurface = FB_FlipHWSurface;
+     this->YOffsetHWSurface = FB_YOffsetHWSurface;
+     this->DoubleBufferEnable = FB_DoubleBufferEnable;
++    this->SyncDoubleBuffer = FB_SyncDoubleBuffer;
+ #endif
+     this->FreeHWSurface = FB_FreeHWSurface;
+     this->GetFBInfo = FB_GetFBInfo;
+@@ -1335,6 +1337,37 @@ static int FB_FlipHWSurface(_THIS, GAL_Surface *surface, GAL_Rect *rects,
+ 	return (0);
+ }
+ 
++static void FB_SyncDoubleBuffer(_THIS, GAL_Surface *surface, GAL_Rect *rects)
++{
++   FB_LockHWSurface(this, surface);
++
++   GAL_BlitInfo info;
++
++   //Set up the blit information
++   info.s_pixels = (Uint8 *) flip_address[flip_page] + surface->offset
++           + (Uint16) rects->y * surface->pitch
++           + (Uint16) rects->x * surface->format->BytesPerPixel;
++   info.s_width = rects->w;
++   info.s_height = rects->h;
++   info.s_skip = surface->pitch
++           - info.s_width * surface->format->BytesPerPixel;
++   info.d_pixels = (Uint8 *) flip_address[!flip_page] + surface->offset
++           + (Uint16) rects->y * surface->pitch
++           + (Uint16) rects->x * surface->format->BytesPerPixel;
++   info.d_width = rects->w;
++   info.d_height = rects->h;
++   info.d_skip = surface->pitch
++           - info.d_width * surface->format->BytesPerPixel;
++   info.aux_data = surface->map->sw_data->aux_data;
++   info.src = surface->format;
++   info.table = surface->map->table;
++   info.dst = surface->format;
++
++   FB_BlitCopy(&info);
++
++   FB_UnlockHWSurface(this, surface);
++}
++
+ void FB_SavePaletteTo(_THIS, int palette_len, __u16 *area)
+ {
+     struct fb_cmap cmap;
+diff --git a/src/newgal/surface.c b/src/newgal/surface.c
+index 670c0fe..959cdeb 100644
+--- a/src/newgal/surface.c
++++ b/src/newgal/surface.c
+@@ -701,8 +701,9 @@ int GAL_FillRect(GAL_Surface *dst, const GAL_Rect *dstrect, Uint32 color)
+     }
+ 
+     /* Check for hardware acceleration */
++    /* g2d hardware does not support output width of 1 */
+     if ( ((dst->flags & GAL_HWSURFACE) == GAL_HWSURFACE) &&
+-                    video->info.blit_fill ) {
++                    video->info.blit_fill && my_dstrect.w != 1) {
+         return(video->FillHWRect(this, dst, &my_dstrect, color));
+     }
+ 
+@@ -1566,10 +1567,13 @@ int GAL_PutBox (GAL_Surface *dst, const GAL_Rect *dstrect, BITMAP* box)
+         else if (box->bmType & BMP_TYPE_ALPHA) {
+ #ifdef _MGIMAGE_G2D
+             /* g2d hardware does not support output width of 1 */
+-            if (my_dstrect.w != 1 && current_video->HWPutBoxAlpha) {
+-                GAL_Rect srcrect = { off_x, off_y, w, h };
+-                return current_video->HWPutBoxAlpha(current_video, box, &srcrect,
+-                        dst, &my_dstrect);
++            /* software scaler when possible when the height is 1 */
++            if (my_dstrect.w != 1 && my_dstrect.h != 1
++                    && current_video->HWPutBoxAlpha) {
++                GAL_Rect srcrect =
++                        { off_x + box->bmXo, off_y + box->bmYo, w, h };
++                return current_video->HWPutBoxAlpha(current_video, box,
++                        &srcrect, dst, &my_dstrect);
+             } else {
+                 return _PutBoxAlpha(dst, dstrow, srcrow, w, h, box);
+             }
+@@ -1654,6 +1658,23 @@ slow_copy:
+     return 0;
+ }
+ 
++int GAL_PutBoxAlphaScaler(GAL_Surface *dst, const GAL_Rect *srcrect,
++        const GAL_Rect *dstrect, BITMAP *box, const GAL_Rect *devrect,
++        const GAL_Rect *scalrect) {
++#ifdef _MGIMAGE_G2D
++    /* g2d hardware does not support output width of 1 */
++    if (dstrect->w != 1 && scalrect->w != 1
++            && current_video->HWPutBoxAlphaScaler) {
++        return current_video->HWPutBoxAlphaScaler(current_video, box, srcrect,
++                dst, dstrect, devrect, scalrect);
++    } else {
++        return -1;
++    }
++#else
++    return -1;
++#endif
++}
++
+ /* 
+  * Convert a surface into the specified pixel format.
+  */
+diff --git a/src/newgal/sysvideo.h b/src/newgal/sysvideo.h
+index 1ab99af..a67dac6 100644
+--- a/src/newgal/sysvideo.h
++++ b/src/newgal/sysvideo.h
+@@ -140,17 +140,18 @@ struct GAL_VideoDevice {
+ 
+ 	/* Allocates a surface in video memory */
+ 	int (*AllocHWSurface)(_THIS, GAL_Surface *surface);
+-#ifdef _MGIMAGE_G2D
+-	int (*AllocHWBuffer)(_THIS, PBITMAP bmp, int nSize);
+-	void (*FreeHWBuffer)(_THIS, PBITMAP bmp);
+-	int (*HWPutBoxAlpha)(_THIS, PBITMAP src, GAL_Rect *srcrect, GAL_Surface *dst, GAL_Rect *dstrect);
+-#endif
++
+ 	/* Sets the hardware accelerated blit function, if any, based
+ 	   on the current flags of the surface (colorkey, alpha, etc.)
+ 	 */
+ 	int (*CheckHWBlit)(_THIS, GAL_Surface *src, GAL_Surface *dst);
+ #ifdef _MGIMAGE_G2D
+ 	int (*HWAccelBlit)(_THIS, GAL_Surface *src, GAL_Rect *srcrect, GAL_Surface *dst, GAL_Rect *dstrect);
++	int (*AllocHWBuffer)(_THIS, PBITMAP bmp, int nSize);
++	void (*FreeHWBuffer)(_THIS, PBITMAP bmp);
++	int (*HWPutBoxAlpha)(_THIS, PBITMAP src, GAL_Rect *srcrect, GAL_Surface *dst, GAL_Rect *dstrect);
++	int (*HWPutBoxAlphaScaler)(_THIS, PBITMAP src, GAL_Rect *srcrect, GAL_Surface *dst,
++	        GAL_Rect *dstrect, GAL_Rect *devrect, GAL_Rect *scalrect);
+ #endif
+ 	/* Fills a surface rectangle with the given color */
+ 	int (*FillHWRect)(_THIS, GAL_Surface *dst, GAL_Rect *rect, Uint32 color);
+@@ -172,6 +173,7 @@ struct GAL_VideoDevice {
+ 	int (*SlideHWSurface)(_THIS, GAL_Surface *surface);
+ 	/* Performs hardware flipping */
+ 	int (*FlipHWSurface)(_THIS, GAL_Surface *surface, GAL_Rect *rects, BOOL enable);
++	void (*SyncDoubleBuffer)(_THIS, GAL_Surface *surface, GAL_Rect *rects);
+ #endif
+ 
+ 	/* Frees a previously allocated video surface */
+diff --git a/src/newgal/video.c b/src/newgal/video.c
+index 193b856..cc708fa 100644
+--- a/src/newgal/video.c
++++ b/src/newgal/video.c
+@@ -1359,3 +1359,10 @@ void GAL_VideoSlide(void)
+ 		video->SlideHWSurface(video, GAL_VideoSurface);
+ 	}
+ }
++
++void GAL_VideoSyncDoubleBuffer(GAL_Rect *rc) {
++	GAL_VideoDevice *video = current_video;
++	if (video && video->SyncDoubleBuffer) {
++		video->SyncDoubleBuffer(video, GAL_VideoSurface, rc);
++	}
++}
+diff --git a/src/newgdi/bitmap.c b/src/newgdi/bitmap.c
+index 63cd843..6f3ba04 100644
+--- a/src/newgdi/bitmap.c
++++ b/src/newgdi/bitmap.c
+@@ -442,14 +442,23 @@ PDC _begin_fill_bitmap (HDC hdc, int x, int y, int w, int h,
+         info->bmp = bmp;
+         SetRect (&info->dst_rc, rect.x, rect.y, 
+                         rect.x + rect.w, rect.y + rect.h);
+-        info->line_buff = malloc (GAL_BytesPerPixel (pdc->surface) * w);
+-        if (info->line_buff == NULL) {
+-            goto fail;
+-        }
++#ifdef _MGIMAGE_G2D
++        /* g2d hardware does not support output width of 1 */
++        if (w != 1) {
++            info->line_buff = NULL;
++            info->line_alpha_buff = NULL;
++        } else
++#endif
++        {
++            info->line_buff = malloc (GAL_BytesPerPixel (pdc->surface) * w);
++            if (info->line_buff == NULL) {
++                goto fail;
++            }
+ 
+-        info->line_alpha_buff = malloc (w);
+-        if (info->line_alpha_buff == NULL) {
+-            goto fail;
++            info->line_alpha_buff = malloc (w);
++            if (info->line_alpha_buff == NULL) {
++                goto fail;
++            }
+         }
+     }
+     else {
+@@ -991,17 +1000,26 @@ BOOL GUIAPI FillBoxWithBitmapPart (HDC hdc, int x, int y, int w, int h,
+         info.dst_w = w; info.dst_h = h;
+         info.off_x = xo; info.off_y = yo;
+         info.bmp = bmp;
+-        info.line_buff = malloc (GAL_BytesPerPixel (pdc->surface) * bw);
+-        if (info.line_buff == NULL) {
+-            UNLOCK_GCRINFO (pdc);
+-            return FALSE;
+-        }
++#ifdef _MGIMAGE_G2D
++        /* g2d hardware does not support output width of 1 */
++        if (w != 1) {
++            info.line_buff = NULL;
++            info.line_alpha_buff = NULL;
++        } else
++#endif
++        {
++            info.line_buff = malloc (GAL_BytesPerPixel (pdc->surface) * bw);
++            if (info.line_buff == NULL) {
++                UNLOCK_GCRINFO (pdc);
++                return FALSE;
++            }
+ 
+-        info.line_alpha_buff = malloc (bw);
+-        if (info.line_alpha_buff == NULL) {
+-            free (info.line_buff);
+-            UNLOCK_GCRINFO (pdc);
+-            return FALSE;
++            info.line_alpha_buff = malloc (bw);
++            if (info.line_alpha_buff == NULL) {
++                free (info.line_buff);
++                UNLOCK_GCRINFO (pdc);
++                return FALSE;
++            }
+         }
+     }
+     else {
+@@ -1030,9 +1048,18 @@ BOOL GUIAPI FillBoxWithBitmapPart (HDC hdc, int x, int y, int w, int h,
+     else {
+         BITMAP part = *bmp;
+         if (xo != 0 || yo != 0) {
+-            part.bmBits += part.bmPitch * yo + 
+-                    xo * GAL_BytesPerPixel (pdc->surface);
+-            part.bmAlphaMask += yo * part.bmAlphaPitch + xo;
++#ifdef _MGIMAGE_G2D
++            /* g2d hardware does not support output width of 1 */
++            if (w != 1) {
++                part.bmXo = xo;
++                part.bmYo = yo;
++            } else
++#endif
++            {
++                part.bmBits += part.bmPitch * yo+
++                xo * GAL_BytesPerPixel (pdc->surface);
++                part.bmAlphaMask += yo * part.bmAlphaPitch + xo;
++            }
+         }
+         _dc_fillbox_bmp_clip (pdc, &rect, &part);
+     }
+@@ -1289,6 +1316,7 @@ struct _SCALER_INFO_STRETCHBLT
+     PDC pdc;
+     int dst_x, dst_y;
+     int dst_w, dst_h;
++    int sw, sh;
+     BYTE* line_buff;
+     BOOL bottom2top;
+ };
+@@ -1403,22 +1431,45 @@ void GUIAPI StretchBlt (HDC hsdc, int sx, int sy, int sw, int sh,
+     info.pdc = pddc;
+     info.dst_x = dx; info.dst_y = dy;
+     info.dst_w = dw; info.dst_h = dh;
+-    info.line_buff = malloc (GAL_BytesPerPixel (pddc->surface) * dw);
++#ifdef _MGIMAGE_G2D
++    /* g2d hardware does not support output width of 1 */
++    if (dw != 1) {
++        info.line_buff = NULL;
++    } else
++#endif
++    {
++        info.line_buff = malloc(GAL_BytesPerPixel (pddc->surface) * dw);
+ 
+-    if (info.line_buff == NULL) {
+-        goto error_ret;
++        if (info.line_buff == NULL) {
++            goto error_ret;
++        }
+     }
+ 
+     memset (&bmp, 0, sizeof (bmp));
+     bmp.bmType = BMP_TYPE_NORMAL;
+     bmp.bmBitsPerPixel = GAL_BitsPerPixel (psdc->surface);
+     bmp.bmBytesPerPixel = GAL_BytesPerPixel (psdc->surface);
+-    bmp.bmWidth = sw;
+-    bmp.bmHeight = sh;
+-    bmp.bmPitch = psdc->surface->pitch;
+-    bmp.bmBits = (unsigned char*)psdc->surface->pixels 
+-            + sy * psdc->surface->pitch 
+-            + sx * GAL_BytesPerPixel (psdc->surface);
++#ifdef _MGIMAGE_G2D
++    /* g2d hardware does not support output width of 1 */
++    if (dw != 1) {
++        info.sw = sw;
++        info.sh = sh;
++        bmp.bmXo = sx;
++        bmp.bmYo = sy;
++        bmp.bmWidth = psdc->surface->w;
++        bmp.bmHeight = psdc->surface->h;
++        bmp.bmPitch = psdc->surface->pitch;
++        bmp.bmBits = (unsigned char*) psdc->surface->pixels;
++    } else
++#endif
++    {
++        bmp.bmWidth = sw;
++        bmp.bmHeight = sh;
++        bmp.bmPitch = psdc->surface->pitch;
++        bmp.bmBits = (unsigned char*)psdc->surface->pixels
++                + sy * psdc->surface->pitch
++                + sx * GAL_BytesPerPixel (psdc->surface);
++    }
+ 
+     if (pddc->surface ==  psdc->surface)
+         GetBoundRect (&pddc->rc_output, &srcOutput, &dstOutput);
+@@ -1492,7 +1543,8 @@ void GUIAPI StretchBlt (HDC hsdc, int sx, int sy, int sw, int sh,
+ 
+     LEAVE_DRAWING (pddc);
+ 
+-    free (info.line_buff);
++    if (info.line_buff)
++        free(info.line_buff);
+ 
+ error_ret:
+     UNLOCK_GCRINFO (pddc);
+@@ -1871,6 +1923,50 @@ BOOL BitmapDDAScalerEx (void* context, const BITMAP* src_bmp,
+     if (dst_w <= 0 || dst_h <= 0)
+         return FALSE;
+ 
++#ifdef _MGIMAGE_G2D
++    if (cb_line_scaled == _line_scaled_fillbox) {
++        struct _SCALER_INFO_FILLBMP *info =
++                (struct _SCALER_INFO_FILLBMP*) context;
++        GAL_Rect srcrect = { 0, 0, src_bmp->bmWidth, src_bmp->bmHeight };
++        GAL_Rect dstrect = { info->dst_rc.left, info->dst_rc.top,
++                info->dst_rc.right - info->dst_rc.left, info->dst_rc.bottom
++                        - info->dst_rc.top };
++        GAL_Rect devrect = { info->pdc->DevRC.left, info->pdc->DevRC.top,
++                info->pdc->DevRC.right - info->pdc->DevRC.left,
++                info->pdc->DevRC.bottom - info->pdc->DevRC.top };
++        GAL_Rect scalrect = { 0, 0, dst_w, dst_h };
++        if (GAL_PutBoxAlphaScaler(info->pdc->surface, &srcrect, &dstrect,
++                src_bmp, &devrect, &scalrect) >= 0)
++            return 0;
++    } else if (cb_line_scaled == _line_scaled_fillboxpart) {
++        struct _SCALER_INFO_FILLBMPPART *info =
++                (struct _SCALER_INFO_FILLBMPPART*) context;
++        GAL_Rect srcrect = { 0, 0, src_bmp->bmWidth, src_bmp->bmHeight };
++        GAL_Rect dstrect =
++                { info->dst_x, info->dst_y, info->dst_w, info->dst_h };
++        GAL_Rect devrect = { info->pdc->DevRC.left, info->pdc->DevRC.top,
++                info->pdc->DevRC.right - info->pdc->DevRC.left,
++                info->pdc->DevRC.bottom - info->pdc->DevRC.top };
++        GAL_Rect scalrect = { info->off_x, info->off_y, dst_w, dst_h };
++        if (GAL_PutBoxAlphaScaler(info->pdc->surface, &srcrect, &dstrect,
++                src_bmp, &devrect, &scalrect) >= 0)
++            return 0;
++    } else if (cb_line_scaled == _line_scaled_stretchblt) {
++        struct _SCALER_INFO_STRETCHBLT *info =
++                (struct _SCALER_INFO_STRETCHBLT*) context;
++        GAL_Rect srcrect = { src_bmp->bmXo, src_bmp->bmYo, info->sw, info->sh };
++        GAL_Rect dstrect =
++                { info->dst_x, info->dst_y, info->dst_w, info->dst_h };
++        GAL_Rect devrect = { info->pdc->DevRC.left, info->pdc->DevRC.top,
++                info->pdc->DevRC.right - info->pdc->DevRC.left,
++                info->pdc->DevRC.bottom - info->pdc->DevRC.top };
++        GAL_Rect scalrect = { 0, 0, dst_w, dst_h };
++        if (GAL_PutBoxAlphaScaler(info->pdc->surface, &srcrect, &dstrect,
++                src_bmp, &devrect, &scalrect) >= 0)
++            return 0;
++    }
++#endif
++
+     xfactor = muldiv64 (src_bmp->bmWidth, 65536, dst_w);    /* scaled by 65536 */
+     yfactor = muldiv64 (src_bmp->bmHeight, 65536, dst_h);   /* scaled by 65536 */
+ 
+-- 
+2.29.0
+

@@ -1,0 +1,54 @@
+From cba8098454971ba42900c6d1528f5c78204e7530 Mon Sep 17 00:00:00 2001
+From: zhijinzeng <zhijinzeng@allwinnertech.com>
+Date: Fri, 11 Dec 2020 16:33:28 +0800
+Subject: [PATCH] fix gcc-8.1.0 compile error
+
+Signed-off-by: zhijinzeng <zhijinzeng@allwinnertech.com>
+---
+ c++/cursesf.h | 2 +-
+ c++/cursesm.h | 2 +-
+ c++/cursesp.h | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/c++/cursesf.h b/c++/cursesf.h
+index 70a30c3..5acbec7 100644
+--- a/c++/cursesf.h
++++ b/c++/cursesf.h
+@@ -703,7 +703,7 @@ public:
+   virtual ~NCursesUserForm() {
+   };
+ 
+-  inline T* UserData (void) const {
++  inline T* UserData (void) {
+     return reinterpret_cast<T*>(get_user ());
+   };
+ 
+diff --git a/c++/cursesm.h b/c++/cursesm.h
+index d9c2273..2ed51bf 100644
+--- a/c++/cursesm.h
++++ b/c++/cursesm.h
+@@ -659,7 +659,7 @@ public:
+   virtual ~NCursesUserMenu() {
+   };
+ 
+-  inline T* UserData (void) const {
++  inline T* UserData (void) {
+     return reinterpret_cast<T*>(get_user ());
+   };
+ 
+diff --git a/c++/cursesp.h b/c++/cursesp.h
+index 9b63d6d..7a85513 100644
+--- a/c++/cursesp.h
++++ b/c++/cursesp.h
+@@ -251,7 +251,7 @@ public:
+ 
+   virtual ~NCursesUserPanel() {};
+ 
+-  T* UserData (void) const
++  T* UserData (void)
+   {
+     return reinterpret_cast<T*>(get_user ());
+   };
+-- 
+2.28.0
+

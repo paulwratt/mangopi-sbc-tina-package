@@ -1,0 +1,63 @@
+From 2f590a23c35635bfd5a644ab1f43900c457f488e Mon Sep 17 00:00:00 2001
+From: anruliu <anruliu@allwinnertech.com>
+Date: Thu, 10 Jun 2021 09:20:11 +0800
+Subject: [PATCH] add textrotate configure support
+
+Signed-off-by: anruliu <anruliu@allwinnertech.com>
+---
+ cmake_mgconfig.h.in |  3 +++
+ configure.ac        | 10 ++++++++++
+ 2 files changed, 13 insertions(+)
+
+diff --git a/cmake_mgconfig.h.in b/cmake_mgconfig.h.in
+index 4a32c1a..4ed28e8 100644
+--- a/cmake_mgconfig.h.in
++++ b/cmake_mgconfig.h.in
+@@ -568,6 +568,9 @@
+ /* Define if support GPU Rotate */
+ #cmakedefine _MGIMAGE_GPU_ROTATE    1
+ 
++/* Define if support text rotate */
++#cmakedefine _MGHAVE_TEXT_ROTATE    1
++
+ /* ******* */
+ /* USE_OWN */
+ /* ******* */
+diff --git a/configure.ac b/configure.ac
+index 050ef90..5641d80 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -214,6 +214,7 @@ build_g2d_support="no"
+ build_g2drotate_support="no"
+ build_gpu_support="no"
+ build_gpurotate_support="no"
++build_textrotate_support="no"
+ build_pcx_support="no"
+ build_lbm_support="no"
+ build_tga_support="no"
+@@ -716,6 +717,10 @@ AC_ARG_ENABLE(gpurotatesupport,
+ [  --enable-gpurotatesupport      include GPU Rotate support <default=no>],
+ build_gpurotate_support=$enableval)
+ 
++AC_ARG_ENABLE(textrotatesupport,
++[  --enable-textrotatesupport      include text rotate support <default=no>],
++build_textrotate_support=$enableval)
++
+ AC_ARG_ENABLE(menu,
+ [  --enable-menu            include menu support <default=yes>],
+ build_menu=$enableval)
+@@ -2337,6 +2342,11 @@ if test "x$build_gpurotate_support" = "xyes"; then
+             [Define if support GPU Rotate])
+ fi
+ 
++if test "x$build_textrotate_support" = "xyes"; then
++    AC_DEFINE(_MGHAVE_TEXT_ROTATE, 1,
++            [Define if support text rotate])
++fi
++
+ if test "x$build_menu" = "xyes"; then
+     AC_DEFINE(_MGHAVE_MENU, 1,
+             [Define if support menu])
+-- 
+2.29.0
+

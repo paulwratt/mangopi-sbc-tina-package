@@ -1,0 +1,104 @@
+From 04630d01ab286b878e45ee2e09e7f38fe33856c1 Mon Sep 17 00:00:00 2001
+From: zhijinzeng <zhijinzeng@allwinnertech.com>
+Date: Fri, 11 Dec 2020 19:02:04 +0800
+Subject: [PATCH] include sys/sysmacros.h for major/minor/makedev
+
+Signed-off-by: zhijinzeng <zhijinzeng@allwinnertech.com>
+---
+ jffs2reader.c           | 1 +
+ lib/libmtd.c            | 1 +
+ lib/libmtd_legacy.c     | 1 +
+ mkfs.jffs2.c            | 1 +
+ mkfs.ubifs/mkfs.ubifs.c | 2 ++
+ mkfs.ubifs/mkfs.ubifs.h | 1 +
+ ubi-utils/libubi.c      | 1 +
+ 7 files changed, 8 insertions(+)
+
+diff --git a/jffs2reader.c b/jffs2reader.c
+index a62da9a..ace0eb2 100644
+--- a/jffs2reader.c
++++ b/jffs2reader.c
+@@ -73,6 +73,7 @@ BUGS:
+ #include <time.h>
+ #include <sys/types.h>
+ #include <sys/stat.h>
++#include <sys/sysmacros.h>
+ #include <dirent.h>
+ #include <zlib.h>
+ 
+diff --git a/lib/libmtd.c b/lib/libmtd.c
+index 60b4782..f39550c 100644
+--- a/lib/libmtd.c
++++ b/lib/libmtd.c
+@@ -31,6 +31,7 @@
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <sys/ioctl.h>
++#include <sys/sysmacros.h>
+ #include <inttypes.h>
+ 
+ #include <mtd/mtd-user.h>
+diff --git a/lib/libmtd_legacy.c b/lib/libmtd_legacy.c
+index 233a92e..7d85e22 100644
+--- a/lib/libmtd_legacy.c
++++ b/lib/libmtd_legacy.c
+@@ -31,6 +31,7 @@
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <sys/ioctl.h>
++#include <sys/sysmacros.h>
+ #include <mtd/mtd-user.h>
+ 
+ #include <libmtd.h>
+diff --git a/mkfs.jffs2.c b/mkfs.jffs2.c
+index f09c0b2..3bb30c9 100644
+--- a/mkfs.jffs2.c
++++ b/mkfs.jffs2.c
+@@ -72,6 +72,7 @@
+ #include <byteswap.h>
+ #include <crc32.h>
+ #include <inttypes.h>
++#include <sys/sysmacros.h>
+ 
+ #include "rbtree.h"
+ #include "common.h"
+diff --git a/mkfs.ubifs/mkfs.ubifs.c b/mkfs.ubifs/mkfs.ubifs.c
+index ca17e2b..fd5fc39 100644
+--- a/mkfs.ubifs/mkfs.ubifs.c
++++ b/mkfs.ubifs/mkfs.ubifs.c
+@@ -26,6 +26,8 @@
+ #include <crc32.h>
+ #include "common.h"
+ 
++#include <sys/sysmacros.h>
++
+ /* Size (prime number) of hash table for link counting */
+ #define HASH_TABLE_SIZE 10099
+ 
+diff --git a/mkfs.ubifs/mkfs.ubifs.h b/mkfs.ubifs/mkfs.ubifs.h
+index 944a159..6888dad 100644
+--- a/mkfs.ubifs/mkfs.ubifs.h
++++ b/mkfs.ubifs/mkfs.ubifs.h
+@@ -45,6 +45,7 @@
+ #include <ctype.h>
+ #include <uuid/uuid.h>
+ #include <sys/file.h>
++#include <sys/sysmacros.h>
+ 
+ #include <mtd/ubifs-media.h>
+ 
+diff --git a/ubi-utils/libubi.c b/ubi-utils/libubi.c
+index 97c0434..c013315 100644
+--- a/ubi-utils/libubi.c
++++ b/ubi-utils/libubi.c
+@@ -36,6 +36,7 @@
+ #include "libubi_int.h"
+ #include "common.h"
+ 
++#include <sys/sysmacros.h>
+ /**
+  * mkpath - compose full path from 2 given components.
+  * @path: the first component
+-- 
+2.28.0
+

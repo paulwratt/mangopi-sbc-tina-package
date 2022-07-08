@@ -1,0 +1,26 @@
+From 09bbe24e5f8ed17c3d376285c74ca7040a129903 Mon Sep 17 00:00:00 2001
+From: anruliu <anruliu@allwinnertech.com>
+Date: Fri, 19 Mar 2021 15:18:37 +0800
+Subject: [PATCH] init fix compile rv failed
+
+Signed-off-by: anruliu <anruliu@allwinnertech.com>
+---
+ src/softkeyboard/animate/p-code.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/softkeyboard/animate/p-code.c b/src/softkeyboard/animate/p-code.c
+index c1d7e2f..e1c1845 100644
+--- a/src/softkeyboard/animate/p-code.c
++++ b/src/softkeyboard/animate/p-code.c
+@@ -547,7 +547,7 @@ void * CreateMethod(int arg_counts)
+ 	return pex;
+ }
+ 
+-inline unsigned char* get_ptr(pcode_method_ex_t* pex, int size) 
++unsigned char* get_ptr(pcode_method_ex_t* pex, int size)
+ {
+ 	unsigned char* p = pex->method->codes + pex->method->code_len;
+ 	if( (pex->method->code_len+size) > pex->buf){
+-- 
+2.29.0
+

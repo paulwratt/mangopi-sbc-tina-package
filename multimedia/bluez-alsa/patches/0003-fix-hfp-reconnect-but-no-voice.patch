@@ -1,0 +1,78 @@
+From 89339b805dd451856bc4efd7eb68b17e72317b1a Mon Sep 17 00:00:00 2001
+From: luoyuyi <luoyuyi@allwinnertech.com>
+Date: Fri, 3 Dec 2021 11:47:02 +0800
+Subject: [PATCH] fix hfp reconnect but no voice.
+
+Signed-off-by: luoyuyi <luoyuyi@allwinnertech.com>
+---
+ src/rfcomm.c | 18 ++++++++++++++----
+ 1 file changed, 14 insertions(+), 4 deletions(-)
+
+diff --git a/src/rfcomm.c b/src/rfcomm.c
+index 65913b0..597fc22 100644
+--- a/src/rfcomm.c
++++ b/src/rfcomm.c
+@@ -523,9 +523,9 @@ static const struct rfcomm_handler rfcomm_handler_brsf_set = {
+ static const struct rfcomm_handler rfcomm_handler_brsf_resp = {
+ 	AT_TYPE_RESP, "+BRSF", rfcomm_handler_brsf_resp_cb };
+ static const struct rfcomm_handler rfcomm_handler_vgm_set = {
+-	AT_TYPE_CMD_SET, "+VGM", rfcomm_handler_vgm_set_cb };
++	AT_TYPE_RESP, "+VGM", rfcomm_handler_vgm_set_cb };
+ static const struct rfcomm_handler rfcomm_handler_vgs_set = {
+-	AT_TYPE_CMD_SET, "+VGS", rfcomm_handler_vgs_set_cb };
++	AT_TYPE_RESP, "+VGS", rfcomm_handler_vgs_set_cb };
+ static const struct rfcomm_handler rfcomm_handler_btrh_get = {
+ 	AT_TYPE_CMD_GET, "+BTRH", rfcomm_handler_btrh_get_cb };
+ static const struct rfcomm_handler rfcomm_handler_bcs_set = {
+@@ -629,7 +629,7 @@ void *rfcomm_thread(void *arg) {
+ 		rfcomm_callback *callback;
+ 		char tmp[16];
+ 
+-		if (conn.state != HFP_CONNECTED) {
++		if (conn.state < HFP_CONNECTED) {
+ 
+ 			/* If some progress has been made in the SLC procedure, reset the
+ 			 * retries counter. */
+@@ -700,6 +700,8 @@ void *rfcomm_thread(void *arg) {
+ 					rfcomm_set_hfp_state(&conn, HFP_CONNECTED);
+ 				case HFP_CONNECTED:
+ 					bluealsa_ctl_event(BA_EVENT_TRANSPORT_ADDED);
++				default:
++					break;
+ 				}
+ 
+ 			if (t->profile == BLUETOOTH_PROFILE_HFP_AG)
+@@ -729,6 +731,8 @@ void *rfcomm_thread(void *arg) {
+ 					rfcomm_set_hfp_state(&conn, HFP_CONNECTED);
+ 				case HFP_CONNECTED:
+ 					bluealsa_ctl_event(BA_EVENT_TRANSPORT_ADDED);
++				default:
++					break;
+ 				}
+ 
+ 			if (conn.handler != NULL) {
+@@ -737,7 +741,7 @@ void *rfcomm_thread(void *arg) {
+ 			}
+ 
+ 		}
+-
++recvat:
+ 		/* skip poll() since we've got unprocessed data */
+ 		if (reader.next != NULL)
+ 			goto read;
+@@ -847,6 +851,12 @@ read:
+ 			errno = ECONNRESET;
+ 			goto ioerror;
+ 		}
++		else {
++			if (conn.state < HFP_CONNECTED){
++				debug("into but no recv at");
++				goto recvat;
++			}
++		}
+ 
+ 		continue;
+ 
+-- 
+2.29.0
+

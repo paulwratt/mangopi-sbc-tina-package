@@ -1,0 +1,121 @@
+diff --git a/extras/floppy/create_floppy_devices.c b/extras/floppy/create_floppy_devices.c
+index 0698fcd..ad1567c 100644
+--- a/extras/floppy/create_floppy_devices.c
++++ b/extras/floppy/create_floppy_devices.c
+@@ -23,6 +23,7 @@
+ #include <string.h>
+ #include <pwd.h>
+ #include <grp.h>
++#include <sys/sysmacros.h>
+ 
+ #include "../../udev/udev.h"
+ 
+diff --git a/extras/scsi_id/scsi_serial.c b/extras/scsi_id/scsi_serial.c
+index cbacf37..9eb404f 100644
+--- a/extras/scsi_id/scsi_serial.c
++++ b/extras/scsi_id/scsi_serial.c
+@@ -29,6 +29,7 @@
+ #include <linux/types.h>
+ /* #include <linux/bsg.h> */
+ #include "bsg.h"
++#include <sys/sysmacros.h>
+ 
+ #include "../../udev/udev.h"
+ #include "scsi.h"
+diff --git a/udev/lib/libudev-device.c b/udev/lib/libudev-device.c
+index ddc4b34..c5cac78 100644
+--- a/udev/lib/libudev-device.c
++++ b/udev/lib/libudev-device.c
+@@ -19,6 +19,7 @@
+ #include <fcntl.h>
+ #include <ctype.h>
+ #include <sys/stat.h>
++#include <sys/sysmacros.h>
+ 
+ #include "libudev.h"
+ #include "libudev-private.h"
+diff --git a/udev/lib/libudev-monitor.c b/udev/lib/libudev-monitor.c
+index 2540e85..4be63e0 100644
+--- a/udev/lib/libudev-monitor.c
++++ b/udev/lib/libudev-monitor.c
+@@ -23,6 +23,7 @@
+ #include <arpa/inet.h>
+ #include <linux/netlink.h>
+ #include <linux/filter.h>
++#include <sys/sysmacros.h>
+ 
+ #include "libudev.h"
+ #include "libudev-private.h"
+diff --git a/udev/lib/test-libudev.c b/udev/lib/test-libudev.c
+index db08d48..4b41c6e 100644
+--- a/udev/lib/test-libudev.c
++++ b/udev/lib/test-libudev.c
+@@ -19,6 +19,7 @@
+ #include <syslog.h>
+ #include <fcntl.h>
+ #include <sys/select.h>
++#include <sys/sysmacros.h>
+ 
+ #include "libudev.h"
+ 
+diff --git a/udev/udev-event.c b/udev/udev-event.c
+index 345fb20..25065fb 100644
+--- a/udev/udev-event.c
++++ b/udev/udev-event.c
+@@ -27,6 +27,7 @@
+ #include <sys/socket.h>
+ #include <net/if.h>
+ #include <linux/sockios.h>
++#include <sys/sysmacros.h>
+ 
+ #include "udev.h"
+ 
+diff --git a/udev/udev-node.c b/udev/udev-node.c
+index 2f9cf4d..a4f0fdc 100644
+--- a/udev/udev-node.c
++++ b/udev/udev-node.c
+@@ -26,6 +26,7 @@
+ #include <dirent.h>
+ #include <sys/stat.h>
+ #include <sys/types.h>
++#include <sys/sysmacros.h>
+ 
+ #include "udev.h"
+ 
+diff --git a/udev/udev-rules.c b/udev/udev-rules.c
+index fac418e..3333910 100644
+--- a/udev/udev-rules.c
++++ b/udev/udev-rules.c
+@@ -27,6 +27,7 @@
+ #include <errno.h>
+ #include <dirent.h>
+ #include <fnmatch.h>
++#include <sys/sysmacros.h>
+ 
+ #include "udev.h"
+ 
+diff --git a/udev/udevadm-info.c b/udev/udevadm-info.c
+index f20eb07..0dc6fd6 100644
+--- a/udev/udevadm-info.c
++++ b/udev/udevadm-info.c
+@@ -27,6 +27,7 @@
+ #include <getopt.h>
+ #include <sys/stat.h>
+ #include <sys/types.h>
++#include <sys/sysmacros.h>
+ 
+ #include "udev.h"
+ 
+diff --git a/udev/udevd.c b/udev/udevd.c
+index 419c486..b5a06ab 100644
+--- a/udev/udevd.c
++++ b/udev/udevd.c
+@@ -38,6 +38,8 @@
+ #ifdef HAVE_INOTIFY
+ #include <sys/inotify.h>
+ #endif
++#include <sys/sysmacros.h>
++#include <sys/resource.h>
+ 
+ #include "udev.h"
+ 

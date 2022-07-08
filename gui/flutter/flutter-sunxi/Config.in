@@ -1,0 +1,29 @@
+if PACKAGE_flutter-sunxi
+
+config FLUTTER_USE_FBDEV
+	bool "flutter use fbdev"
+	default y
+		help
+		Whether use flutter_fbdev
+
+config FLUTTER_USE_EGLFS
+	bool "flutter use eglfs"
+	default n
+		help
+		Whether use flutter_eglfs
+
+config FLUTTER_DEMO_COMPLEX_LAYOUT
+	bool "flutter demo complex layout"
+	select FLUTTER_USE_FBDEV
+	default n
+		help
+		Whether use flutter demo complex layout
+
+config FLUTTER_DEMO_GALLERY
+	bool "flutter demo gallery"
+	select FLUTTER_USE_FBDEV
+	default n
+		help
+		Whether use flutter demo complex gallery
+
+endif

@@ -1,0 +1,89 @@
+<html>
+<%+header%>
+<body>
+<div id="content_syslog">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="initial-scale=1, maximum-scale=3, minimum-scale=1, user-scalable=no">
+	<title>input</title>
+	<style type="text/css">
+	body,ul,ol,li,p,h1,h2,h3,h4,h5,h6,form,fieldset,table,td,img,div,dl,dt,dd,input{margin:0;padding:0;}
+	body{font-size:12px;}
+	img{border:none;}
+	ul,ol{list-style:none;}
+	input,select,textarea{outline:none; border:none; background:#FFF;}
+	textarea{resize:none;}
+	a{text-decoration:none;}
+	.input{
+		width: 100%;
+		height: 100%;
+	}
+	.input-head{
+		height: 70px;
+		background-color: #9e9e9e17;
+		position: relative;
+	}
+	.input-head a{
+		display: inline-block;
+		padding: 15px;
+	}
+	.input-head a img{
+
+		width: 50px;
+		height: 50px;
+	}
+	.input-tie{
+		display: inline-block;
+	    font-size: large;
+	    margin-left: 10%;
+	    position: absolute;
+    	top: 30px;
+    	color: #004fff85;
+	}
+</style>
+</head>
+<body>
+<div class="input">
+	<div class="input-head">
+		<a href="<%=url("networkd/wifi_station/wifi_list")%>">
+			<img src="<%=resource%>/icons/networkd_back.png" alt="back">
+		</a>
+		<div id = "ssid1" class="input-tie"></div>
+	</div >
+<table class="cbi-section-table" style="margin:10px; empty-cells:hide">
+<tr>
+	<td style="width:100%;text-align:middle">
+        <form action="<%=url('networkd/wifi_station/connect')%>" method="post" class="inline">
+			SSID: <input id="ssid2" type="text" name="ssid" value="" readonly />
+			<br>
+            PASSWORD:<input type="text" name="password" value="" />
+			<br>
+            <input type="submit" class="cbi-button cbi-button-find" style="width:100px" margin-top:="2cm" title="<%:Connect AP %>" value="<%:Connect%>" />
+        </form>
+	</td>
+</tr>
+</table>
+</div>
+<script type="text/javascript" src="<%=resource%>/cbi.js"></script>
+<script src="<%=resource%>/utf8.js"></script>
+<script type="text/javascript">
+
+	String.prototype.convert = function() {
+    	return this.replace(/\\x([0-9A-Fa-f]{2})/g, function() {
+        	return String.fromCharCode(parseInt(arguments[1], 16));
+   		});
+	};
+
+
+	function get_ssid(){
+		var url=location.href
+		var str=url.split("=")[1];
+		var avin= decodeURIComponent(utf8.decode(str.convert()));
+		return  avin;
+	}
+document.getElementById("ssid1").innerHTML = get_ssid();
+document.getElementById("ssid2").value = get_ssid();
+</script>
+</body>
+<%+footer%>
+</html>

@@ -1,0 +1,163 @@
+From 002203f3773b0e45c7843006e9a4d0bd2c75cf4a Mon Sep 17 00:00:00 2001
+From: anruliu <anruliu@allwinnertech.com>
+Date: Sat, 6 Feb 2021 17:00:41 +0800
+Subject: [PATCH] newgal videosunxifb add SetSlideBufferEnable
+
+Signed-off-by: anruliu <anruliu@allwinnertech.com>
+---
+ include/window.h      |  8 ++++++--
+ src/gui/window.c      | 13 +++++++++++++
+ src/include/newgal.h  | 10 ++++++++++
+ src/newgal/sysvideo.h |  3 +++
+ src/newgal/video.c    | 28 ++++++++++++++++++++++++++--
+ 5 files changed, 58 insertions(+), 4 deletions(-)
+
+diff --git a/include/window.h b/include/window.h
+index 9d8eaba..4d10b7c 100644
+--- a/include/window.h
++++ b/include/window.h
+@@ -52,12 +52,16 @@
+ #ifndef _MGUI_WINDOW_H
+ #define _MGUI_WINDOW_H
+ 
+-MG_EXPORT int GUIAPI DoubleBufferEnable(BOOL enable);
+-MG_EXPORT void GUIAPI YOffsetBufferEnable(BOOL enable);
+ #ifdef __cplusplus
+ extern "C" {
+ #endif  /* __cplusplus */
+ 
++/* Private function */
++MG_EXPORT int GUIAPI DoubleBufferEnable(BOOL enable);
++MG_EXPORT void GUIAPI YOffsetBufferEnable(BOOL enable);
++MG_EXPORT void GUIAPI SetSlideBufferEnable (BOOL enable);
++MG_EXPORT BOOL GUIAPI GetSlideBufferEnable (void);
++
+     /**
+      * \defgroup msgs Messages
+      * @{
+diff --git a/src/gui/window.c b/src/gui/window.c
+index 46cff11..1bec2a3 100644
+--- a/src/gui/window.c
++++ b/src/gui/window.c
+@@ -3941,6 +3941,16 @@ void GUIAPI SetGlobaYOffset(int yoffset)
+ 		fbGlobalYOffset = yoffset;
+ }
+ 
++void GUIAPI SetSlideBufferEnable(BOOL enable)
++{
++	GAL_SetSlideBufferEnable(enable);
++}
++
++BOOL GUIAPI GetSlideBufferEnable(void)
++{
++	return GAL_GetSlideBufferEnable();
++}
++
+ void GUIAPI UpdateWindow (HWND hWnd, BOOL fErase)
+ {
+     MG_CHECK (MG_IS_NORMAL_WINDOW(hWnd));
+@@ -5154,6 +5164,9 @@ void GUIAPI EndPaint (HWND hWnd, HDC hdc)
+         pWin->pCaretInfo->fBlink = FALSE;
+         ShowCaretEx (hWnd, FALSE);
+     }
++
++    if (GAL_GetSlideBufferEnable())
++        GAL_VideoSlide();
+ #endif
+ }
+ 
+diff --git a/src/include/newgal.h b/src/include/newgal.h
+index 3643e9f..e9654d0 100644
+--- a/src/include/newgal.h
++++ b/src/include/newgal.h
+@@ -744,6 +744,16 @@ extern BYTE*  gal_PutPixelKeyAlphaChannel (GAL_Surface* dst, BYTE* dstrow, Uint3
+ extern BYTE*  gal_PutPixelAlpha (GAL_Surface* dst, BYTE* dstrow, Uint32 pixel, MYBITMAP_CONTXT* mybmp);
+ extern BYTE*  gal_PutPixelKeyAlpha (GAL_Surface* dst, BYTE* dstrow, Uint32 pixel, MYBITMAP_CONTXT* mybmp);
+ 
++/* Private function */
++extern int GAL_DoubleBufferEnable (BOOL enable);
++extern void GAL_YOffsetBufferEnable (BOOL enable);
++extern BOOL GAL_YOffgetBufferEnable (void);
++extern void GAL_YOffset (int yoffset);
++extern void GAL_SetSlideBufferEnable (BOOL enable);
++extern BOOL GAL_GetSlideBufferEnable (void);
++extern void GAL_VideoSync (void);
++extern void GAL_VideoFlip (GAL_Rect *rc);
++extern void GAL_VideoSlide (void);
+ 
+ #define mg_TerminateGAL GAL_VideoQuit
+ 
+diff --git a/src/newgal/sysvideo.h b/src/newgal/sysvideo.h
+index f90cd19..61ac764 100644
+--- a/src/newgal/sysvideo.h
++++ b/src/newgal/sysvideo.h
+@@ -68,6 +68,8 @@ struct GAL_VideoDevice {
+ 	BOOL doubleBufferStatus;
+ 	/* The three Buffer Status */
+ 	BOOL yOffsetBufferStatus;
++	/* The slide Status */
++	BOOL slideBufferStatus;
+ 
+ 	/* * * */
+ 	/* Initialization/Query functions */
+@@ -165,6 +167,7 @@ struct GAL_VideoDevice {
+ 	void (*UnlockHWSurface)(_THIS, GAL_Surface *surface);
+ 	int (*YOffsetHWSurface)(_THIS, GAL_Surface *surface, int yoffset);
+ 	int (*DoubleBufferEnable)(_THIS, GAL_Surface *current, BOOL enable);
++	int (*SlideHWSurface)(_THIS, GAL_Surface *surface);
+ 	/* Performs hardware flipping */
+ 	int (*FlipHWSurface)(_THIS, GAL_Surface *surface, GAL_Rect *rects, BOOL enable);
+ #endif
+diff --git a/src/newgal/video.c b/src/newgal/video.c
+index 4f5d29f..193b856 100644
+--- a/src/newgal/video.c
++++ b/src/newgal/video.c
+@@ -1296,7 +1296,7 @@ void GAL_YOffsetBufferEnable(BOOL enable)
+ 	video->yOffsetBufferStatus = enable;
+ }
+ 
+-BOOL GAL_YOffgetBufferEnable()
++BOOL GAL_YOffgetBufferEnable(void)
+ {
+ 	GAL_VideoDevice *video = current_video;
+ 	if (video)
+@@ -1318,7 +1318,24 @@ void GAL_YOffset(int yoffset)
+  	}
+ }
+ 
+-void GAL_VideoSync()
++void GAL_SetSlideBufferEnable(BOOL enable)
++{
++	GAL_VideoDevice *video = current_video;
++	if (video && video->slideBufferStatus == enable)
++		return;
++	video->slideBufferStatus = enable;
++}
++
++BOOL GAL_GetSlideBufferEnable(void)
++{
++	GAL_VideoDevice *video = current_video;
++	if (video)
++		return video->slideBufferStatus;
++	else
++		return FALSE;
++}
++
++void GAL_VideoSync(void)
+ {
+ 	GAL_VideoDevice *video = current_video;
+ 	if (video && video->VideoSync && !video->doubleBufferStatus
+@@ -1335,3 +1352,10 @@ void GAL_VideoFlip(GAL_Rect *rc)
+ 	}
+ }
+ 
++void GAL_VideoSlide(void)
++{
++	GAL_VideoDevice *video = current_video;
++	if (video && video->slideBufferStatus) {
++		video->SlideHWSurface(video, GAL_VideoSurface);
++	}
++}
+-- 
+2.29.0
+

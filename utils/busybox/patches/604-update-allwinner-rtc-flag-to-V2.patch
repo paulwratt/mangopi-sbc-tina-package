@@ -1,0 +1,49 @@
+From a468bffbde4279c13237961a2149604a3e2a5247 Mon Sep 17 00:00:00 2001
+From: wuhuabin <wuhuabin@allwinnertech.com>
+Date: Mon, 22 Feb 2021 11:20:48 +0800
+Subject: [PATCH] busybox:reboot: update allwinner rtc flag to V2
+
+Signed-off-by: wuhuabin <wuhuabin@allwinnertech.com>
+---
+ init/halt.c | 16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
+
+diff --git a/init/halt.c b/init/halt.c
+index b58b262..a714907 100644
+--- a/init/halt.c
++++ b/init/halt.c
+@@ -96,6 +96,7 @@ struct bootloader_message {
+ 
+ static const char *MISC_DEVICE = "/dev/by-name/misc";
+ static const char *RTC_SYSFS_FLAG = "/sys/devices/platform/soc/rtc/flag";
++static const char *RTC_SYSFS_FLAG_V2 = "/sys/devices/platform/soc@3000000/7090000.rtc/flag";
+ // ------------------------------------
+ // for misc partitions on block devices
+ // ------------------------------------
+@@ -236,10 +237,21 @@ static int write_rtc_flag(const char *reason)
+ 	if(ret == -1)
+ 	{
+ 		LOGE("can not access %s\n", RTC_SYSFS_FLAG);
+-		return 0;
++
++		ret = access(RTC_SYSFS_FLAG_V2, F_OK); //mode:F_OK
++		if(ret == -1)
++		{
++			LOGE("can not access %s\n", RTC_SYSFS_FLAG_V2);
++			return 0;
++		}
++
++		f = fopen(RTC_SYSFS_FLAG_V2, "wb");
++	}
++	else
++	{
++		f = fopen(RTC_SYSFS_FLAG, "wb");
+ 	}
+ 
+-	f = fopen(RTC_SYSFS_FLAG, "wb");
+ 	if (f == NULL) {
+ 		LOGE("Can't open %s\n(%s)\n", RTC_SYSFS_FLAG, strerror(errno));
+ 		return -1;
+-- 
+2.29.0
+

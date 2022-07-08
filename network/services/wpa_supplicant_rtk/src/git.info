@@ -1,0 +1,4 @@
+/* Realtek wpa_supplicant is based on
+ * https://android.googlesource.com/platform/external/wpa_supplicant_8/+/refs/heads/oreo-r6-release
+ * commit   d2b09d986d99dfb1e0331bc7786793bcfc91b411
+ */

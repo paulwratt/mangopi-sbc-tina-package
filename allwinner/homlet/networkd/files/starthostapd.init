@@ -1,0 +1,49 @@
+#!/bin/sh /etc/rc.common
+# Copyright (C) 2006-2011 OpenWrt.org
+
+START=97
+STOP=97
+
+USE_PROCD=1
+DEPEND=wpa_supplicant
+NANE=starthostapd
+PROG=/usr/bin/softap.sh
+OOM_ADJ=-17
+
+function wait_wifi_driver() {
+    MAC_ADDR=
+    i=0
+    while [ -z $MAC_ADDR ]
+    do
+        MAC_ADDR=`ifconfig wlan0 |grep HWaddr |head -n 1 | grep -o  "[a-f0-9A-F]\\([a-f0-9A-F]\\:[a-f0-9A-F]\\)\\{5\\}[a-f0-9A-F]"`
+        [ ! -z $MAC_ADDR ] && break;
+        i=`expr $i + 1`
+        usleep 500
+        if [ $i -eq 400 ]; then
+                break
+        fi
+    done
+}
+
+start_service() {
+    procd_open_instance
+    wait_wifi_driver
+    procd_set_param oom_adj $OOM_ADJ
+    procd_set_param command $PROG
+    procd_close_instance
+}
+
+#stop_service() {
+#    procd_open_instance
+#    wpa=`ps | grep wpa_supplicant | grep -v grep`
+#    [ -n "$wpa" ] && {
+#        killall  wpa_supplicant
+#		sleep 1
+#    }
+#    ifconfig wlan0 down
+#    procd_close_instance
+#}
+#restart() {
+#    stop $@
+#    start $@
+#}

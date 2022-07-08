@@ -1,0 +1,55 @@
+From 430261b0faf014a3b3f2942588f0f34203495e0a Mon Sep 17 00:00:00 2001
+From: zhijinzeng <zhijinzeng@allwinnertech.com>
+Date: Fri, 11 Dec 2020 19:19:17 +0800
+Subject: [PATCH] include sys/sysmacros.h for major/minor/makedev, and remove
+ Werror
+
+Signed-off-by: zhijinzeng <zhijinzeng@allwinnertech.com>
+---
+ CMakeLists.txt        | 2 +-
+ libblkid-tiny/mkdev.c | 2 ++
+ libubi/libubi.c       | 2 ++
+ 3 files changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index b3b28d7..0012e32 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1,7 +1,7 @@
+ cmake_minimum_required(VERSION 2.6)
+ 
+ PROJECT(fs-tools C)
+-ADD_DEFINITIONS(-Os -ggdb -Wall -Werror --std=gnu99 -Wmissing-declarations)
++ADD_DEFINITIONS(-Os -ggdb -Wall --std=gnu99 -Wmissing-declarations)
+ 
+ SET(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "")
+ 
+diff --git a/libblkid-tiny/mkdev.c b/libblkid-tiny/mkdev.c
+index f1d504f..60c7688 100644
+--- a/libblkid-tiny/mkdev.c
++++ b/libblkid-tiny/mkdev.c
+@@ -17,6 +17,8 @@
+ #include <sys/stat.h>
+ #include <sys/types.h>
+ 
++#include <sys/sysmacros.h>
++
+ #include <stdio.h>
+ #include <string.h>
+ #include <stdlib.h>
+diff --git a/libubi/libubi.c b/libubi/libubi.c
+index d1f2a8b..ea1b295 100644
+--- a/libubi/libubi.c
++++ b/libubi/libubi.c
+@@ -35,6 +35,8 @@
+ #include "libubi.h"
+ #include "libubi_int.h"
+ 
++#include <sys/sysmacros.h>
++
+ /**
+  * mkpath - compose full path from 2 given components.
+  * @path: the first component
+-- 
+2.28.0
+

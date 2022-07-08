@@ -1,0 +1,42 @@
+From 87cd51239db21aa844a72dc26424e289a2add598 Mon Sep 17 00:00:00 2001
+From: chenshite <chenshite@allwinnertech.com>
+Date: Fri, 25 Jun 2021 14:02:59 +0800
+Subject: [PATCH] fix the build problem:not used ubus
+
+Signed-off-by: chenshite <chenshite@allwinnertech.com>
+---
+ src/ap/hostapd.h                  | 2 ++
+ wpa_supplicant/wpa_supplicant_i.h | 2 ++
+ 2 files changed, 4 insertions(+)
+
+diff --git a/src/ap/hostapd.h b/src/ap/hostapd.h
+index 54b3674..31c2f0e 100644
+--- a/src/ap/hostapd.h
++++ b/src/ap/hostapd.h
+@@ -81,7 +81,9 @@ struct hapd_interfaces {
+ #ifdef CONFIG_CTRL_IFACE_UDP
+        unsigned char ctrl_iface_cookie[CTRL_IFACE_COOKIE_LEN];
+ #endif /* CONFIG_CTRL_IFACE_UDP */
++#ifdef CONFIG_UBUS
+ 	struct ubus_object ubus;
++#endif
+ };
+ 
+ enum hostapd_chan_status {
+diff --git a/wpa_supplicant/wpa_supplicant_i.h b/wpa_supplicant/wpa_supplicant_i.h
+index a84e053..770e63c 100644
+--- a/wpa_supplicant/wpa_supplicant_i.h
++++ b/wpa_supplicant/wpa_supplicant_i.h
+@@ -312,7 +312,9 @@ struct wpa_global {
+ 
+ 	struct psk_list_entry *add_psk; /* From group formation */
+ 
++#ifdef CONFIG_UBUS
+ 	struct ubus_object ubus_global;
++#endif
+ };
+ 
+ 
+-- 
+2.29.0
+

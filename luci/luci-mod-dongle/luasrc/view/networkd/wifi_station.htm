@@ -1,0 +1,27 @@
+<html>
+<%+header%>
+<script type="text/javascript" src="<%=resource%>/cbi.js"></script>
+<body>
+<div id="content_syslog">
+<textarea readonly="readonly" wrap="off" rows="<%=scanlist:cmatch("\n")+2%>" id="syslog"><%=scanlist:pcdata()%></textarea>
+</div>
+<table class="cbi-section-table" style="margin:10px; empty-cells:hide">
+<tr>
+	<td style="width:34px"><img src="<%=resource%>/icons/wifi_big_disabled.png" style="float:left; margin-right:10px" id="wifi_deivce_status" /></td>
+        <td colspan="2" style="text-align:left">
+                    <big><strong>test wifi (wlan0)</strong></big><br />
+                    <span id="iw-devinfo"></span>
+        </td>
+	<td style="width:310px;text-align:middle">
+                    <form action="<%=url('networkd/wifi_station/connect')%>" method="post" class="inline">
+                        SSID: <input type="text" name="ssid" value="" />
+			<br>
+                        PASSWORD:<input type="text" name="password" value="" />
+                        <input type="submit" class="cbi-button cbi-button-find" style="width:100px" title="<%:Connect AP %>" value="<%:Connect%>" />
+                    </form>
+	</td>
+</tr>
+</table>
+</body>
+<%+footer%>
+</html>

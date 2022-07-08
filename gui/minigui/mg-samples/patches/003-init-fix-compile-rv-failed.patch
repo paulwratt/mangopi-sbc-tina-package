@@ -1,0 +1,26 @@
+From 32b9ed894c143eb9ca7153b071d93eb3f3513ef1 Mon Sep 17 00:00:00 2001
+From: anruliu <anruliu@allwinnertech.com>
+Date: Thu, 18 Mar 2021 11:07:27 +0800
+Subject: [PATCH] fix compile rv failed
+
+Signed-off-by: anruliu <anruliu@allwinnertech.com>
+---
+ mgplus/animate/p-code.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/mgplus/animate/p-code.c b/mgplus/animate/p-code.c
+index 6d95c10..217d8ef 100644
+--- a/mgplus/animate/p-code.c
++++ b/mgplus/animate/p-code.c
+@@ -548,7 +548,7 @@ void * CreateMethod(int arg_counts)
+ 	return pex;
+ }
+ 
+-inline unsigned char* get_ptr(pcode_method_ex_t* pex, int size) 
++unsigned char* get_ptr(pcode_method_ex_t* pex, int size)
+ {
+ 	unsigned char* p = pex->method->codes + pex->method->code_len;
+ 	if( (pex->method->code_len+size) > pex->buf){
+-- 
+2.29.0
+

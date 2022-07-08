@@ -1,0 +1,32 @@
+diff --git a/gio/gdbusauth.c b/gio/gdbusauth.c
+index 4036d77..c28c1a6 100644
+--- a/gio/gdbusauth.c
++++ b/gio/gdbusauth.c
+@@ -1295,9 +1295,11 @@ _g_dbus_auth_run_server (GDBusAuth              *auth,
+                                                     &line_length,
+                                                     cancellable,
+                                                     error);
+-          debug_print ("SERVER: WaitingForBegin, read '%s'", line);
+-          if (line == NULL)
++          if (line == NULL) {
++            debug_print ("SERVER: WaitingForBegin, read NULL");
+             goto out;
++          }
++          debug_print ("SERVER: WaitingForBegin, read '%s'", line);
+           if (g_strcmp0 (line, "BEGIN") == 0)
+             {
+               /* YAY, done! */
+diff --git a/gio/gdbusmessage.c b/gio/gdbusmessage.c
+index d9d8f37..1c138b6 100644
+--- a/gio/gdbusmessage.c
++++ b/gio/gdbusmessage.c
+@@ -2695,7 +2695,8 @@ g_dbus_message_to_blob (GDBusMessage          *message,
+   if (message->body != NULL)
+     {
+       gchar *tupled_signature_str;
+-      tupled_signature_str = g_strdup_printf ("(%s)", signature_str);
++      if (signature_str != NULL)
++        tupled_signature_str = g_strdup_printf ("(%s)", signature_str);
+       if (signature == NULL)
+         {
+           g_set_error (error,
