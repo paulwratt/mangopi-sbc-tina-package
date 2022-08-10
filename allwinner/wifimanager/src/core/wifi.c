@@ -22,11 +22,11 @@ static struct wpa_ctrl *monitor_conn;
 static int exit_sockets[2];
 
 //static const char IFACE_DIR[]           = "/data/misc/wifi/sockets";
-static const char IFACE_DIR[]           = "/etc/wifi/sockets";
+static const char IFACE_DIR[]           = "/var/sockets";
 static char primary_iface[IFACE_VALUE_MAX];
 static const char SUPP_CONFIG_TEMPLATE[]= "/etc/wifi/wpa_supplicant_src.conf";
 static const char SUPP_CONFIG_FILE[]    = "/etc/wifi/wpa_supplicant.conf";
-static const char CONTROL_IFACE_PATH[]  = "/etc/wifi/sockets";
+static const char CONTROL_IFACE_PATH[]  = "/var/sockets";
 
 static const char SUPP_ENTROPY_FILE[]   = WIFI_ENTROPY_FILE;
 static unsigned char dummy_key[21] = { 0x02, 0x11, 0xbe, 0x33, 0x43, 0x35,
