@@ -266,7 +266,7 @@ mount_overlay() {
 		return
 	}
 	# only for recovery,copy boot_partition(boot) wifi information to boot_partition(recovery)
-	local system=$(fw_printenv -n boot_partition)
+	local system=$(fw_printenv -n boot_partition 2>/dev/null)
 
 	if [ x"$system" = x"recovery" ]; then
 		[ -e /overlay/upper/etc/wifi/wpa_supplicant ] && {
